@@ -108,9 +108,6 @@ namespace theDoctor
 
       void  AddRegion(string tag, string plotLabel, bool (*selector)(), string options = "");
 
-      void  ScheduleVariablesForRegion(string region, vector<string> list);
-      void  ScheduleVariablesForRegion(string region, string list);
-
       // ########################
       // #   Histo management   #
       // ########################

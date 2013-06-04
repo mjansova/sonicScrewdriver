@@ -12,6 +12,7 @@
 // Plot hammers
 #include "interface/Plot1DSuperpRenorm.h"
 #include "interface/Plot1DStack.h"
+#include "interface/Plot1DCutSignificance.h"
 #include "interface/PlotDataMCComparison.h"
 #include "interface/Plot2D.h"
 #include "interface/Plot2DProjectedTo1D.h"
@@ -31,7 +32,7 @@ namespace theDoctor
       Plot* AddPlot(string type, string name1, string name2, string name3, string name4, string name5, string name6, string options = "")
       { 
           string name;
-          if ((type == "1DSuperpRenorm") || (type == "1DStack") || (type == "DataMCComparison"))
+          if ((type == "1DSuperpRenorm") || (type == "1DStack") || (type == "DataMCComparison") || (type == "1DCutSignificance"))
                 name = string("var:")+name1+"|region:"+name2+"|channel:"+name3+"|type:"+type;
 
           else if ((type == "2D") || (type== "2DProjectedTo1D"))
@@ -51,6 +52,7 @@ namespace theDoctor
       {
          if ((plotType != "1DSuperpRenorm")
          &&  (plotType != "1DStack")
+         &&  (plotType != "1DCutSignificance")
          &&  (plotType != "DataMCComparison")
          &&  (plotType != "2D")
          &&  (plotType != "2DProjectedTo1D")
@@ -77,21 +79,30 @@ namespace theDoctor
          {
             string plotType = scheduledPlots[i];
 
-            if ((plotType == "1DSuperpRenorm") || (plotType == "1DStack") || (plotType == "DataMCComparison"))
+            if ((plotType == "1DSuperpRenorm") || (plotType == "1DStack") || (plotType == "DataMCComparison") || (plotType == "1DCutSignificance"))
             for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
             {
-                vector<int> variablesById = (*theRegions)[r].AssociatedVariablesById();
-                for (unsigned int v = 0 ; v < variablesById.size() ; v++)
+                for (unsigned int v = 0 ; v < theVariables->size() ; v++)
                 for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
                 {
-                    Variable* theVar     = &((*theVariables)[variablesById[v]]);
+                    Variable* theVar     = &((*theVariables)[v]);
                     Region*   theRegion  = &((*theRegions)[r]);
                     Channel*  theChannel = &((*theChannels)[c]);
+
+                    string plotTypeOptions;
+                    if (plotType == "1DCutSignificance")
+                    {
+                        plotTypeOptions = scheduledPlotsOptions[i];
+                        string varTag = OptionsScrewdriver::getStringOption(plotTypeOptions,"var");
+                        if (varTag != theVar->getTag()) continue;
+                    }
+
                     Plot*     thePlot    = AddPlot(plotType,theVar->getTag(),theRegion->getTag(),theChannel->getTag(),"","","",options);
 
-                         if (plotType == "1DSuperpRenorm")     Plot1DSuperpRenorm::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
-                    else if (plotType == "1DStack")                   Plot1DStack::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
-                    else if (plotType == "DataMCComparison") PlotDataMCComparison::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
+                         if (plotType == "1DSuperpRenorm")       Plot1DSuperpRenorm::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
+                    else if (plotType == "1DStack")                     Plot1DStack::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
+                    else if (plotType == "DataMCComparison")   PlotDataMCComparison::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
+                    else if (plotType == "1DCutSignificance") Plot1DCutSignificance::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,plotTypeOptions,options);
                 }
             }	
 
@@ -192,6 +203,8 @@ namespace theDoctor
 
         system(("rm -f "+outputFolder+"/1DStack.root").c_str());
         system(("rm -f "+outputFolder+"/1DSuperpRenorm.root").c_str());
+        system(("rm -f "+outputFolder+"/1DCutSignificance.root").c_str());
+        system(("rm -f "+outputFolder+"/DataMCComparison.root").c_str());
         system(("rm -f "+outputFolder+"/2D.root").c_str());
         system(("rm -f "+outputFolder+"/2DProjectedTo1D.root").c_str());
         system(("rm -f "+outputFolder+"/3DProjectedTo2D.root").c_str());

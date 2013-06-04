@@ -116,72 +116,8 @@ void SonicScrewdriver::SetLumi(float inputLumi)
 void  SonicScrewdriver::AddRegion(string tag, string plotLabel, bool (*selector)(), string options)
 {	theRegions.push_back(Region(tag,plotLabel,selector,options));	}
 
-void  SonicScrewdriver::ScheduleVariablesForRegion(string region, vector<string> list)
-{	
-	vector<string> cleanedList;
-	vector<int> cleanedIdList;
-
-	for (unsigned int i = 0 ; i < theRegions.size() ; i++)
-    {
-        if (theRegions[i].getTag() != region) continue;
-
-		// TODO : Add management of a case where list is empty or list = "all" => add all the variables.
-		
-	    if ((list.size() == 1) && (list[0] == "all"))
-        {
-            for (unsigned int j = 0 ; j < theVariables.size() ; j++)
-            {
-				cleanedList.push_back(theVariables[j].getTag());
-				cleanedIdList.push_back(j);
-            }
-        }
-        else for (unsigned int j = 0 ; j < list.size() ; j++)
-		{
-            int tmpIndex = getIndexOfVariable(list[j]);
-			if (tmpIndex != -1)
-			{
-				cleanedList.push_back(list[j]);
-				cleanedIdList.push_back(tmpIndex);
-			}
-			else
-				WARNING_MSG << "Did not find any variable named '" << list[j] << "'." << endl;
-		}
-
-		theRegions[i].AddVariables(cleanedList, cleanedIdList);
-
-        return;
-    }
-
-	WARNING_MSG << "Did not found region named " << region << endl;
-    return;
-}
-
-
-
-vector<string> Common_SplitString(string input,char sep)
-{
-	vector<string> output;
-
-	string item;
-	stringstream stream(input);
-	while( getline(stream,item,sep) )
-	{
-		output.push_back(item);
-	}
-
-	return output;
-}
-
-void SonicScrewdriver::ScheduleVariablesForRegion(string region, string list)
-{
-	vector<string> splitedList = Common_SplitString(list,',');
-	return ScheduleVariablesForRegion(region,splitedList);
-}
-
-
 void SonicScrewdriver::AddChannel(string tag, string plotLabel, bool (*selector)(), string options)
 {	theChannels.push_back(Channel(tag,plotLabel,selector,options));	}
-
 
 // ###########################
 // #    Histo management     #

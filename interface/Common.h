@@ -30,6 +30,7 @@
 
 using namespace std;
 
+#define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
 #define WARNING_MSG cout << "WARNING (" << __FILE__ << ", l." << __LINE__ << ") "
 
 #define COLORPLOT_GREEN		kSpring-1

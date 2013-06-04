@@ -21,6 +21,8 @@ int HistoScrewdriver::getIndexOfVariable(string tag)
 {
   for (unsigned int i = 0 ; i < theVariables->size() ; i++)
     if ((*theVariables)[i].getTag() == tag) return i;
+
+  WARNING_MSG << "Didn't find index of variable named '" << tag << "'." << endl;
   return -1;
 }
 
@@ -28,6 +30,7 @@ int HistoScrewdriver::getIndexOfProcessClass(string tag)
 {
   for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
     if ((*theProcessClasses)[i].getTag() == tag) return i;
+  WARNING_MSG << "Didn't find index of process class named '" << tag << "'." << endl;
   return -1;
 }
 
@@ -35,6 +38,7 @@ int HistoScrewdriver::getIndexOfRegion(string tag)
 {
   for (unsigned int i = 0 ; i < theRegions->size() ; i++)
     if ((*theRegions)[i].getTag() == tag) return i;
+  WARNING_MSG << "Didn't find index of region named '" << tag << "'." << endl;
   return -1;
 }
 
@@ -42,6 +46,7 @@ int HistoScrewdriver::getIndexOfChannel(string tag)
 {
   for (unsigned int i = 0 ; i < theChannels->size() ; i++)
     if ((*theChannels)[i].getTag() == tag) return i;
+  WARNING_MSG << "Didn't find index of channel named '" << tag << "'." << endl;
   return -1;
 }
 
@@ -77,38 +82,30 @@ int HistoScrewdriver::getIndexOfHisto1D(string tagVar, string tagProcessClass, s
  
 void HistoScrewdriver::Create1DHistos()
 {
-
-  // #######################
-  // #  Loop over regions  #
-  // #######################
-  for (unsigned int r = 0 ; r < theRegions->size()        ; r++)
-  {
-
-    // ################################################
-    // #  Loop over variables associated to region r  #
-    // ################################################
-    vector<int> variablesById = (*theRegions)[r].AssociatedVariablesById();
-    for (unsigned int v = 0 ; v < variablesById.size()     ; v++)
+    // #########################
+    // #  Loop over variables  #
+    // #########################
+    for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
     {
-       bool autoFill = (*theVariables)[variablesById[v]].haveFillPointer();
+       bool autoFill = (*theVariables)[v].haveFillPointer();
       
-      // ############################################
-      // #  Loop over channels and process classes  #
-      // ############################################
-      for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
-      for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
-      {
-      Histo1D newHisto(
-                  &((*theVariables)[variablesById[v]]),
+       // ############################################
+       // #  Loop over channels and process classes  #
+       // ############################################
+       for (unsigned int r = 0 ; r < theRegions->size()        ; r++)
+       for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
+       for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+       {
+            Histo1D newHisto(
+                  &((*theVariables)[v]),
                   &((*theProcessClasses)[p]),
                   &((*theRegions)[r]),
                   &((*theChannels)[c]),
                   autoFill
                  );
-      the1DHistos.push_back(newHisto);
-      }
+            the1DHistos.push_back(newHisto);
+       }
     }
-  }
 }
 
 void HistoScrewdriver::Fill(string var,  string processClass, float value, float weight)
@@ -189,57 +186,41 @@ int HistoScrewdriver::getIndexOfHisto2D(string tagVarX, string tagVarY, string t
  
 void HistoScrewdriver::Add2DHisto(string varX, string varY, bool autoFill, int nBinsX, float minX, float maxX, int nBinsY, float minY, float maxY)
 {
-  
+
    int indexVarX = getIndexOfVariable(varX);
    int indexVarY = getIndexOfVariable(varY);
 
-   // #######################
-   // #  Loop over regions  #
-   // #######################
-   for (unsigned int r = 0 ; r < theRegions->size()        ; r++)
+   bool autoFillVarX = false; 
+   bool autoFillVarY = false;
+   bool autoFill_ = false;
+
+   for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
    {
-    // ##########################################################
-    // #  Check both variables are associated with the regions  #
-    // ##########################################################
-      bool checkVarX = false; 
-      bool checkVarY = false;
-      bool autoFillVarX = false; 
-      bool autoFillVarY = false;
-      bool autoFill = false;
-
-    vector<int> variablesById = (*theRegions)[r].AssociatedVariablesById();
-    for (unsigned int v = 0 ; v < variablesById.size()     ; v++)
-    {
-          if (variablesById[v] == indexVarX)
-          { checkVarX = true;             autoFillVarX = (*theVariables)[variablesById[v]].haveFillPointer(); }
-          if (variablesById[v] == indexVarY)
-          { checkVarY = true;             autoFillVarY = (*theVariables)[variablesById[v]].haveFillPointer(); } 
-      }
-
-      if ((!checkVarX) || (!checkVarY)) continue;
-
-      if ((autoFillVarX) && (autoFillVarY)) autoFill = true;
-
-      // ############################################
-      // #  Loop over channels and process classes  #
-      // ############################################
-      for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
-      for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
-      {
-            Histo2D newHisto(
-              &((*theVariables)[indexVarX]),
-              &((*theVariables)[indexVarY]),
-              &((*theProcessClasses)[p]),
-              &((*theRegions)[r]),
-              &((*theChannels)[c]),
-              autoFill,
-              nBinsX,minX,maxX,
-              nBinsY,minY,maxY);
-
-      the2DHistos.push_back(newHisto);
-      }
-    
+        if (v == indexVarX) autoFillVarX = (*theVariables)[v].haveFillPointer();
+        if (v == indexVarY) autoFillVarY = (*theVariables)[v].haveFillPointer(); 
    }
+      
+   if ((autoFillVarX) && (autoFillVarY)) autoFill_ = true;
+
+   // ############################################
+   // #  Loop over channels and process classes  #
+   // ############################################
+   for (unsigned int r = 0 ; r < theRegions->size()        ; r++)
+   for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
+   for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+   {
+        Histo2D newHisto(
+          &((*theVariables)[indexVarX]),
+          &((*theVariables)[indexVarY]),
+          &((*theProcessClasses)[p]),
+          &((*theRegions)[r]),
+          &((*theChannels)[c]),
+          autoFill_,
+          nBinsX,minX,maxX,
+          nBinsY,minY,maxY);
+
+        the2DHistos.push_back(newHisto);
+    }
 }
 
 void HistoScrewdriver::Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight)
@@ -330,62 +311,44 @@ void HistoScrewdriver::Add3DHisto(string varX, string varY, string varZ, bool au
                                   int nBinsZ, float minZ, float maxZ)
 {
   
-   int indexVarX = getIndexOfVariable(varX);
-   int indexVarY = getIndexOfVariable(varY);
-   int indexVarZ = getIndexOfVariable(varZ);
+   unsigned int indexVarX = getIndexOfVariable(varX);
+   unsigned int indexVarY = getIndexOfVariable(varY);
+   unsigned int indexVarZ = getIndexOfVariable(varZ);
 
-   // #######################
-   // #  Loop over regions  #
-   // #######################
-   for (unsigned int r = 0 ; r < theRegions->size()        ; r++)
+   bool autoFillVarX = false; 
+   bool autoFillVarY = false;
+   bool autoFillVarZ = false;
+   bool autoFill_ = false;
+
+   for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
    {
-    // ##########################################################
-    // #  Check both variables are associated with the regions  #
-    // ##########################################################
-      bool checkVarX = false; 
-      bool checkVarY = false;
-      bool checkVarZ = false;
-      bool autoFillVarX = false; 
-      bool autoFillVarY = false;
-      bool autoFillVarZ = false;
-      bool autoFill = false;
+        if (v == indexVarX) autoFillVarX = (*theVariables)[v].haveFillPointer();
+        if (v == indexVarY) autoFillVarY = (*theVariables)[v].haveFillPointer();
+        if (v == indexVarZ) autoFillVarZ = (*theVariables)[v].haveFillPointer();
+   }
 
-      vector<int> variablesById = (*theRegions)[r].AssociatedVariablesById();
-      for (unsigned int v = 0 ; v < variablesById.size()     ; v++)
-      {
-          if (variablesById[v] == indexVarX)
-          { checkVarX = true;             autoFillVarX = (*theVariables)[variablesById[v]].haveFillPointer(); }
-          if (variablesById[v] == indexVarY)
-          { checkVarY = true;             autoFillVarY = (*theVariables)[variablesById[v]].haveFillPointer(); } 
-          if (variablesById[v] == indexVarZ)
-          { checkVarZ = true;             autoFillVarZ = (*theVariables)[variablesById[v]].haveFillPointer(); }
-      }
+   if ((autoFillVarX) && (autoFillVarY) && (autoFillVarZ)) autoFill_ = true;
 
-      if ((!checkVarX) || (!checkVarY) || (!checkVarZ)) continue;
+   // ############################################
+   // #  Loop over channels and process classes  #
+   // ############################################
+   for (unsigned int r = 0 ; r < theRegions->size()        ; r++)
+   for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
+   for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+   {
+        Histo3D newHisto(
+          &((*theVariables)[indexVarX]),
+          &((*theVariables)[indexVarY]),
+          &((*theVariables)[indexVarZ]),
+          &((*theProcessClasses)[p]),
+          &((*theRegions)[r]),
+          &((*theChannels)[c]),
+          autoFill_,
+          nBinsX,minX,maxX,
+          nBinsY,minY,maxY,
+          nBinsZ,minZ,maxZ);
 
-      if ((autoFillVarX) && (autoFillVarY) && (autoFillVarZ)) autoFill = true;
-
-      // ############################################
-      // #  Loop over channels and process classes  #
-      // ############################################
-      for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
-      for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
-      {
-            Histo3D newHisto(
-              &((*theVariables)[indexVarX]),
-              &((*theVariables)[indexVarY]),
-              &((*theVariables)[indexVarZ]),
-              &((*theProcessClasses)[p]),
-              &((*theRegions)[r]),
-              &((*theChannels)[c]),
-              autoFill,
-              nBinsX,minX,maxX,
-              nBinsY,minY,maxY,
-              nBinsZ,minZ,maxZ);
-
-            the3DHistos.push_back(newHisto);
-      }
-    
+        the3DHistos.push_back(newHisto);
    }
 }
 
