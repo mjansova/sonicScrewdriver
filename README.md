@@ -15,12 +15,13 @@ Features
 --------
 
 - Add variables, process classes, regions and channels
-- Create the histograms that will be needed for your plots in one line
+- Create the histograms that will be needed for your plots (one line of code)
 - List the type of plots you want to be produced
-- Add options where you want to change the standard behavior
-- Run over your events and fill all the histograms in one line
-- Ask for the plots to be produced
-- Run your macro, browse your plots and do actual physics
+- Eventually add options where you want to change the standard behavior
+- Run over your events and fill all the histograms (one line of code)
+- Ask for the plots to be produced (two lines of code)
+- Run your macro
+- Browse your plots, do actual physics
 
 
 To-do list / ideas
