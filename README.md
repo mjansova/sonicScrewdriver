@@ -45,12 +45,12 @@ To-do list / ideas
 Changelog
 ---------
 
-## 13-06-05
+### 13-06-05
 
 - Fixed eps/png plot export
 - Updated README
 
-## 13-06-04
+### 13-06-04
 
 - Removed 1D/2DCustom plots (now replaced by 2Dto1D and 3Dto2D projections)
 - Added 1D-cut significance plots
