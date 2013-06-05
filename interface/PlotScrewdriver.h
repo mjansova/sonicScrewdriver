@@ -239,19 +239,24 @@ namespace theDoctor
                         if (thePlots[j].infoFromCanvasName("channel") != (*theChannels)[c].getTag()) continue;
                         if (thePlots[j].infoFromCanvasName("region")  !=  (*theRegions)[r].getTag()) continue;
 
+                        string addPath = "";
                         // For 2D-histos, create a subfolder varX[vs]varY
                         if ((plotType == "2D") || (plotType == "2DProjectedTo1D") || (plotType == "3DProjectedTo2D"))
                         {
                             string varX = thePlots[j].infoFromCanvasName("varX");
                             string varY = thePlots[j].infoFromCanvasName("varY");
-                        
+                       
+                            addPath += "/" + varX + "[vs]" + varY;
                             if (!regionDir->GetDirectory((varX+"[vs]"+varY).c_str()))
                             { varDir = regionDir->mkdir((varX+"[vs]"+varY).c_str()); varDir->cd(); }
-                            
-
+                        
                         }
                     
-                        thePlots[j].Write(infoText,options);
+                        thePlots[j].Write(outputFolder+"/"+plotType
+                                                      +"/"+(*theChannels)[c].getTag()
+                                                      +"/"+(*theRegions)[r].getTag()
+                                                      +addPath,
+                                          infoText,options);
                     }
                 }
             }

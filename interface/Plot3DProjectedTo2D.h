@@ -91,7 +91,7 @@ namespace theDoctor
         }
 
         Plot2D::ApplyHistoStyle(thePlot,theProjectedHisto,theProcessClass->getColor(),plotOptions,theProcessClass->getOptions());
-        Plot2D::ApplyAxisStyle(thePlot,theProjectedHisto,xlabel,ylabel,plotOptions,theVarX->getOptions(),theVarY->getOptions());
+        Plot2D::ApplyAxisStyle(thePlot,theProjectedHisto,xlabel,ylabel,zlabel+" for "+theProcessClass->getTag(),plotOptions,theVarX->getOptions(),theVarY->getOptions());
         theProjectedHisto->Draw("COLZ");
      }
 

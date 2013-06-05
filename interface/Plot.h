@@ -92,7 +92,7 @@ namespace theDoctor
           return newPad;
       }
       
-      void Write(string infoText = "", string options = "")
+      void Write(string outputFolder = "", string infoText = "", string options = "")
       {
         
         // Draw the legend and top info before writing
@@ -127,17 +127,14 @@ namespace theDoctor
         // Optionnal export in png and eps 
         if (OptionsScrewdriver::getBoolOption(options,"exportPngAndEps"))
         {
+            if (outputFolder.find("[") != string::npos) outputFolder.replace(outputFolder.find("["),1,"_");
+            if (outputFolder.find("]") != string::npos) outputFolder.replace(outputFolder.find("]"),1,"_");
             string shortPlotName = theCanvas->GetName();
-            shortPlotName.replace(shortPlotName.find(type)-1,shortPlotName.size()+1,"");
 
             // TODO Should do something clean about the output directory
-            string epsOutput("plots/eps/");     system((string("mkdir -p ")+epsOutput).c_str());
-            epsOutput+=type+"/";                system((string("mkdir -p ")+epsOutput).c_str());
-            epsOutput+=shortPlotName+".eps";
-            
-            string pngOutput("plots/png/");     system((string("mkdir -p ")+pngOutput).c_str());
-            pngOutput+=type+"/";                system((string("mkdir -p ")+pngOutput).c_str());
-            pngOutput+=shortPlotName+".png";
+            system((string("mkdir -p ")+outputFolder).c_str());
+            string epsOutput = outputFolder+"/"+shortPlotName+".eps";  
+            string pngOutput = outputFolder+"/"+shortPlotName+".png";  
 
             // Save eps
                     // TODO move this line elsewhere

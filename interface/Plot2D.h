@@ -61,7 +61,7 @@ namespace theDoctor
          // Normalize histogram to unity
          //histoClone->Scale(1.0/histoClone->Integral());
             
-         ApplyAxisStyle(thePlot,histoClone,xlabel,ylabel,plotOptions,theVarX->getOptions(),theVarY->getOptions());
+         ApplyAxisStyle(thePlot,histoClone,xlabel,ylabel,theProcessClass->getTag(),plotOptions,theVarX->getOptions(),theVarY->getOptions());
          histoClone->Draw("COLZ");
 
       }
@@ -71,10 +71,11 @@ namespace theDoctor
       {
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, string plotOptions = "", string varXOptions = "", string varYOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, string title, string plotOptions = "", string varXOptions = "", string varYOptions = "")
       {	
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
+         //theHisto->SetTitle(title.c_str());
          theHisto->SetTitle("");
          theHisto->SetStats(0);
          thePlot->SetLogZ();

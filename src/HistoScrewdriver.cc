@@ -196,8 +196,8 @@ void HistoScrewdriver::Add2DHisto(string varX, string varY, bool autoFill, int n
 
    for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
    {
-        if (v == indexVarX) autoFillVarX = (*theVariables)[v].haveFillPointer();
-        if (v == indexVarY) autoFillVarY = (*theVariables)[v].haveFillPointer(); 
+        if (((int) v) == indexVarX) autoFillVarX = (*theVariables)[v].haveFillPointer();
+        if (((int) v) == indexVarY) autoFillVarY = (*theVariables)[v].haveFillPointer(); 
    }
       
    if ((autoFillVarX) && (autoFillVarY)) autoFill_ = true;
