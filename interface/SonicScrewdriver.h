@@ -223,7 +223,9 @@ namespace theDoctor
 
       Figure GetYieldAndError(string var, string processClass,string region,string channel);
 
+      vector<Histo1D>* Get1DHistoList();
       vector<Histo2D>* Get2DHistoList();
+      vector<Histo3D>* Get3DHistoList();
 
      private:
 

@@ -166,6 +166,11 @@ void HistoScrewdriver::ApplyScaleFactor(string var, string processClass, string 
   else                return the1DHistos[indexHisto].ApplyScaleFactor(scaleFactor);
 }
 
+vector<Histo1D>* HistoScrewdriver::Get1DHistoList()
+{
+    return &(the1DHistos);
+}
+
 // ###########################
 // #   2D histo management   #
 // ###########################

@@ -72,7 +72,7 @@ namespace theDoctor
             thePlot->AddToLegend(histoClone,(*theProcessClasses)[i].getLabelC() ,"l");
 
             // Normalize histogram to unity
-            histoClone->Scale(1.0/histoClone->Integral());
+            if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
             
             // Get the max value after normalization
             if (globalMax < histoClone->GetMaximum())

@@ -203,8 +203,17 @@ Figure SonicScrewdriver::GetYieldAndError(string var, string processClass,string
     return theHistoScrewdriver.GetYieldAndError(var,processClass,region,channel);
 }
 
+vector<Histo1D>* SonicScrewdriver::Get1DHistoList()
+{
+    return theHistoScrewdriver.Get1DHistoList();
+}
+
 vector<Histo2D>* SonicScrewdriver::Get2DHistoList()
 {
     return theHistoScrewdriver.Get2DHistoList();
 }
 
+vector<Histo3D>* SonicScrewdriver::Get3DHistoList()
+{
+    return theHistoScrewdriver.Get3DHistoList();
+}

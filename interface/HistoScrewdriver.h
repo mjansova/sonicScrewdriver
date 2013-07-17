@@ -45,6 +45,7 @@ namespace theDoctor
       Histo1D* get1DHistoPointer(string var, string processClass, string region, string channel);
       TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
       TH1F* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
+      vector<Histo1D>* Get1DHistoList();
 
       // 2D histos
      
