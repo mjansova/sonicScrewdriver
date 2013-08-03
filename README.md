@@ -25,10 +25,10 @@ Features
 Usage
 -----
 
-And example is available in test/. 
+An example is available in test/. 
 After setting up your environment, just do :
 
-   ./cmdCompile.sh && ./makeTreeForExample && ./plotGenerationExample
+    ./cmdCompile.sh && ./makeTreeForExample && ./plotGenerationExample
 
 And browse the plots/ folder.
 
@@ -40,7 +40,6 @@ This tool doesn't work on WOOD.
 To-do list / ideas
 ------------------
 
-- Update the example in test/
 - Actual documentation
 - Fix infos displayed on plots (energy/lumi, + add region, channel, change emplacement)
 - Possibility to add custom lines/infos on plots via external user-defined templates 
