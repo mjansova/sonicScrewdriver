@@ -3,13 +3,12 @@ sonicScrewdriver
 
 A plotting tool for high-energy physics using Root
 
-
 Goal
 ----
 
 The Sonic Screwdriver is designed to generate high-energy physics plots easily by providing the user with a clean, flexible front-end aimed to manipulate physics concepts instead of ROOT-related technical mess.
 
-Name inspiration : https://en.wikipedia.org/wiki/Sonic_screwdriver
+[Name inspiration](https://en.wikipedia.org/wiki/Sonic_screwdriver)
 
 Features
 --------
@@ -23,6 +22,20 @@ Features
 - Run your macro
 - Browse your plots, do actual physics
 
+Usage
+-----
+
+And example is available in test/. 
+After setting up your environment, just do :
+
+   ./cmdCompile.sh && ./makeTreeForExample && ./plotGenerationExample
+
+And browse the plots/ folder.
+
+Disclaimer
+----------
+
+This tool doesn't work on WOOD.
 
 To-do list / ideas
 ------------------
@@ -43,16 +56,4 @@ To-do list / ideas
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
 - Global options configuration to set/change the default behavior (ex : font, line width, text colors ...)
 
-Changelog
----------
 
-### 13-06-05
-
-- Fixed eps/png plot export
-- Updated README
-
-### 13-06-04
-
-- Removed 1D/2DCustom plots (now replaced by 2Dto1D and 3Dto2D projections)
-- Added 1D-cut significance plots
-- Removed mechanism that associate variables to region (turned out to be useless)

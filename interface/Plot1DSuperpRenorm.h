@@ -28,7 +28,8 @@ namespace theDoctor
                            Channel* theChannel, 
                            HistoScrewdriver* theHistoScrewdriver, 
                            Plot* thePlot, 
-                           string plotOptions = "")
+                           string plotTypeOptions = "",
+                           string generalOptions = "")
      {
 
          // Prepare the labels for x and y axis
@@ -60,13 +61,12 @@ namespace theDoctor
         for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
         {
             // If this processClass is not a background, we skip it
-            if ( ((*theProcessClasses)[i].getType() != "background") 
-              && ((*theProcessClasses)[i].getType() != "signal")     ) continue;
+            if ((*theProcessClasses)[i].getType() != "background") continue;
 
             string processClassOptions = (*theProcessClasses)[i].getOptions();
                 
             TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
-            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),plotOptions,(*theProcessClasses)[i].getOptions());
+            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,(*theProcessClasses)[i].getOptions());
 
             // Add to legend
             thePlot->AddToLegend(histoClone,(*theProcessClasses)[i].getLabelC() ,"l");
@@ -80,13 +80,47 @@ namespace theDoctor
             
             if (firstHisto == NULL) 
             {
-                ApplyAxisStyle(thePlot,histoClone,xlabel,ylabel,plotOptions,theVar->getOptions());
+                ApplyAxisStyle(thePlot,histoClone,xlabel,ylabel,generalOptions,theVar->getOptions());
                 firstHisto = histoClone;
                 histoClone->Draw("hist E0");
             }
             else histoClone->Draw("hist E0 same");
 
         }
+                           
+     
+        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        {
+            for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+            {
+                if ((*theProcessClasses)[i].getType() != "signal") continue; 
+
+                string processClassOptions = (*theProcessClasses)[i].getOptions();
+                    
+                TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
+                ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,(*theProcessClasses)[i].getOptions());
+                histoClone->SetLineStyle(9);
+
+                // Normalize histogram to unity
+                if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+                
+                // Add histo to legend
+                thePlot->AddToLegend(histoClone,(*theProcessClasses)[i].getLabelC() ,"l");
+                
+                // Get the max value after normalization
+                if (globalMax < histoClone->GetMaximum())
+                    globalMax = histoClone->GetMaximum();
+                
+                if (firstHisto == NULL) 
+                {
+                    ApplyAxisStyle(thePlot,histoClone,xlabel,ylabel,generalOptions,theVar->getOptions());
+                    firstHisto = histoClone;
+                    histoClone->Draw("hist E0");
+                }
+                else histoClone->Draw("hist E0 same");
+            }
+        }
+        
 
         // Set max value for the plot
         firstHisto->SetMaximum(globalMax * 1.1);
@@ -95,7 +129,7 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string plotOptions = "", string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(6);
@@ -103,8 +137,8 @@ namespace theDoctor
          
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, string plotOptions = "", string varOptions = "")
-      {	
+      static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, string generalOptions = "", string varOptions = "")
+      {    
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
          theHisto->SetTitle("");

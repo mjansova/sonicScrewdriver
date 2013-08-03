@@ -39,12 +39,12 @@ microEvent;
 #     -> invariant mass ~flat           #
 #     -> higher MET                     #
 #                                       #
-#   c) baz                              #
+#   c) muf                              #
 #     -> invariant mass peak at ~125GeV #
 #     -> higher MET                     #
 #                                       #
 #   d) (pseudo-)dat                     #
-#     -> Mean of a,b,0.1*c fluctuated   #
+#     -> Mean of a,b,0.05*c fluctuated  #
 #                                       #
 #########################################
 */
@@ -70,7 +70,7 @@ int main()
 		myEvent.leptonsFlavor = (int) (gen->Uniform()*2);
 
 		int processTypeData = -1;
-		if (myEvent.processType == 3) processTypeData = (int) (gen->Uniform()*2.1); 
+		if (myEvent.processType == 3) processTypeData = (int) (gen->Uniform()*2*(1+0.05)); 
 
 
 		     if ((myEvent.processType == 0) || (processTypeData == 0))

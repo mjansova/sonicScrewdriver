@@ -47,6 +47,31 @@ namespace theDoctor
         return "";
       }
 
+      static float getFloatOption(string options, string field)
+      {
+        if (!OptionsScrewdriver::isInOptions(options,field)) return -1.0;
+
+        string optionWithValue;
+        stringstream stream(options);
+        while( getline(stream,optionWithValue,',') )
+        {
+            stringstream stream2(optionWithValue);
+            string option; getline(stream2,option,'=');
+            
+            if (option != field) continue;
+            
+            string value; 
+            getline(stream2,value,'=');
+            return atof(value.c_str());
+        }
+
+        WARNING_MSG << "Tried to access option '" << field << "' not present in the list, returned default value" << endl;
+        
+        // TODO fix this : every available field should have a default option
+        // set somewhere else
+        return -1.0;
+      }
+
       static bool getBoolOption(string options, string field)
       {
           string value = getStringOption(options,field);

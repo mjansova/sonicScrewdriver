@@ -89,9 +89,9 @@ namespace theDoctor
                     Region*   theRegion  = &((*theRegions)[r]);
                     Channel*  theChannel = &((*theChannels)[c]);
 
-                    string plotTypeOptions;
                     if (plotType == "1DCutSignificance")
                     {
+                    	string plotTypeOptions;
                         plotTypeOptions = scheduledPlotsOptions[i];
                         string varTag = OptionsScrewdriver::getStringOption(plotTypeOptions,"var");
                         if (varTag != theVar->getTag()) continue;
@@ -99,10 +99,10 @@ namespace theDoctor
 
                     Plot*     thePlot    = AddPlot(plotType,theVar->getTag(),theRegion->getTag(),theChannel->getTag(),"","","",options);
 
-                         if (plotType == "1DSuperpRenorm")       Plot1DSuperpRenorm::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
-                    else if (plotType == "1DStack")                     Plot1DStack::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
-                    else if (plotType == "DataMCComparison")   PlotDataMCComparison::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,options);
-                    else if (plotType == "1DCutSignificance") Plot1DCutSignificance::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,plotTypeOptions,options);
+                         if (plotType == "1DSuperpRenorm")       Plot1DSuperpRenorm::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,scheduledPlotsOptions[i],options);
+                    else if (plotType == "1DStack")                     Plot1DStack::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,scheduledPlotsOptions[i],options);
+                    else if (plotType == "DataMCComparison")   PlotDataMCComparison::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,scheduledPlotsOptions[i],options);
+                    else if (plotType == "1DCutSignificance") Plot1DCutSignificance::MakePlot(theVar,theProcessClasses,theRegion,theChannel,theHistoScrewdriver,thePlot,scheduledPlotsOptions[i],options);
                 }
             }	
 
@@ -201,14 +201,17 @@ namespace theDoctor
         TDirectory* regionDir  = 0;
         TDirectory* varDir     = 0; 
 
-        system(("rm -f "+outputFolder+"/1DStack.root").c_str());
-        system(("rm -f "+outputFolder+"/1DSuperpRenorm.root").c_str());
-        system(("rm -f "+outputFolder+"/1DCutSignificance.root").c_str());
-        system(("rm -f "+outputFolder+"/DataMCComparison.root").c_str());
-        system(("rm -f "+outputFolder+"/2D.root").c_str());
-        system(("rm -f "+outputFolder+"/2DProjectedTo1D.root").c_str());
-        system(("rm -f "+outputFolder+"/3DProjectedTo2D.root").c_str());
-
+		int ret;
+        ret = system(("rm -f "+outputFolder+"/1DStack.root").c_str());
+        ret = system(("rm -f "+outputFolder+"/1DSuperpRenorm.root").c_str());
+        ret = system(("rm -f "+outputFolder+"/1DCutSignificance.root").c_str());
+        ret = system(("rm -f "+outputFolder+"/DataMCComparison.root").c_str());
+        ret = system(("rm -f "+outputFolder+"/2D.root").c_str());
+        ret = system(("rm -f "+outputFolder+"/2DProjectedTo1D.root").c_str());
+        ret = system(("rm -f "+outputFolder+"/3DProjectedTo2D.root").c_str());
+		// Fix "ret not used" warning
+		ret = ret + 1;
+		
         for (unsigned int i = 0 ; i < scheduledPlots.size() ; i++)
         {
             string plotType = scheduledPlots[i];

@@ -27,8 +27,9 @@ namespace theDoctor
                            Region* theRegion,
                            Channel* theChannel,
                            HistoScrewdriver* theHistoScrewdriver, 
-                           Plot* thePlot, 
-                           string plotOptions = "")
+                           Plot* thePlot,
+						   string plotTypeOptions = "",
+                           string generalOptions = "")
       {
 
          // Prepare the labels for x and y axis
@@ -54,6 +55,7 @@ namespace theDoctor
 
         vector<TH1F*> pointersForLegend;
         vector<string> labelsForLegend;
+        vector<string> optionsForLegend;
 
         // #################################
         // #####                       #####
@@ -80,11 +82,12 @@ namespace theDoctor
             TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
 
             // Change style of histo and add it to legend
-            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),plotOptions,processClassOptions);
+            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
         
             // Add to legend
             pointersForLegend.push_back(histoClone);
             labelsForLegend.push_back((*theProcessClasses)[i].getLabel());
+            optionsForLegend.push_back("f");
 
             // Add it to the sumBackground (error will be extracted from the sum of bkg)
             if (sumBackground == 0)   sumBackground =  (TH1F*) histoClone->Clone();
@@ -96,11 +99,49 @@ namespace theDoctor
 
         // Apply axis style and plot the stack
         stackBackground->Draw("HIST");
-        ApplyAxisStyle(thePlot,stackBackground,xlabel,ylabel,plotOptions,theVar->getOptions());
+        ApplyAxisStyle(thePlot,stackBackground,xlabel,ylabel,generalOptions,theVar->getOptions());
 
         // Apply style to error histo and draw the errors on top of the stack
-        ApplyErrorStyle(thePlot,sumBackground,plotOptions);
+        ApplyErrorStyle(thePlot,sumBackground,generalOptions);
         //sumBackground->Draw("SAMEPE1X0");
+ 
+		// #################################
+        // #####                       #####
+        // ###          Signal           ###
+        // #####                       #####
+        // #################################
+
+		// Add signal if specified in the options of the plotType
+        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        {
+            float factor = OptionsScrewdriver::getFloatOption(plotTypeOptions,"factorSignal");
+            string factorStr = OptionsScrewdriver::getStringOption(plotTypeOptions,"factorSignal");
+            if (factor == -1.0) factor = 1.0;
+
+            for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+            {
+                if ((*theProcessClasses)[i].getType() != "signal") continue; 
+
+                string processClassOptions = (*theProcessClasses)[i].getOptions();
+                    
+                TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
+                ApplyHistoSignalStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
+                histoClone->Scale(factor);
+                
+                if (OptionsScrewdriver::getStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
+					histoClone->Add(sumBackground);		
+                
+				// Add to legend
+		        pointersForLegend.insert(pointersForLegend.begin(),histoClone);
+		        optionsForLegend.insert(optionsForLegend.begin(),string("l"));
+                if (factor == 1.0)
+        		    labelsForLegend.insert(labelsForLegend.begin(),(*theProcessClasses)[i].getLabel());
+                else
+        		    labelsForLegend.insert(labelsForLegend.begin(),factorStr+"#times"+(*theProcessClasses)[i].getLabel());
+
+                histoClone->Draw("hist same");
+            }
+        }
 
         // #################################
         // #####                       #####
@@ -124,10 +165,11 @@ namespace theDoctor
         }
 
         pointersForLegend.push_back(dataHisto);
-        labelsForLegend.push_back(string("data"));
+        labelsForLegend.push_back("data");
+        optionsForLegend.push_back("pl");
 
         // Apply style to data and draw it
-        ApplyDataStyle(thePlot,dataHisto,plotOptions);
+        ApplyDataStyle(thePlot,dataHisto,generalOptions);
         dataHisto->Draw("SAME E");
         
         // #################################
@@ -139,13 +181,9 @@ namespace theDoctor
         // Add stuff to legend in reverse order
         for (unsigned int leg_i = 0 ; leg_i < pointersForLegend.size() ; leg_i++)
         {
-            string style;
-            if (labelsForLegend[pointersForLegend.size()-1-leg_i] == string("data")) style = "pl";
-            else style = "f";
-
             thePlot->AddToLegend(pointersForLegend[pointersForLegend.size()-1-leg_i],
                                  labelsForLegend[pointersForLegend.size()-1-leg_i].c_str(),
-                                 style.c_str());
+                                 optionsForLegend[pointersForLegend.size()-1-leg_i].c_str());
         }
 
         // #################################
@@ -166,10 +204,31 @@ namespace theDoctor
         unity->SetLineStyle(1);
         unity->SetLineWidth(1);
 
-        ApplyRatioStyle(thePlot,ratio,plotOptions);
-        ApplyRatioAxisStyle(thePlot,ratio,plotOptions,theVar->getOptions());
+        ApplyRatioStyle(thePlot,ratio,generalOptions);
+        ApplyRatioAxisStyle(thePlot,ratio,generalOptions,theVar->getOptions());
 
         ratio->Draw("E");
+
+		// Add signal if specified in the options of the plotType
+        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        {
+            float factor = OptionsScrewdriver::getFloatOption(plotTypeOptions,"factorSignal");
+            if (factor == -1.0) factor = 1.0;
+            for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+            {
+                if ((*theProcessClasses)[i].getType() != "signal") continue; 
+                string processClassOptions = (*theProcessClasses)[i].getOptions();
+                    
+                TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
+                ApplyHistoSignalStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
+                histoClone->Scale(factor);
+				histoClone->Add(sumBackground);		
+                histoClone->Divide(sumBackground);
+                histoClone->Draw("hist same");
+            }
+        }
+
+		// Draw unity
         unity->Draw("SAME");
         
         //padStack->cd();
@@ -201,33 +260,29 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string plotOptions = "", string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
       {
          theHisto->SetFillColor(color);
-
-        
-         if (OptionsScrewdriver::isInOptions(processClassOptions,"noLine")) 
-         {  
-             theHisto->SetLineColor(color);
-             theHisto->SetLineWidth(1);
-             theHisto->SetLineStyle(3);
-         }
-         else 
-         {
-       
-            theHisto->SetLineColor(kBlack);
-            theHisto->SetLineWidth(2);
-         }
+         theHisto->SetLineColor(kBlack);
+         theHisto->SetLineWidth(2);
       }
 
-      static void ApplyErrorStyle(Plot* thePlot, TH1F* theError, string plotOptions = "")
+	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
+      {
+         theHisto->SetFillColor(0);
+         theHisto->SetLineWidth(3);
+         theHisto->SetLineColor(color);
+		 theHisto->SetLineStyle(9);
+	  }
+
+      static void ApplyErrorStyle(Plot* thePlot, TH1F* theError, string generalOptions = "")
       {
          theError->SetMarkerSize(0);
          theError->SetLineWidth(2);
          theError->SetFillStyle(0);
       }
 
-      static void ApplyDataStyle(Plot* thePlot, TH1F* theData, string plotOptions = "")
+      static void ApplyDataStyle(Plot* thePlot, TH1F* theData, string generalOptions = "")
       {
          theData->SetMarkerStyle(8);
          theData->SetMarkerSize(1);
@@ -236,7 +291,7 @@ namespace theDoctor
          theData->SetFillStyle(0);
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, string plotOptions = "", string varOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, string generalOptions = "", string varOptions = "")
       { 
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
@@ -244,7 +299,7 @@ namespace theDoctor
          if (OptionsScrewdriver::getBoolOption(varOptions,"logY")) thePlot->SetLogY();
       }
 
-      static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, string plotOptions = "")
+      static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, string generalOptions = "")
       {
          theRatio->SetMarkerStyle(8);
          theRatio->SetMarkerSize(1);
@@ -253,7 +308,7 @@ namespace theDoctor
          theRatio->SetFillStyle(0);
       }
 
-      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, string plotOptions = "", string varOptions = "")
+      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, string generalOptions = "", string varOptions = "")
       { 
          // Y axis
          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));

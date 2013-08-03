@@ -27,8 +27,9 @@ namespace theDoctor
                            Region* theRegion, 
                            Channel* theChannel, 
                            HistoScrewdriver* theHistoScrewdriver, 
-                           Plot* thePlot, 
-                           string plotOptions = "")
+                           Plot* thePlot,
+                           string plotTypeOptions = "",
+                           string generalOptions = "")
       {
 
          // Prepare the labels for x and y axis
@@ -53,13 +54,18 @@ namespace theDoctor
 
         vector<TH1F*> pointersForLegend;
         vector<string> labelsForLegend;
+        vector<string> optionsForLegend;
 
         // Create stack histo
         THStack* theStack = new THStack("","");
+        TH1F* sumBackground = 0;
 
         // Now loop on the histos
         for (int i = theProcessClasses->size()-1 ; i >= 0 ; i--)
         {
+
+            // If this processClass is not a background, we skip it
+            if ((*theProcessClasses)[i].getType() != "background") continue;
 
             // Get the options for the processClass
             string processClassOptions = (*theProcessClasses)[i].getOptions();
@@ -68,10 +74,15 @@ namespace theDoctor
             TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
 
             // Change style of histo and add it to legend
-            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),plotOptions,processClassOptions);
+            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
          
             pointersForLegend.push_back(histoClone);
-            labelsForLegend.push_back((*theProcessClasses)[i].getLabel());
+            optionsForLegend.push_back(string("f"));
+			labelsForLegend.push_back((*theProcessClasses)[i].getLabel());
+
+			// Add it to the sumBackground (this is for when signal is included, in stacked mode)
+            if (sumBackground == 0)   sumBackground =  (TH1F*) histoClone->Clone();
+            else                      sumBackground->Add(histoClone);
 
             // Add histo to stack
             theStack->Add(histoClone);
@@ -79,7 +90,40 @@ namespace theDoctor
 
         // Apply axis style and plot the stack
         theStack->Draw("HIST");
-        ApplyAxisStyle(thePlot,theStack,xlabel,ylabel,plotOptions,theVar->getOptions());
+        ApplyAxisStyle(thePlot,theStack,xlabel,ylabel,generalOptions,theVar->getOptions());
+
+		// Add signal if specified in the options of the plotType
+        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        {
+            float factor = OptionsScrewdriver::getFloatOption(plotTypeOptions,"factorSignal");
+            string factorStr = OptionsScrewdriver::getStringOption(plotTypeOptions,"factorSignal");
+            if (factor == -1.0) factor = 1.0;
+
+            for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+            {
+                if ((*theProcessClasses)[i].getType() != "signal") continue; 
+
+                string processClassOptions = (*theProcessClasses)[i].getOptions();
+                    
+                TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
+                ApplyHistoSignalStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
+                histoClone->Scale(factor);
+                
+                if (OptionsScrewdriver::getStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
+					histoClone->Add(sumBackground);		
+                
+				// Add to legend
+		        pointersForLegend.insert(pointersForLegend.begin(),histoClone);
+		        optionsForLegend.insert(optionsForLegend.begin(),string("l"));
+                if (factor == 1.0)
+        		    labelsForLegend.insert(labelsForLegend.begin(),(*theProcessClasses)[i].getLabel());
+                else
+        		    labelsForLegend.insert(labelsForLegend.begin(),factorStr+"#times"+(*theProcessClasses)[i].getLabel());
+
+                histoClone->Draw("hist same");
+            }
+        }
+        
 
      
         // Add stuff to legend in reverse order
@@ -87,39 +131,34 @@ namespace theDoctor
         {
             thePlot->AddToLegend(pointersForLegend[pointersForLegend.size()-1-leg_i],
                                  labelsForLegend[pointersForLegend.size()-1-leg_i].c_str(),
-                                 "f");
+                                 optionsForLegend[pointersForLegend.size()-1-leg_i].c_str());
         }
 
       }
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string plotOptions = "", string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
       {
          theHisto->SetFillColor(color);
-
-        
-         if (OptionsScrewdriver::isInOptions(processClassOptions,"noLine")) 
-         {  
-             theHisto->SetLineColor(color);
-             theHisto->SetLineWidth(1);
-             theHisto->SetLineStyle(3);
-         }
-         else 
-         {
-       
-            theHisto->SetLineColor(kBlack);
-            theHisto->SetLineWidth(2);
-         }
+         theHisto->SetLineColor(kBlack);
+         theHisto->SetLineWidth(2);
       }
+	  
+	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
+      {
+         theHisto->SetFillColor(0);
+         theHisto->SetLineWidth(3);
+         theHisto->SetLineColor(color);
+		 theHisto->SetLineStyle(9);
+	  }
 
-      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, string plotOptions = "", string varOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, string generalOptions = "", string varOptions = "")
       { 
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
          theStack->SetTitle("");
-         //theStack->SetStats(0);
-         thePlot->SetLogY();
+         if (OptionsScrewdriver::getBoolOption(varOptions,"logY")) thePlot->SetLogY();
       }
 
     };

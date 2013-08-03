@@ -68,24 +68,30 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-      mySonic.AddVariable("invariantMass",   "Invariant mass",         "GeV",    20,80,150 ,&(myEvent.invariantMass)              );
-      mySonic.AddVariable("MET",             "Missing E_{T}",          "GeV",    20,0,200  ,&(myEvent.MET)            ,"logY=true");
+      mySonic.AddVariable("invariantMass",   "Invariant mass",         "GeV",    20,60,160 ,&(myEvent.invariantMass)              );
+      mySonic.AddVariable("MET",             "Missing E_{T}",          "GeV",    20,0,400  ,&(myEvent.MET)            ,"logY=true");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
   // #########################################################
 
+	  // Backgrounds
+
       mySonic.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_ORANGE);
-           mySonic.AddDataset("foo","foo",2500,0.25);
+           mySonic.AddDataset("foo1","foo",25000,0.475);
   
       mySonic.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_AZURE);
-           mySonic.AddDataset("bar","bar",2500,0.5);
+           mySonic.AddDataset("bar1","bar",25000,0.475);
 
-      mySonic.AddProcessClass("baz",     "Baz",     "signal",     COLORPLOT_GREEN);
-           mySonic.AddDataset("baz","baz",2500,0.5);
+	  // Signal(s)
+
+      mySonic.AddProcessClass("muf",     "Muf",     "signal",     COLORPLOT_GREEN);
+           mySonic.AddDataset("muf1","muf",25000,0.05);
+
+	  // Data
 
       mySonic.AddProcessClass("data" ,   "Data",    "data",       COLORPLOT_BLACK);
-           mySonic.AddDataset("data","data",1,25000);
+           mySonic.AddDataset("data1","data",1,25000);
   
   // ##########################
   // ##    Create Regions    ##
@@ -107,9 +113,10 @@ int main (int argc, char *argv[])
      // Create histograms
      mySonic.Create1DHistos();
 
-     // Schedule plots
-     mySonic.SchedulePlots("1DSuperpRenorm");
-     mySonic.SchedulePlots("DataMCComparison");
+     // Schedule plots				(if you don't want the signal to be included, just remove the options)
+     mySonic.SchedulePlots("1DSuperpRenorm","includeSignal=true");
+     mySonic.SchedulePlots("1DStack","includeSignal=true,includeSignalHow=stack,factorSignal=2.0");
+     mySonic.SchedulePlots("DataMCComparison","includeSignal=true,includeSignalHow=stack,factorSignal=1.0");
 
   // ########################################
   // ##        Run over the events         ##
@@ -131,14 +138,14 @@ int main (int argc, char *argv[])
      
         // Find which dataset the event is from
         string currentDataset;
-             if (myEvent.processType == 0) { currentDataset = string("foo");  }
-        else if (myEvent.processType == 1) { currentDataset = string("bar");  }
-        else if (myEvent.processType == 2) { currentDataset = string("baz");  }
-        else if (myEvent.processType == 3) { currentDataset = string("data");  }        
+             if (myEvent.processType == 0) { currentDataset = string("foo1");  }
+        else if (myEvent.processType == 1) { currentDataset = string("bar1");  }
+        else if (myEvent.processType == 2) { currentDataset = string("muf1");  }
+        else if (myEvent.processType == 3) { currentDataset = string("data1");  }        
      
         // Reweight event to luminosity
         float weight = mySonic.GetDatasetLumiWeight(currentDataset);
-           
+          
         // Get the processClass associated to the current dataset
         string currentProcessClass = mySonic.GetProcessClass(currentDataset);
      

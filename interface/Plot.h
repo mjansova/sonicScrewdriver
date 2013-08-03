@@ -132,7 +132,8 @@ namespace theDoctor
             string shortPlotName = theCanvas->GetName();
 
             // TODO Should do something clean about the output directory
-            system((string("mkdir -p ")+outputFolder).c_str());
+            int ret;
+			ret = system((string("mkdir -p ")+outputFolder).c_str());
             string epsOutput = outputFolder+"/"+shortPlotName+".eps";  
             string pngOutput = outputFolder+"/"+shortPlotName+".png";  
 
@@ -142,14 +143,17 @@ namespace theDoctor
                    gErrorIgnoreLevel = kWarning;
             
             string eraseBeforeCreationEps("rm -f "+epsOutput);
-            system(eraseBeforeCreationEps.c_str());
+            ret = system(eraseBeforeCreationEps.c_str());
             theCanvas->SaveAs(epsOutput.c_str());
 
             // Convert to png
             string eraseBeforeCreationPng("rm -f "+pngOutput);
-            system(eraseBeforeCreationPng.c_str());
+            ret = system(eraseBeforeCreationPng.c_str());
             string convertCommand("convert -density 130 "+epsOutput+" "+pngOutput+" 2> /dev/null");
-            system(convertCommand.c_str());
+            ret = system(convertCommand.c_str());
+			
+			// Remove "ret not used" warning
+			ret = ret + 1;
         }  
       };
 

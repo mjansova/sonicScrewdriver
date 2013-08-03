@@ -81,9 +81,9 @@ float SonicScrewdriver::GetDatasetLumiWeight(string dataset)
     {
         if (theDatasets[i].getTag() != dataset) continue;
         string type = GetProcessClassType(theDatasets[i].getProcessClass()); 
-             if (type == "background")
+             if ((type == "background") || (type == "signal"))
             return theDatasets[i].getXsecOrLumi() * theLumi / theDatasets[i].getTrueNumberOfEvents();
-        else if ((type == "data") || (type == "signal"))
+        else if (type == "data")
             return 1.0;
     }
     return 0.0;
