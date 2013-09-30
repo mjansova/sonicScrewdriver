@@ -38,7 +38,7 @@ namespace theDoctor
          // ylabel = Normalized entries / largeurDeBin Unité
 
          string xlabel("Cut on "+theVar->getLabel());
-         string ylabel("Significance #epsilon_{S}/#sqrt{#epsilon{B}}");
+         string ylabel("Figure of merit");
 
          // Add the unit
          if (theVar->getUnit() != "")
@@ -52,6 +52,7 @@ namespace theDoctor
 
         // Create stack histo + another histo for the error plotting for the background sum
         TH1F* sumBackground = 0;
+        vector<TH1F*> backgrounds;
 
         // Now loop on the histos
         for (int i = theProcessClasses->size()-1 ; i >= 0 ; i--)
@@ -69,6 +70,9 @@ namespace theDoctor
             // Add it to the sumBackground (error will be extracted from the sum of bkg)
             if (sumBackground == 0)   sumBackground =  (TH1F*) histoClone->Clone();
             else                      sumBackground->Add(histoClone);
+
+            // Renormalize to raw number of entries
+            backgrounds.push_back(histoClone);
         }
 
         // #################################
@@ -77,11 +81,17 @@ namespace theDoctor
         // #####                       #####
         // #################################
         
+        string signalName_ = OptionsScrewdriver::getStringOption(plotTypeOptions,"signal");
+
+
         TH1F* signalHisto = 0;
         for (int i = theProcessClasses->size()-1 ; i >= 0 ; i--)
         {
-            // If this processClass is not data, we skip it
+            // If this processClass is data or SM monte-carlo, we skip it
             if ((*theProcessClasses)[i].getType() != "signal") continue;
+
+            // Keep only signal specified in options (or keep all signal if none)
+            if ((signalName_ != "") && ((*theProcessClasses)[i].getTag() != signalName_)) continue;
 
             TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
 
@@ -90,11 +100,11 @@ namespace theDoctor
 
         }
 
-        // #################################
-        // #####                       #####
-        // ###   Ratio effS/sqrt(effB)   ###
-        // #####                       #####
-        // #################################   
+        // ####################################
+        // #####                          #####
+        // ###   Ratio S/sqrt(B + (fB)^2)   ###
+        // #####                          #####
+        // ####################################   
        
         string cutType_ = OptionsScrewdriver::getStringOption(plotTypeOptions,"cutType");
         int cutType = -1;
@@ -102,27 +112,54 @@ namespace theDoctor
         else if (cutType_ == string("keepHighValues")) cutType = 1; 
 
         TH1F* significanceHisto = (TH1F*) signalHisto->Clone();
-        int nBins = significanceHisto->GetNbinsX();
-        float totalYieldS = signalHisto->Integral(0,nBins+1);
-        float totalYieldB = sumBackground->Integral(0,nBins+1);
-        float effS = 0.0;
-        float effB = 0.0;
+        int   nBins = significanceHisto->GetNbinsX();
+        float S = 0.0;
+        float B = 0.0;
+        float f = OptionsScrewdriver::getFloatOption(plotTypeOptions,"backgroundSystematicUncertainty");
+
+        float includeMCUnc = 0.0;
         for (int i = 1 ; i <= nBins ; i++)
         {
 
             if (cutType == 1)
             {
-                effS = signalHisto->Integral(i,nBins+1) / totalYieldS;
-                effB = sumBackground->Integral(i,nBins+1) / totalYieldB;
+                S = signalHisto->Integral(i,nBins+1);
+                B = sumBackground->Integral(i,nBins+1);
             }
             else if (cutType == 0)
             {
-                effS = signalHisto->Integral(0,i) / totalYieldS;
-                effB = sumBackground->Integral(0,i) / totalYieldB;
+                S = signalHisto->Integral(0,i);
+                B = sumBackground->Integral(0,i);
             }
-           
+          
+            float MCUncSquared = 0.0;
+            /*
+            if (includeMCUnc > 0.0)
+            {
+                for (unsigned int j = 0 ; j < backgrounds.size() ; j++)
+                {
+                    float BTot_Lumi  = backgrounds[j]->Integral(0,nBins+1);
+                    float BTot_RawMC = backgrounds[j]->GetEntries();
+                    float BSel_Lumi  = backgrounds[j]->Integral(i,nBins+1);
+                    float BSel_RawMC = BSel_Lumi * BTot_RawMC / BTot_Lumi;
+
+                    //cout << "BSel_Lumi = " << BSel_Lumi << endl;
+                    //cout << "MCunc contribution = " << (   ((BSel_RawMC+1) * (BSel_RawMC+2)) / ((BTot_RawMC+2) * (BTot_RawMC+3))
+                    //                                     - ((BSel_RawMC+1) * (BSel_RawMC+1)) / ((BTot_RawMC+2) * (BTot_RawMC+2))
+                    //                                   ) * BTot_Lumi * BTot_Lumi << endl;
+
+                    MCUncSquared += (   ((BSel_RawMC+1) * (BSel_RawMC+2)) / ((BTot_RawMC+2) * (BTot_RawMC+3))
+                                      - ((BSel_RawMC+1) * (BSel_RawMC+1)) / ((BTot_RawMC+2) * (BTot_RawMC+2))
+                                     ) * BTot_Lumi * BTot_Lumi;
+
+                }
+                //cout << " " << endl;
+            }
+            */
+
+            if (B < 1) B = 1;
             float sOverSqrtB = 0.0;
-            if (effB != 0) sOverSqrtB = effS / sqrt(effB);
+            if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B + includeMCUnc * MCUncSquared);
 
             significanceHisto->SetBinContent(i,sOverSqrtB);
             significanceHisto->SetBinError(i,0.0);
