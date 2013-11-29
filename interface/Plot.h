@@ -125,7 +125,7 @@ namespace theDoctor
         theCanvas->Write();
 
         // Optionnal export in png and eps 
-        if (OptionsScrewdriver::getBoolOption(options,"exportPngAndEps"))
+        if (OptionsScrewdriver::GetBoolOption(options,"exportPngAndEps"))
         {
             if (outputFolder.find("[") != string::npos) outputFolder.replace(outputFolder.find("["),1,"_");
             if (outputFolder.find("]") != string::npos) outputFolder.replace(outputFolder.find("]"),1,"_");

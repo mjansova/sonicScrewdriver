@@ -40,6 +40,7 @@ This tool doesn't work on WOOD.
 To-do list / ideas
 ------------------
 
+- Optimise AutoFill : should check only once the regions and channel in AutoFill before dispatch
 - Actual documentation
 - Fix infos displayed on plots (energy/lumi, + add region, channel, change emplacement)
 - Possibility to add custom lines/infos on plots via external user-defined templates 

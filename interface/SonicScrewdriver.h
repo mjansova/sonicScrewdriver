@@ -3,6 +3,7 @@
 
 #include "interface/Common.h"
 
+#include "interface/OptionsScrewdriver.h"
 #include "interface/HistoScrewdriver.h"
 #include "interface/PlotScrewdriver.h"
 
@@ -134,12 +135,6 @@ namespace theDoctor
       //     (If no variable/processClass is specified, every 
       //     variable/processClass known is used)
       //
-      //     When adding a single var-processClass histo, one can override
-      //     the default nBins/min/max for the variable.
-      //	
-      //	 If autoFill is set to true, the histogram will be
-      //	 filled during the "automatic" fill.
-      //
 
       void Create1DHistos();
 
@@ -156,21 +151,16 @@ namespace theDoctor
       void ApplyScaleFactor(string var,	string processClass, Figure scaleFactor);
 
             // ########################
-            // #  Histo2D management  #
+            // #  Histo2DEntries management  #
             // ########################
      
       // 
       // *** Add a 2-dimension histogram to the HistoScrewdriver
       //     for the specified set of variables/processClass.
       //
-      //	 If autoFill is set to true, the histogram will be
-      //	 filled during the "automatic" fill.
       // 
       
-      void Add2DHisto(string varX, string varY, 
-                      bool autoFill = true, 
-                      int nBinsX = -1, float minX = -1.0, float maxX = -1.0,
-                      int nBinsY = -1, float minY = -1.0, float maxY = -1.0);
+      void Add2DHisto(string varX, string varY);
 
       //
       // *** Manual fill of the varX-varY-processClass specified histogram.
@@ -179,7 +169,7 @@ namespace theDoctor
       void Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight = 1.0);
  
             // ########################
-            // #  Histo3D management  #
+            // #  Histo3DEntries management  #
             // ########################
      
       // 
@@ -190,18 +180,24 @@ namespace theDoctor
       //	 filled during the "automatic" fill.
       // 
       
-      void Add3DHisto(string varX, string varY, string varZ, 
-                      bool autoFill = true, 
-                      int nBinsX = -1, float minX = -1.0, float maxX = -1.0,
-                      int nBinsY = -1, float minY = -1.0, float maxY = -1.0,
-                      int nBinsZ = -1, float minZ = -1.0, float maxZ = -1.0);
+      void Add3DHisto(string varX, string varY, string varZ);
 
       //
       // *** Manual fill of the varX-varY-varZ-processClass specified histogram.
       //
 
       void Fill(string varX, string varY, string varZ, string processClass, float valueX, float valueY, float valueZ, float weight = 1.0);
-         
+
+      // ##########################
+      // #   Options management   #
+      // ##########################
+
+      void SetOption(string category, string field, float value)  { thePlotScrewdriver.SetOption(category,field,value); }
+      void SetOption(string category, string field, string value) { thePlotScrewdriver.SetOption(category,field,value); }
+      void SetOption(string category, string field, bool value)   { thePlotScrewdriver.SetOption(category,field,value); }
+      void SetOption(string category, string field, int value)    { thePlotScrewdriver.SetOption(category,field,value); }
+      void SetOption(string category, string field, double value) { thePlotScrewdriver.SetOption(category,field,(float) value); }
+
       // ########################
       // #   Plots management   #
       // ########################
@@ -223,9 +219,9 @@ namespace theDoctor
 
       Figure GetYieldAndError(string var, string processClass,string region,string channel);
 
-      vector<Histo1D>* Get1DHistoList();
-      vector<Histo2D>* Get2DHistoList();
-      vector<Histo3D>* Get3DHistoList();
+      vector<Histo1DEntries>* Get1DHistosEntries();
+      vector<Histo2DEntries>* Get2DHistosEntries();
+      vector<Histo3DEntries>* Get3DHistosEntries();
 
      private:
 
@@ -244,17 +240,11 @@ namespace theDoctor
       // *** Container for the regions
       vector<Region> theRegions;
       
-
-
-
       // *** Manager for the histograms
       HistoScrewdriver theHistoScrewdriver;
       
       // *** Manager for the plots
       PlotScrewdriver thePlotScrewdriver;
-
-      // TODO	  
-      //vector<TableScrewdriver> theTableScrewdrivers;
 
       float theLumi;
 

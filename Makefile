@@ -10,11 +10,11 @@ ROOTLIBS      = $(shell root-config --libs)
 ROOTGLIBS     = $(shell root-config --libs)
 
 # Linux with egcs
-DEFINES       = -DNO_ORCA_CLASSES
+DEFINES       = 
 CXX           = g++
 CXXFLAGS	  = -O -Wall -fPIC $(DEFINES)
 LD		      = g++ 
-LDFLAGS 	  = -g -O -Wall -fPIC
+LDFLAGS 	  = -g -O -Wall -fPIC -Wl,--no-undefined
 SOFLAGS		  = -shared
 
 CXXFLAGS	+= $(ROOTCFLAGS) -I./
@@ -38,4 +38,7 @@ clean:
 libSonicScrewdriver.so: $(OBJECTS) 
 	@echo "Building libSonicScrewdriver..."
 	$(LD) -L${ROOTSYS}/lib $+ -o $@ $(LIBS) $(SOFLAGS) $(LDFLAGS)
+
+ 
+
 

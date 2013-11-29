@@ -41,7 +41,7 @@ namespace theDoctor
 
          string xlabel(theVarX->getLabel());
          string ylabel(theVarY->getLabel());
-         string zlabel = OptionsScrewdriver::getStringOption(theProjectionInfos,"labelZ");
+         string zlabel = OptionsScrewdriver::GetStringOption(theProjectionInfos,"labelZ");
          
          // Add the units
          if (theVarX->getUnit() != "")
@@ -62,7 +62,7 @@ namespace theDoctor
         int nBinsY = theVarY->getNbins(); float minY = theVarY->getMin(); float maxY = theVarY->getMax();
         int nBinsZ = theVarZ->getNbins(); float minZ = theVarZ->getMin(); float maxZ = theVarZ->getMax();
         
-        string theProjectionType = OptionsScrewdriver::getStringOption(theProjectionInfos,"projectionType");
+        string theProjectionType = OptionsScrewdriver::GetStringOption(theProjectionInfos,"projectionType");
 
         TH2F* theProjectedHisto = new TH2F((theProjectionType+"|"+histoClone->GetName()).c_str(),"",
                                                nBinsX,minX,maxX,nBinsY,minY,maxY);
@@ -93,6 +93,10 @@ namespace theDoctor
         Plot2D::ApplyHistoStyle(thePlot,theProjectedHisto,theProcessClass->getColor(),plotOptions,theProcessClass->getOptions());
         Plot2D::ApplyAxisStyle(thePlot,theProjectedHisto,xlabel,ylabel,zlabel+" for "+theProcessClass->getTag(),plotOptions,theVarX->getOptions(),theVarY->getOptions());
         theProjectedHisto->Draw("COLZ");
+     }
+
+     static void GetHistoDependencies(vector<pair<string,string> >& output)
+     {
      }
 
     };

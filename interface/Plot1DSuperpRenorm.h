@@ -89,7 +89,7 @@ namespace theDoctor
         }
                            
      
-        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        if (OptionsScrewdriver::GetBoolOption(plotTypeOptions,"includeSignal"))
         {
             for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
             {
@@ -127,6 +127,10 @@ namespace theDoctor
 
       }
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output)
+      {
+      }
+
      private:
 
       static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
@@ -144,7 +148,7 @@ namespace theDoctor
          theHisto->SetTitle("");
          theHisto->SetStats(0);
 
-         if (OptionsScrewdriver::getBoolOption(varOptions,"logY")) thePlot->SetLogY();
+         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY")) thePlot->SetLogY();
       }
 
     };

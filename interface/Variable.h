@@ -34,14 +34,6 @@ namespace theDoctor
           else return *(autoFillPointer); 
       };
 
-      bool haveFillPointer()
-      { 
-          if (autoFillPointer == 0) 
-              return false;
-          else
-              return true; 
-      };
-
       string getUnit() 	{ return unit; }; 
       int getNbins() 	{ return nBins; }; 
       float getMin() 	{ return min; 	}; 

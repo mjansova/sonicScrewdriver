@@ -62,14 +62,14 @@ void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight)
 // #   1D histo management   #
 // ###########################
 
-int HistoScrewdriver::getIndexOfHisto1D(string tagVar, string tagProcessClass, string tagRegion, string tagChannel)
+int HistoScrewdriver::getIndexOfHisto1DEntries(string tagVar, string tagProcessClass, string tagRegion, string tagChannel)
 {
-  for (unsigned int i = 0 ; i < the1DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
   {
-    if (the1DHistos[i].getChannelTag()      != tagChannel     ) continue;
-    if (the1DHistos[i].getRegionTag()       != tagRegion      ) continue;
-    if (the1DHistos[i].getProcessClassTag() != tagProcessClass) continue;
-    if (the1DHistos[i].getVariableTag()     != tagVar         ) continue;
+    if (the1DHistosEntries[i].getChannelTag()      != tagChannel     ) continue;
+    if (the1DHistosEntries[i].getRegionTag()       != tagRegion      ) continue;
+    if (the1DHistosEntries[i].getProcessClassTag() != tagProcessClass) continue;
+    if (the1DHistosEntries[i].getVariableTag()     != tagVar         ) continue;
     return i;
   }
   WARNING_MSG << "Unable to find histo for (var,processClass,region,channel) "
@@ -80,14 +80,13 @@ int HistoScrewdriver::getIndexOfHisto1D(string tagVar, string tagProcessClass, s
   return -1;
 }
  
-void HistoScrewdriver::Create1DHistos()
+void HistoScrewdriver::Create1DHistosEntries()
 {
     // #########################
     // #  Loop over variables  #
     // #########################
     for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
     {
-       bool autoFill = (*theVariables)[v].haveFillPointer();
       
        // ############################################
        // #  Loop over channels and process classes  #
@@ -96,116 +95,109 @@ void HistoScrewdriver::Create1DHistos()
        for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
        for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
        {
-            Histo1D newHisto(
+            Histo1DEntries newHisto(
                   &((*theVariables)[v]),
                   &((*theProcessClasses)[p]),
                   &((*theRegions)[r]),
-                  &((*theChannels)[c]),
-                  autoFill
+                  &((*theChannels)[c])
                  );
-            the1DHistos.push_back(newHisto);
+            the1DHistosEntries.push_back(newHisto);
        }
     }
 }
 
 void HistoScrewdriver::Fill(string var,  string processClass, float value, float weight)
 {
-  for (unsigned int i = 0 ; i < the1DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
   {
-    if (the1DHistos[i].getVariableTag()     != var) continue;
-    if (the1DHistos[i].getProcessClassTag() != processClass) continue;
+    if (the1DHistosEntries[i].getVariableTag()     != var) continue;
+    if (the1DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the1DHistos[i].getRegion()->passSelection()) continue;
-    if (!the1DHistos[i].getChannel()->passSelection()) continue;
+    if (!the1DHistosEntries[i].getRegion()->passSelection()) continue;
+    if (!the1DHistosEntries[i].getChannel()->passSelection()) continue;
 
-    the1DHistos[i].Fill(value,weight);
+    the1DHistosEntries[i].Fill(value,weight);
   }
 }
 
 void HistoScrewdriver::Fill(string var,  string processClass, string region, string channel, float value, float weight)
 {
-  int indexHisto = getIndexOfHisto1D(var,processClass,region,channel);
+  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
   if (indexHisto < 0) return;
-  else                return the1DHistos[indexHisto].Fill(value,weight);
+  else                return the1DHistosEntries[indexHisto].Fill(value,weight);
 }
 
 void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
 {
-  for (unsigned int i = 0 ; i < the1DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
   {
-    if (the1DHistos[i].getProcessClassTag() != processClass) continue;
-    if (!(the1DHistos[i].doAutoFill())) continue;
+    if (the1DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the1DHistos[i].getRegion()->passSelection()) continue;
-    if (!the1DHistos[i].getChannel()->passSelection()) continue;
+    if (!the1DHistosEntries[i].getRegion()->passSelection()) continue;
+    if (!the1DHistosEntries[i].getChannel()->passSelection()) continue;
 
-    the1DHistos[i].AutoFill(weight);
+    the1DHistosEntries[i].AutoFill(weight);
   }
 }
- 
+
+Histo1DEntries* HistoScrewdriver::get1DHistoPointer(string var, string processClass, string region, string channel)
+{
+  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
+    if (indexHisto < 0) return 0;
+  else         return &(the1DHistosEntries[indexHisto]);
+}
+
 TH1F* HistoScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
 {
-  int indexHisto = getIndexOfHisto1D(var,processClass,region,channel);
+  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
     if (indexHisto < 0) return 0;
-  else         return the1DHistos[indexHisto].getClone();
+  else         return the1DHistosEntries[indexHisto].getClone();
 }
 
 TH1F* HistoScrewdriver::get1DHistoEntriesClone(string var, string processClass, string region, string channel)
 {
-  int indexHisto = getIndexOfHisto1D(var,processClass,region,channel);
+  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
     if (indexHisto < 0) return 0;
-  else         return the1DHistos[indexHisto].getEntriesClone();
+  else         return the1DHistosEntries[indexHisto].getEntriesClone();
 }
 
 void HistoScrewdriver::ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor)
 {
-  int indexHisto = getIndexOfHisto1D(var,processClass,region,channel);
+  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
   if (indexHisto < 0) return;
-  else                return the1DHistos[indexHisto].ApplyScaleFactor(scaleFactor);
+  else                return the1DHistosEntries[indexHisto].ApplyScaleFactor(scaleFactor);
 }
 
-vector<Histo1D>* HistoScrewdriver::Get1DHistoList()
+vector<Histo1DEntries>* HistoScrewdriver::Get1DHistosEntries()
 {
-    return &(the1DHistos);
+    return &(the1DHistosEntries);
 }
 
 // ###########################
 // #   2D histo management   #
 // ###########################
 
-int HistoScrewdriver::getIndexOfHisto2D(string tagVarX, string tagVarY, string tagProcessClass, string tagRegion, string tagChannel)
+int HistoScrewdriver::getIndexOfHisto2DEntries(string tagVarX, string tagVarY, string tagProcessClass, string tagRegion, string tagChannel)
 {
-  for (unsigned int i = 0 ; i < the2DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the2DHistosEntries.size() ; i++)
   {
-    if (the2DHistos[i].getVariableXTag()    != tagVarX   ) continue;
-    if (the2DHistos[i].getVariableYTag()    != tagVarY   ) continue;
-    if (the2DHistos[i].getProcessClassTag() != tagProcessClass) continue;
-    if (the2DHistos[i].getRegionTag()       != tagRegion ) continue;
-    if (the2DHistos[i].getChannelTag()      != tagChannel) continue;
+    if (the2DHistosEntries[i].getVariableXTag()    != tagVarX   ) continue;
+    if (the2DHistosEntries[i].getVariableYTag()    != tagVarY   ) continue;
+    if (the2DHistosEntries[i].getProcessClassTag() != tagProcessClass) continue;
+    if (the2DHistosEntries[i].getRegionTag()       != tagRegion ) continue;
+    if (the2DHistosEntries[i].getChannelTag()      != tagChannel) continue;
     return i;
   }
   return -1;
 }
  
-void HistoScrewdriver::Add2DHisto(string varX, string varY, bool autoFill, int nBinsX, float minX, float maxX, int nBinsY, float minY, float maxY)
+void HistoScrewdriver::Add2DHistoEntries(string varX, string varY)
 {
 
    int indexVarX = getIndexOfVariable(varX);
    int indexVarY = getIndexOfVariable(varY);
-
-   bool autoFillVarX = false; 
-   bool autoFillVarY = false;
-   bool autoFill_ = false;
-
-   for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
-   {
-        if (((int) v) == indexVarX) autoFillVarX = (*theVariables)[v].haveFillPointer();
-        if (((int) v) == indexVarY) autoFillVarY = (*theVariables)[v].haveFillPointer(); 
-   }
-      
-   if ((autoFillVarX) && (autoFillVarY)) autoFill_ = true;
 
    // ############################################
    // #  Loop over channels and process classes  #
@@ -214,63 +206,59 @@ void HistoScrewdriver::Add2DHisto(string varX, string varY, bool autoFill, int n
    for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
    for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
    {
-        Histo2D newHisto(
+        Histo2DEntries newHisto(
           &((*theVariables)[indexVarX]),
           &((*theVariables)[indexVarY]),
           &((*theProcessClasses)[p]),
           &((*theRegions)[r]),
-          &((*theChannels)[c]),
-          autoFill_,
-          nBinsX,minX,maxX,
-          nBinsY,minY,maxY);
+          &((*theChannels)[c]));
 
-        the2DHistos.push_back(newHisto);
+        the2DHistosEntries.push_back(newHisto);
     }
 }
 
 void HistoScrewdriver::Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight)
 {
 
-  for (unsigned int i = 0 ; i < the2DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the2DHistosEntries.size() ; i++)
   {
-    if (the2DHistos[i].getProcessClassTag() != processClass) continue;
-    if (the2DHistos[i].getVariableXTag()    != varX   ) continue;
-    if (the2DHistos[i].getVariableYTag()    != varY   ) continue;
-    if (!the2DHistos[i].getRegion()->passSelection()) continue;
-    if (!the2DHistos[i].getChannel()->passSelection()) continue;
-    the2DHistos[i].Fill(valueX,valueY,weight);
+    if (the2DHistosEntries[i].getProcessClassTag() != processClass) continue;
+    if (the2DHistosEntries[i].getVariableXTag()    != varX   ) continue;
+    if (the2DHistosEntries[i].getVariableYTag()    != varY   ) continue;
+    if (!the2DHistosEntries[i].getRegion()->passSelection()) continue;
+    if (!the2DHistosEntries[i].getChannel()->passSelection()) continue;
+    the2DHistosEntries[i].Fill(valueX,valueY,weight);
   }
 
 }
 void HistoScrewdriver::AutoFill2DProcessClass(string processClass, float weight)
 {
-  for (unsigned int i = 0 ; i < the2DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the2DHistosEntries.size() ; i++)
   {
-    if (the2DHistos[i].getProcessClassTag() != processClass) continue;
-    if (!(the2DHistos[i].doAutoFill())) continue;
+    if (the2DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the2DHistos[i].getRegion()->passSelection()) continue;
-    if (!the2DHistos[i].getChannel()->passSelection()) continue;
+    if (!the2DHistosEntries[i].getRegion()->passSelection()) continue;
+    if (!the2DHistosEntries[i].getChannel()->passSelection()) continue;
 
-    the2DHistos[i].AutoFill(weight);
+    the2DHistosEntries[i].AutoFill(weight);
   }
 }
 
-Histo2D* HistoScrewdriver::get2DHistoPointer(string varX, string varY, string processClass, string region, string channel)
+Histo2DEntries* HistoScrewdriver::get2DHistoPointer(string varX, string varY, string processClass, string region, string channel)
 {
-    int indexHisto = getIndexOfHisto2D(varX,varY,processClass,region,channel);
+    int indexHisto = getIndexOfHisto2DEntries(varX,varY,processClass,region,channel);
     if (indexHisto == -1) 
     {   
         WARNING_MSG << "Unable to find histo for (varX,varY,processClass,region,channel) "
-                                       << "= (" << varX          << "," 
-                                                << varY          << "," 
-                                                << processClass  << "," 
-                                                << region        << ","
-                                                << channel        << ")" << endl;
+                                           << "= (" << varX          << "," 
+                                                    << varY          << "," 
+                                                    << processClass  << "," 
+                                                    << region        << ","
+                                                    << channel        << ")" << endl;
         return 0; 
     }
-    return &(the2DHistos[indexHisto]);
+    return &(the2DHistosEntries[indexHisto]);
 }
 
 TH2F* HistoScrewdriver::get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
@@ -283,9 +271,9 @@ TH2F* HistoScrewdriver::get2DHistoEntriesClone(string varX, string varY, string 
     return get2DHistoPointer(varX,varY,processClass,region,channel)->getEntriesClone();
 }
 
-vector<Histo2D>* HistoScrewdriver::Get2DHistoList()
+vector<Histo2DEntries>* HistoScrewdriver::Get2DHistosEntries()
 {
-    return &(the2DHistos);
+    return &(the2DHistosEntries);
 }
 
 
@@ -294,45 +282,28 @@ vector<Histo2D>* HistoScrewdriver::Get2DHistoList()
 // #   3D histo management   #
 // ###########################
 
-int HistoScrewdriver::getIndexOfHisto3D(string tagVarX, string tagVarY, string tagVarZ,
+int HistoScrewdriver::getIndexOfHisto3DEntries(string tagVarX, string tagVarY, string tagVarZ,
                                         string tagProcessClass, string tagRegion, string tagChannel)
 {
-  for (unsigned int i = 0 ; i < the3DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the3DHistosEntries.size() ; i++)
   {
-    if (the3DHistos[i].getVariableXTag()    != tagVarX   ) continue;
-    if (the3DHistos[i].getVariableYTag()    != tagVarY   ) continue;
-    if (the3DHistos[i].getVariableZTag()    != tagVarZ   ) continue;
-    if (the3DHistos[i].getProcessClassTag() != tagProcessClass) continue;
-    if (the3DHistos[i].getRegionTag()       != tagRegion ) continue;
-    if (the3DHistos[i].getChannelTag()      != tagChannel) continue;
+    if (the3DHistosEntries[i].getVariableXTag()    != tagVarX   ) continue;
+    if (the3DHistosEntries[i].getVariableYTag()    != tagVarY   ) continue;
+    if (the3DHistosEntries[i].getVariableZTag()    != tagVarZ   ) continue;
+    if (the3DHistosEntries[i].getProcessClassTag() != tagProcessClass) continue;
+    if (the3DHistosEntries[i].getRegionTag()       != tagRegion ) continue;
+    if (the3DHistosEntries[i].getChannelTag()      != tagChannel) continue;
     return i;
   }
   return -1;
 }
  
-void HistoScrewdriver::Add3DHisto(string varX, string varY, string varZ, bool autoFill, 
-                                  int nBinsX, float minX, float maxX, 
-                                  int nBinsY, float minY, float maxY, 
-                                  int nBinsZ, float minZ, float maxZ)
+void HistoScrewdriver::Add3DHistoEntries(string varX, string varY, string varZ) 
 {
   
    unsigned int indexVarX = getIndexOfVariable(varX);
    unsigned int indexVarY = getIndexOfVariable(varY);
    unsigned int indexVarZ = getIndexOfVariable(varZ);
-
-   bool autoFillVarX = false; 
-   bool autoFillVarY = false;
-   bool autoFillVarZ = false;
-   bool autoFill_ = false;
-
-   for (unsigned int v = 0 ; v < theVariables->size()     ; v++)
-   {
-        if (v == indexVarX) autoFillVarX = (*theVariables)[v].haveFillPointer();
-        if (v == indexVarY) autoFillVarY = (*theVariables)[v].haveFillPointer();
-        if (v == indexVarZ) autoFillVarZ = (*theVariables)[v].haveFillPointer();
-   }
-
-   if ((autoFillVarX) && (autoFillVarY) && (autoFillVarZ)) autoFill_ = true;
 
    // ############################################
    // #  Loop over channels and process classes  #
@@ -341,56 +312,51 @@ void HistoScrewdriver::Add3DHisto(string varX, string varY, string varZ, bool au
    for (unsigned int c = 0 ; c < theChannels->size()       ; c++)
    for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
    {
-        Histo3D newHisto(
+        Histo3DEntries newHisto(
           &((*theVariables)[indexVarX]),
           &((*theVariables)[indexVarY]),
           &((*theVariables)[indexVarZ]),
           &((*theProcessClasses)[p]),
           &((*theRegions)[r]),
-          &((*theChannels)[c]),
-          autoFill_,
-          nBinsX,minX,maxX,
-          nBinsY,minY,maxY,
-          nBinsZ,minZ,maxZ);
+          &((*theChannels)[c]));
 
-        the3DHistos.push_back(newHisto);
+        the3DHistosEntries.push_back(newHisto);
    }
 }
 
 void HistoScrewdriver::Fill(string varX, string varY, string varZ, string processClass, float valueX, float valueY, float valueZ, float weight)
 {
 
-  for (unsigned int i = 0 ; i < the3DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the3DHistosEntries.size() ; i++)
   {
-    if (the3DHistos[i].getProcessClassTag() != processClass) continue;
-    if (the3DHistos[i].getVariableXTag()    != varX   ) continue;
-    if (the3DHistos[i].getVariableYTag()    != varY   ) continue;
-    if (the3DHistos[i].getVariableZTag()    != varZ   ) continue;
-    if (!the3DHistos[i].getRegion()->passSelection()) continue;
-    if (!the3DHistos[i].getChannel()->passSelection()) continue;
-    the3DHistos[i].Fill(valueX,valueY,valueZ,weight);
+    if (the3DHistosEntries[i].getProcessClassTag() != processClass) continue;
+    if (the3DHistosEntries[i].getVariableXTag()    != varX   ) continue;
+    if (the3DHistosEntries[i].getVariableYTag()    != varY   ) continue;
+    if (the3DHistosEntries[i].getVariableZTag()    != varZ   ) continue;
+    if (!the3DHistosEntries[i].getRegion()->passSelection()) continue;
+    if (!the3DHistosEntries[i].getChannel()->passSelection()) continue;
+    the3DHistosEntries[i].Fill(valueX,valueY,valueZ,weight);
   }
 
 }
 
 void HistoScrewdriver::AutoFill3DProcessClass(string processClass, float weight)
 {
-  for (unsigned int i = 0 ; i < the3DHistos.size() ; i++)
+  for (unsigned int i = 0 ; i < the3DHistosEntries.size() ; i++)
   {
-    if (the3DHistos[i].getProcessClassTag() != processClass) continue;
-    if (!(the3DHistos[i].doAutoFill())) continue;
+    if (the3DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the3DHistos[i].getRegion()->passSelection()) continue;
-    if (!the3DHistos[i].getChannel()->passSelection()) continue;
+    if (!the3DHistosEntries[i].getRegion()->passSelection()) continue;
+    if (!the3DHistosEntries[i].getChannel()->passSelection()) continue;
 
-    the3DHistos[i].AutoFill(weight);
+    the3DHistosEntries[i].AutoFill(weight);
   }
 }
 
-Histo3D* HistoScrewdriver::get3DHistoPointer(string varX, string varY, string varZ, string processClass, string region, string channel)
+Histo3DEntries* HistoScrewdriver::get3DHistoPointer(string varX, string varY, string varZ, string processClass, string region, string channel)
 {
-    int indexHisto = getIndexOfHisto3D(varX,varY,varZ,processClass,region,channel);
+    int indexHisto = getIndexOfHisto3DEntries(varX,varY,varZ,processClass,region,channel);
     if (indexHisto == -1) 
     {   
         WARNING_MSG << "Unable to find histo for (varX,varY,varZ,processClass,region,channel) "
@@ -402,7 +368,7 @@ Histo3D* HistoScrewdriver::get3DHistoPointer(string varX, string varY, string va
                                                 << channel        << ")" << endl;
         return 0; 
     }
-    return &(the3DHistos[indexHisto]);
+    return &(the3DHistosEntries[indexHisto]);
 }
 
 TH3F* HistoScrewdriver::get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel)
@@ -415,26 +381,15 @@ TH3F* HistoScrewdriver::get3DHistoEntriesClone(string varX, string varY, string 
     return get3DHistoPointer(varX,varY,varZ,processClass,region,channel)->getEntriesClone();
 }
 
-vector<Histo3D>* HistoScrewdriver::Get3DHistoList()
+vector<Histo3DEntries>* HistoScrewdriver::Get3DHistosEntries()
 {
-    return &(the3DHistos);
+    return &(the3DHistosEntries);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 Figure HistoScrewdriver::GetYieldAndError(string var, string processClass, string region, string channel)
 {
-    int indexHisto = getIndexOfHisto1D(var,processClass,region,channel);
+    int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
     if (indexHisto < 0) return Figure(0.0,0.0);
-    else         return the1DHistos[indexHisto].getYieldAndError();
+    else         return the1DHistosEntries[indexHisto].GetYieldAndError();
 }

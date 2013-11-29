@@ -1,5 +1,5 @@
-#ifndef PlotDataMCComparison_h
-#define PlotDataMCComparison_h
+#ifndef Plot1DDataMCComparison_h
+#define Plot1DDataMCComparison_h
 
 #include "interface/Common.h"
 
@@ -7,6 +7,7 @@
 #include "interface/Variable.h"
 #include "interface/ProcessClass.h"
 #include "interface/Histo1D.h"
+#include "interface/Histo1DDataMCRatio.h"
 #include "interface/Histo2D.h"
 #include "interface/PlotDefaultStyles.h"
 #include "interface/OptionsScrewdriver.h"
@@ -14,13 +15,13 @@
 namespace theDoctor
 {
 
-    class PlotDataMCComparison 
+    class Plot1DDataMCComparison 
     {
       
      public:
      
-      PlotDataMCComparison();
-      ~PlotDataMCComparison();
+      Plot1DDataMCComparison();
+      ~Plot1DDataMCComparison();
 
       static void MakePlot(Variable* theVar, 
                            vector<ProcessClass>* theProcessClasses, 
@@ -112,10 +113,10 @@ namespace theDoctor
         // #################################
 
 		// Add signal if specified in the options of the plotType
-        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        if (OptionsScrewdriver::GetBoolOption(plotTypeOptions,"includeSignal"))
         {
-            float factor = OptionsScrewdriver::getFloatOption(plotTypeOptions,"factorSignal");
-            string factorStr = OptionsScrewdriver::getStringOption(plotTypeOptions,"factorSignal");
+            float factor = OptionsScrewdriver::GetFloatOption(plotTypeOptions,"factorSignal");
+            string factorStr = OptionsScrewdriver::GetStringOption(plotTypeOptions,"factorSignal");
             if (factor == -1.0) factor = 1.0;
 
             for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
@@ -128,7 +129,7 @@ namespace theDoctor
                 ApplyHistoSignalStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
                 histoClone->Scale(factor);
                 
-                if (OptionsScrewdriver::getStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
+                if (OptionsScrewdriver::GetStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
 					histoClone->Add(sumBackground);		
                 
 				// Add to legend
@@ -210,9 +211,9 @@ namespace theDoctor
         ratio->Draw("E");
 
 		// Add signal if specified in the options of the plotType
-        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        if (OptionsScrewdriver::GetBoolOption(plotTypeOptions,"includeSignal"))
         {
-            float factor = OptionsScrewdriver::getFloatOption(plotTypeOptions,"factorSignal");
+            float factor = OptionsScrewdriver::GetFloatOption(plotTypeOptions,"factorSignal");
             if (factor == -1.0) factor = 1.0;
             for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
             {
@@ -258,6 +259,12 @@ namespace theDoctor
 
       }
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
+      {
+         Histo1DDataMCRatio::GetHistoDependencies(output); 
+         output.push_back(pair<string,string>("1DDataMCRatio",options));
+      }
+
      private:
 
       static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
@@ -296,7 +303,7 @@ namespace theDoctor
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
          theStack->SetTitle("");
-         if (OptionsScrewdriver::getBoolOption(varOptions,"logY")) thePlot->SetLogY();
+         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY")) thePlot->SetLogY();
       }
 
       static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, string generalOptions = "")

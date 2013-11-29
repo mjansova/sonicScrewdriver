@@ -39,7 +39,7 @@ namespace theDoctor
          // ylabel = Normalized entries / largeurDeBin Unité
 
          string xlabel(theVarX->getLabel());
-         string ylabel = OptionsScrewdriver::getStringOption(theProjectionInfos,"labelY");
+         string ylabel = OptionsScrewdriver::GetStringOption(theProjectionInfos,"labelY");
          
          // Add the units
          if (theVarX->getUnit() != "")
@@ -56,7 +56,7 @@ namespace theDoctor
         int nBinsX = theVarX->getNbins(); float minX = theVarX->getMin(); float maxX = theVarX->getMax();
         int nBinsY = theVarY->getNbins(); float minY = theVarY->getMin(); float maxY = theVarY->getMax();
         
-        string theProjectionType = OptionsScrewdriver::getStringOption(theProjectionInfos,"projectionType");
+        string theProjectionType = OptionsScrewdriver::GetStringOption(theProjectionInfos,"projectionType");
 
         TH1F* theProjectedHisto = new TH1F((theProjectionType+"|"+histoClone->GetName()).c_str(),"",
                                                nBinsX,minX,maxX);
@@ -90,6 +90,10 @@ namespace theDoctor
             
       }
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output)
+      {
+      }
+
       static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string plotOptions = "", string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
@@ -104,7 +108,7 @@ namespace theDoctor
          theHisto->SetTitle("");
          theHisto->SetStats(0);
 
-         if (OptionsScrewdriver::getBoolOption(varOptions,"logY")) thePlot->SetLogY();
+         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY")) thePlot->SetLogY();
       }
 
 

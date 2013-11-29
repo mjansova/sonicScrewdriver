@@ -113,10 +113,27 @@ int main (int argc, char *argv[])
      // Create histograms
      mySonic.Create1DHistos();
 
-     // Schedule plots				(if you don't want the signal to be included, just remove the options)
-     mySonic.SchedulePlots("1DSuperpRenorm","includeSignal=true");
-     mySonic.SchedulePlots("1DStack","includeSignal=true,includeSignalHow=stack,factorSignal=2.0");
-     mySonic.SchedulePlots("DataMCComparison","includeSignal=true,includeSignalHow=stack,factorSignal=1.0");
+     // Set options
+
+     mySonic.SetOption("1DSuperpRenorm",    "includeSignal",                    true);
+     
+     mySonic.SetOption("1DStack",           "includeSignal",                    true);
+     mySonic.SetOption("1DStack",           "includeSignalHow",                 "stack");
+     mySonic.SetOption("1DStack",           "factorSignal",                     2);
+
+     mySonic.SetOption("DataMCComparison",  "includeSignal",                    true);
+     mySonic.SetOption("DataMCComparison",  "includeSignalHow",                 "stack");
+     mySonic.SetOption("DataMCComparison",  "factorSignal",                     1);
+     
+     mySonic.SetOption("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15);
+
+     // Schedule plots
+     
+     mySonic.SchedulePlots("1DSuperpRenorm");
+     mySonic.SchedulePlots("1DStack");
+     mySonic.SchedulePlots("1DDataMCComparison");
+     
+     mySonic.SchedulePlots("1DFigureOfMerit","signal=muf,var=invariantMass,cutType=keepHighValues");
 
   // ########################################
   // ##        Run over the events         ##

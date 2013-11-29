@@ -10,80 +10,102 @@ namespace theDoctor
 
     class OptionsScrewdriver 
     {
-      
-     public:
-     
-      OptionsScrewdriver();
-      ~OptionsScrewdriver();
 
-      static bool isInOptions(string options, string field)
-      {
-          if (options.find(field+"=") != string::npos) return true;
-          else return false;
-      }
-      
-      static string getStringOption(string options, string field)
-      {
-        if (!OptionsScrewdriver::isInOptions(options,field)) return "";
+        public:
 
-        string optionWithValue;
-        stringstream stream(options);
-        while( getline(stream,optionWithValue,',') )
-        {
-            stringstream stream2(optionWithValue);
-            string option; getline(stream2,option,'=');
-            
-            if (option != field) continue;
-            
-            string value; 
-            getline(stream2,value,'=');
-            return value;
-        }
+            OptionsScrewdriver() { }
+            ~OptionsScrewdriver() { }
 
-        WARNING_MSG << "Tried to access option '" << field << "' not present in the list, returned default value" << endl;
-        
-        // TODO fix this : every available field should have a default option
-        // set somewhere else
-        return "";
-      }
+            static bool IsInOptions(string options, string field)
+            {
+                if (options.find(field+"=") != string::npos) return true;
+                else return false;
+            }
 
-      static float getFloatOption(string options, string field)
-      {
-        if (!OptionsScrewdriver::isInOptions(options,field)) return -1.0;
+            static string GetStringOption(string options, string field)
+            {
+                if (!OptionsScrewdriver::IsInOptions(options,field)) return "";
 
-        string optionWithValue;
-        stringstream stream(options);
-        while( getline(stream,optionWithValue,',') )
-        {
-            stringstream stream2(optionWithValue);
-            string option; getline(stream2,option,'=');
-            
-            if (option != field) continue;
-            
-            string value; 
-            getline(stream2,value,'=');
-            return atof(value.c_str());
-        }
+                string optionWithValue;
+                stringstream stream(options);
+                while( getline(stream,optionWithValue,',') )
+                {
+                    stringstream stream2(optionWithValue);
+                    string option; getline(stream2,option,'=');
 
-        WARNING_MSG << "Tried to access option '" << field << "' not present in the list, returned default value" << endl;
-        
-        // TODO fix this : every available field should have a default option
-        // set somewhere else
-        return -1.0;
-      }
+                    if (option != field) continue;
 
-      static bool getBoolOption(string options, string field)
-      {
-          string value = getStringOption(options,field);
+                    string value; 
+                    getline(stream2,value,'=');
+                    return value;
+                }
 
-               if (value == string("true") ) return true;
-          else if (value == string("false")) return false;
-          else 
-          {
-          //    WARNING_MSG << "Tried to access boolean option'" << field << "', but value is neither 'true' or 'false'" << endl;
-              return false;
-          }
-      }
+                return "";
+
+            }
+
+            static float GetFloatOption(string options, string field)
+            {
+                if (!OptionsScrewdriver::IsInOptions(options,field)) return -1.0;
+
+                string optionWithValue;
+                stringstream stream(options);
+                while( getline(stream,optionWithValue,',') )
+                {
+                    stringstream stream2(optionWithValue);
+                    string option; getline(stream2,option,'=');
+
+                    if (option != field) continue;
+
+                    string value; 
+                    getline(stream2,value,'=');
+                    return atof(value.c_str());
+                }
+            }
+
+            static bool GetBoolOption(string options, string field)
+            {
+                string value = GetStringOption(options,field);
+
+                if (value == string("true") ) return true;
+                else if (value == string("false")) return false;
+                else 
+                {
+                    //    WARNING_MSG << "Tried to access boolean option'" << field << "', but value is neither 'true' or 'false'" << endl;
+                    return false;
+                }
+            }
+
+            void SetOption(string category, string field, string value)
+            { pair<string,string> name(category,field); theGlobalOptions_string[name] = value; }
+
+            void SetOption(string category, string field, float value)
+            { pair<string,string> name(category,field); theGlobalOptions_float[name] = value; }
+
+            void SetOption(string category, string field, bool value)
+            { pair<string,string> name(category,field); theGlobalOptions_bool[name] = value; }
+
+            void SetOption(string category, string field, int value)
+            { pair<string,string> name(category,field); theGlobalOptions_int[name] = value; }
+
+            string GetGlobalStringOption(string category, string field)
+            { pair<string,string> name(category,field); return theGlobalOptions_string[name]; }
+
+            float  GetGlobalFloatOption(string category, string field)
+            { pair<string,string> name(category,field); return theGlobalOptions_float[name]; }
+
+            bool   GetGlobalBoolOption(string category, string field)
+            { pair<string,string> name(category,field); return theGlobalOptions_bool[name]; }
+
+            int    GetGlobalIntOption(string category, string field)
+            { pair<string,string> name(category,field); return theGlobalOptions_int[name]; }
+
+        private:
+
+            std::map<pair<string,string>,float>  theGlobalOptions_float;
+            std::map<pair<string,string>,string> theGlobalOptions_string;
+            std::map<pair<string,string>,bool>   theGlobalOptions_bool;
+            std::map<pair<string,string>,int>    theGlobalOptions_int;
 
     };
 

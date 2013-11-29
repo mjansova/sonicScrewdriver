@@ -93,10 +93,10 @@ namespace theDoctor
         ApplyAxisStyle(thePlot,theStack,xlabel,ylabel,generalOptions,theVar->getOptions());
 
 		// Add signal if specified in the options of the plotType
-        if (OptionsScrewdriver::getBoolOption(plotTypeOptions,"includeSignal"))
+        if (OptionsScrewdriver::GetBoolOption(plotTypeOptions,"includeSignal"))
         {
-            float factor = OptionsScrewdriver::getFloatOption(plotTypeOptions,"factorSignal");
-            string factorStr = OptionsScrewdriver::getStringOption(plotTypeOptions,"factorSignal");
+            float factor = OptionsScrewdriver::GetFloatOption(plotTypeOptions,"factorSignal");
+            string factorStr = OptionsScrewdriver::GetStringOption(plotTypeOptions,"factorSignal");
             if (factor == -1.0) factor = 1.0;
 
             for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
@@ -109,7 +109,7 @@ namespace theDoctor
                 ApplyHistoSignalStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
                 histoClone->Scale(factor);
                 
-                if (OptionsScrewdriver::getStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
+                if (OptionsScrewdriver::GetStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
 					histoClone->Add(sumBackground);		
                 
 				// Add to legend
@@ -136,6 +136,10 @@ namespace theDoctor
 
       }
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output)
+      {
+      }
+
      private:
 
       static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
@@ -158,7 +162,7 @@ namespace theDoctor
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
          theStack->SetTitle("");
-         if (OptionsScrewdriver::getBoolOption(varOptions,"logY")) thePlot->SetLogY();
+         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY")) thePlot->SetLogY();
       }
 
     };

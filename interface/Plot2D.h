@@ -66,6 +66,9 @@ namespace theDoctor
 
       }
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output)
+      {
+      }
 
       static void ApplyHistoStyle(Plot* thePlot, TH2F* theHisto, Color_t color, string plotOptions = "", string processClassOptions = "")
       {

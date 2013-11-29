@@ -131,7 +131,7 @@ void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight)
 		// ###########################
 
 void SonicScrewdriver::Create1DHistos()
-{	theHistoScrewdriver.Create1DHistos();	}
+{	theHistoScrewdriver.Create1DHistosEntries();	}
 
 void SonicScrewdriver::Fill(string var,	string processClass, float value, float weight)
 {	theHistoScrewdriver.Fill(var,processClass,value,weight); }
@@ -143,15 +143,9 @@ void SonicScrewdriver::ApplyScaleFactor(string var, string processClass, string 
 		// #   2D histo management   #
 		// ###########################
  
-void SonicScrewdriver::Add2DHisto(string varX, string varY, 
-                                  bool autoFill, 
-                                  int nBinsX, float minX, float maxX, 
-                                  int nBinsY, float minY, float maxY)
+void SonicScrewdriver::Add2DHisto(string varX, string varY)
 {
-  theHistoScrewdriver.Add2DHisto(varX,varY,
-                                 autoFill,
-                                 nBinsX,minX,maxX,
-                                 nBinsY,minY,maxY);
+  theHistoScrewdriver.Add2DHistoEntries(varX,varY);
 }
   
 void SonicScrewdriver::Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight)
@@ -161,17 +155,9 @@ void SonicScrewdriver::Fill(string varX, string varY, string processClass, float
 		// #   3D histo management   #
 		// ###########################
  
-void SonicScrewdriver::Add3DHisto(string varX, string varY, string varZ, 
-                                  bool autoFill, 
-                                  int nBinsX, float minX, float maxX, 
-                                  int nBinsY, float minY, float maxY,
-                                  int nBinsZ, float minZ, float maxZ)
+void SonicScrewdriver::Add3DHisto(string varX, string varY, string varZ) 
 {
-  theHistoScrewdriver.Add3DHisto(varX,varY,varZ,
-                                 autoFill,
-                                 nBinsX,minX,maxX,
-                                 nBinsY,minY,maxY,
-                                 nBinsZ,minZ,maxZ);
+  theHistoScrewdriver.Add3DHistoEntries(varX,varY,varZ);
 }
   
 void SonicScrewdriver::Fill(string varX, string varY, string varZ, string processClass, float valueX, float valueY, float valueZ, float weight)
@@ -188,7 +174,7 @@ void SonicScrewdriver::SchedulePlots(string plotType, string options)
 
 void SonicScrewdriver::MakePlots(string options)
 {
-    thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theHistoScrewdriver,theLumi,options);
+	thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theHistoScrewdriver,options);
 }
 
 void SonicScrewdriver::WritePlots(string outputFolder, string infoText, string options)
@@ -203,17 +189,17 @@ Figure SonicScrewdriver::GetYieldAndError(string var, string processClass,string
     return theHistoScrewdriver.GetYieldAndError(var,processClass,region,channel);
 }
 
-vector<Histo1D>* SonicScrewdriver::Get1DHistoList()
+vector<Histo1DEntries>* SonicScrewdriver::Get1DHistosEntries()
 {
-    return theHistoScrewdriver.Get1DHistoList();
+    return theHistoScrewdriver.Get1DHistosEntries();
 }
 
-vector<Histo2D>* SonicScrewdriver::Get2DHistoList()
+vector<Histo2DEntries>* SonicScrewdriver::Get2DHistosEntries()
 {
-    return theHistoScrewdriver.Get2DHistoList();
+    return theHistoScrewdriver.Get2DHistosEntries();
 }
 
-vector<Histo3D>* SonicScrewdriver::Get3DHistoList()
+vector<Histo3DEntries>* SonicScrewdriver::Get3DHistosEntries()
 {
-    return theHistoScrewdriver.Get3DHistoList();
+    return theHistoScrewdriver.Get3DHistosEntries();
 }
