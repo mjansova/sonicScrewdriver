@@ -24,11 +24,6 @@ namespace theDoctor
                            string plotOptions = "")
       {
           Variable* theVar = theHisto_->getVariable();
-
-          // Prepare the labels for x and y axis
-          // xlabel = labelDeLaVariable (Unité)
-          // ylabel = Normalized entries / largeurDeBin Unité
-
           string xlabel("Cut on "+theVar->getLabel());
           string ylabel("Figure of merit");
 

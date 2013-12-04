@@ -117,12 +117,10 @@ int main (int argc, char *argv[])
 
      mySonic.SetOption("1DSuperpRenorm",    "includeSignal",                    true);
      
-     mySonic.SetOption("1DStack",           "includeSignal",                    true);
-     mySonic.SetOption("1DStack",           "includeSignalHow",                 "stack");
+     mySonic.SetOption("1DStack",           "includeSignal",                    "stack");
      mySonic.SetOption("1DStack",           "factorSignal",                     2);
 
-     mySonic.SetOption("DataMCComparison",  "includeSignal",                    true);
-     mySonic.SetOption("DataMCComparison",  "includeSignalHow",                 "stack");
+     mySonic.SetOption("DataMCComparison",  "includeSignal",                    "stack");
      mySonic.SetOption("DataMCComparison",  "factorSignal",                     1);
      
      mySonic.SetOption("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15);
@@ -133,7 +131,7 @@ int main (int argc, char *argv[])
      mySonic.SchedulePlots("1DStack");
      mySonic.SchedulePlots("1DDataMCComparison");
      
-     mySonic.SchedulePlots("1DFigureOfMerit","signal=muf,var=invariantMass,cutType=keepHighValues");
+     mySonic.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
 
   // ########################################
   // ##        Run over the events         ##

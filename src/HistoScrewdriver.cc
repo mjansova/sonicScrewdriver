@@ -79,7 +79,27 @@ int HistoScrewdriver::getIndexOfHisto1DEntries(string tagVar, string tagProcessC
                      << tagChannel      << ")" << endl;
   return -1;
 }
- 
+
+int HistoScrewdriver::getIndexOfHisto1DForPlot(string tagType, string tagVar, string tagRegion, string tagChannel, string otherParameters)
+{
+  for (unsigned int i = 0 ; i < the1DHistosForPlots.size() ; i++)
+  {
+    if (the1DHistosForPlots[i].getHistoTypeTag()    != tagType   ) continue;
+    if (the1DHistosForPlots[i].getChannelTag()      != tagChannel) continue;
+    if (the1DHistosForPlots[i].getRegionTag()       != tagRegion ) continue;
+    if (the1DHistosForPlots[i].getVariableTag()     != tagVar    ) continue;
+    // TODO : check other parameters
+    return i;
+  }
+  WARNING_MSG << "Unable to find histo for (type,var,region,channel,parameters) "
+              << "= (" << tagType    << ","
+                       << tagVar     << "," 
+                       << tagRegion  << ","
+                       << tagChannel << "," 
+                       << otherParameters << ")" << endl;
+  return -1;
+}
+
 void HistoScrewdriver::Create1DHistosEntries()
 {
     // #########################
@@ -142,12 +162,24 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
   }
 }
 
-Histo1DEntries* HistoScrewdriver::get1DHistoPointer(string var, string processClass, string region, string channel)
+Histo1DEntries* HistoScrewdriver::get1DHistoEntriesPointer(string var, string processClass, string region, string channel)
 {
   int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
-    if (indexHisto < 0) return 0;
+  
+  if (indexHisto < 0) return 0;
   else         return &(the1DHistosEntries[indexHisto]);
 }
+
+Histo1D* HistoScrewdriver::get1DHistoForPlotPointer(string type, string var, string region, string channel, string otherParameters)
+{
+  int indexHisto = getIndexOfHisto1DForPlot(type,var,region,channel,otherParameters);
+  
+  if (indexHisto < 0) return 0;
+  else         return &(the1DHistosForPlots[indexHisto]);
+}
+
+
+
 
 TH1F* HistoScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
 {

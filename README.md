@@ -40,20 +40,23 @@ This tool doesn't work on WOOD.
 To-do list / ideas
 ------------------
 
+Important :
 - Optimise AutoFill : should check only once the regions and channel in AutoFill before dispatch
-- Actual documentation
 - Fix infos displayed on plots (energy/lumi, + add region, channel, change emplacement)
-- Possibility to add custom lines/infos on plots via external user-defined templates 
 - Underflow/overflow management by default
+- Easy access to a given plot or histo
+- Global options configuration to set/change the default behavior (ex : font, line width, text colors ...)
+
+Mid-long term :
+- Actual documentation
+- Possibility to add custom lines/infos on plots via external user-defined templates 
 - Custom binning for variables (ex : for discrete values like # of jets)
 - Improve tables (auto-scale of column width ?)
 - Add daughter class to table for Data/MC or bkg/sig comparison
 - Add or fix latex/ascii export/import for tables
-- Easy access to a given plot or histo
 - Improve ratio plots (lines, gap, scale) for data/MC comparisons plots
 - Lumi reweighting should be done per channel
-- Add surcharge operator +, -, *, and / for (int,Figure)
+- Add surcharge operator +, -, x, and / for (int,Figure)
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
-- Global options configuration to set/change the default behavior (ex : font, line width, text colors ...)
 
 

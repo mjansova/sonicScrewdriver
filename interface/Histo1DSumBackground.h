@@ -15,8 +15,8 @@ namespace theDoctor
       Histo1DSumBackground(Variable* theVar_, 
                            Region* theRegion_, 
                            Channel* theChannel_,
-                           vector<Histo1DEntries*> theRelevantHistograms) : 
-      Histo1D(Name("sumBackground","Entries"),theVar_,theRegion_,theChannel_)
+                           vector<Histo1DEntries*> theBackgrounds) : 
+      Histo1D(Name("1DSumBackground","Entries"),theVar_,theRegion_,theChannel_)
       {
           DEBUG_MSG << endl;
 
@@ -28,9 +28,9 @@ namespace theDoctor
           theHisto->SetName(nameHisto.c_str());
 
           // Loop on the input histograms and add each of them to the histo
-          for (unsigned int i = 0 ; i < theRelevantHistograms.size() ; i++)
+          for (unsigned int i = 0 ; i < theBackgrounds.size() ; i++)
           {
-              theHisto->Add(theRelevantHistograms[i]->getClone());
+              theHisto->Add(theBackgrounds[i]->getClone());
           }
 
           DEBUG_MSG << endl;
@@ -65,7 +65,7 @@ namespace theDoctor
           for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
           {
 
-              vector<Histo1DEntries*> theRelevantHistograms;
+              vector<Histo1DEntries*> theBackgrounds;
 
               Variable* theVar     = &((*theVariables)[v]);
               Region*   theRegion  = &((*theRegions)[r]);
@@ -80,15 +80,15 @@ namespace theDoctor
                   if ((*theProcessClasses)[i].getType() != "background") continue;
                   // If it it, we add it to the relevant backgrounds
                   //
-                  Histo1DEntries* thisBackground = theHistoScrewdriver->get1DHistoPointer(theVar->getTag(),
-                                                                                          (*theProcessClasses)[i].getTag(),
-                                                                                          theRegion->getTag(),
-                                                                                          theChannel->getTag());
-                  theRelevantHistograms.push_back(thisBackground);
+                  Histo1DEntries* thisBackground = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                                                                                                 (*theProcessClasses)[i].getTag(),
+                                                                                                 theRegion->getTag(),
+                                                                                                 theChannel->getTag());
+                  theBackgrounds.push_back(thisBackground);
               }
 
               theHistoScrewdriver->Add1DHistoForPlots(
-                                                        Histo1DSumBackground(theVar,theRegion,theChannel,theRelevantHistograms)
+                                                        Histo1DSumBackground(theVar,theRegion,theChannel,theBackgrounds)
                                                      );
           }
       }

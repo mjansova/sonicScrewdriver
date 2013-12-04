@@ -30,6 +30,8 @@ namespace theDoctor
       int getIndexOfHisto1DEntries(string tagVar,  string tagProcessClass, string tagRegion, string tagChannel);
       int getIndexOfHisto2DEntries(string tagVarX, string tagVarY, string tagProcessClass, string tagRegion, string tagChannel);
       int getIndexOfHisto3DEntries(string tagVarX, string tagVarY, string tagVarZ, string tagProcessClass, string tagRegion, string tagChannel);
+      
+      int getIndexOfHisto1DForPlot(string type, string tagVar, string tagRegion, string tagChannel, string otherParameters = "");
 
 
       // 1D histos
@@ -42,7 +44,8 @@ namespace theDoctor
 
       void ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor);
 
-      Histo1DEntries* get1DHistoPointer(string var, string processClass, string region, string channel);
+      Histo1DEntries* get1DHistoEntriesPointer(string var, string processClass, string region, string channel);
+      Histo1D* get1DHistoForPlotPointer(string type, string var, string region, string channel, string options);
       TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
       TH1F* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
       vector<Histo1DEntries>* Get1DHistosEntries();

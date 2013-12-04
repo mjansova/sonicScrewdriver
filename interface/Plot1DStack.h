@@ -22,16 +22,27 @@ namespace theDoctor
       Plot1DStack();
       ~Plot1DStack();
 
-      static void MakePlot(Variable* theVar, 
-                           vector<ProcessClass>* theProcessClasses, 
+      static Plot MakePlot(Variable* theVar, 
                            Region* theRegion, 
-                           Channel* theChannel, 
-                           HistoScrewdriver* theHistoScrewdriver, 
-                           Plot* thePlot,
-                           string plotTypeOptions = "",
-                           string generalOptions = "")
+                           Channel* theChannel,
+                           vector<Histo1DEntries*> theBackgrounds,
+                           vector<Histo1DEntries*> theSignals,
+                           OptionsScrewdriver theGlobalOptions)
       {
+         string plotName = string("t:1DStack|v:")+theVar->getTag()
+                                          +"|r:"+theRegion->getTag()
+                                          +"|c:"+theChannel->getTag();
 
+         Plot thePlot(plotName,"1DStack","");
+
+         string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStack","includeSignal");
+         float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStack","factorSignal");
+
+         string factorSignalStr;
+         std::ostringstream s1;
+         s1 << factorSignal;
+         factorSignalStr = s1.str();
+         
          // Prepare the labels for x and y axis
          // xlabel = labelDeLaVariable (Unité)
          // ylabel = Normalized entries / largeurDeBin Unité
@@ -40,10 +51,10 @@ namespace theDoctor
          string ylabel("Entries / ");
          
          // Get the bin width and concatenate it with ylabel
-         std::ostringstream ss;
-         ss.precision(3);
-         ss << theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[0].getTag(),theRegion->getTag(),theChannel->getTag())->GetBinWidth(1);
-         ylabel += ss.str();
+         std::ostringstream s2;
+         s2.precision(3);
+         s2 << theBackgrounds[0]->getClone()->GetBinWidth(1);
+         ylabel += s2.str();
 
          // Add the unit
          if (theVar->getUnit() != "")
@@ -52,104 +63,153 @@ namespace theDoctor
             ylabel += string(" ") + theVar->getUnit();
          }
 
-        vector<TH1F*> pointersForLegend;
+        vector<TH1F*>  pointersForLegend;
         vector<string> labelsForLegend;
         vector<string> optionsForLegend;
 
         // Create stack histo
         THStack* theStack = new THStack("","");
-        TH1F* sumBackground = 0;
 
         // Now loop on the histos
-        for (int i = theProcessClasses->size()-1 ; i >= 0 ; i--)
+        for (int i = theBackgrounds.size()-1 ; i >= 0 ; i--)
         {
-
-            // If this processClass is not a background, we skip it
-            if ((*theProcessClasses)[i].getType() != "background") continue;
-
-            // Get the options for the processClass
-            string processClassOptions = (*theProcessClasses)[i].getOptions();
+            // Get associated processClass
+            ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
 
             // Get the histo
-            TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
+            TH1F* histoClone = theBackgrounds[i]->getClone();
 
             // Change style of histo and add it to legend
-            ApplyHistoStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
+            ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
          
             pointersForLegend.push_back(histoClone);
             optionsForLegend.push_back(string("f"));
-			labelsForLegend.push_back((*theProcessClasses)[i].getLabel());
-
-			// Add it to the sumBackground (this is for when signal is included, in stacked mode)
-            if (sumBackground == 0)   sumBackground =  (TH1F*) histoClone->Clone();
-            else                      sumBackground->Add(histoClone);
+			labelsForLegend.push_back(processClass->getLabel());
 
             // Add histo to stack
             theStack->Add(histoClone);
         }
 
         // Apply axis style and plot the stack
-        theStack->Draw("HIST");
-        ApplyAxisStyle(thePlot,theStack,xlabel,ylabel,generalOptions,theVar->getOptions());
-
-		// Add signal if specified in the options of the plotType
-        if (OptionsScrewdriver::GetBoolOption(plotTypeOptions,"includeSignal"))
+        if (includeSignal != "stack")
         {
-            float factor = OptionsScrewdriver::GetFloatOption(plotTypeOptions,"factorSignal");
-            string factorStr = OptionsScrewdriver::GetStringOption(plotTypeOptions,"factorSignal");
-            if (factor == -1.0) factor = 1.0;
+            theStack->Draw("HIST");
+            ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
+        }
 
-            for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+		// Add signal if specified in the options of the plot type
+        if ((includeSignal != "") && (includeSignal != "no") && (includeSignal != "false"))
+        {
+            for (unsigned int i = 0 ; i < theSignals.size() ; i++)
             {
-                if ((*theProcessClasses)[i].getType() != "signal") continue; 
-
-                string processClassOptions = (*theProcessClasses)[i].getOptions();
+                // Get associated processClass
+                ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
                     
-                TH1F* histoClone = theHistoScrewdriver->get1DHistoClone(theVar->getTag(),(*theProcessClasses)[i].getTag(),theRegion->getTag(),theChannel->getTag());
-                ApplyHistoSignalStyle(thePlot,histoClone,(*theProcessClasses)[i].getColor(),generalOptions,processClassOptions);
-                histoClone->Scale(factor);
+                TH1F* histoClone = theSignals[i]->getClone();
+                ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
+                histoClone->Scale(factorSignal);
                 
-                if (OptionsScrewdriver::GetStringOption(plotTypeOptions,"includeSignalHow") == "stack") 
-					histoClone->Add(sumBackground);		
+                if (includeSignal == "stack") 
+					theStack->Add(histoClone);		
                 
 				// Add to legend
 		        pointersForLegend.insert(pointersForLegend.begin(),histoClone);
 		        optionsForLegend.insert(optionsForLegend.begin(),string("l"));
-                if (factor == 1.0)
-        		    labelsForLegend.insert(labelsForLegend.begin(),(*theProcessClasses)[i].getLabel());
+                if (factorSignal == 1.0)
+        		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel());
                 else
-        		    labelsForLegend.insert(labelsForLegend.begin(),factorStr+"#times"+(*theProcessClasses)[i].getLabel());
-
+        		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel()+"#times"+factorSignalStr);
+                
                 histoClone->Draw("hist same");
+
+            }
+
+            if (includeSignal == "stack")
+            {
+                theStack->Draw("HIST");
+                ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
             }
         }
         
-
-     
         // Add stuff to legend in reverse order
         for (unsigned int leg_i = 0 ; leg_i < pointersForLegend.size() ; leg_i++)
         {
-            thePlot->AddToLegend(pointersForLegend[pointersForLegend.size()-1-leg_i],
-                                 labelsForLegend[pointersForLegend.size()-1-leg_i].c_str(),
-                                 optionsForLegend[pointersForLegend.size()-1-leg_i].c_str());
+            thePlot.AddToLegend(pointersForLegend[pointersForLegend.size()-1-leg_i],
+                                labelsForLegend[pointersForLegend.size()-1-leg_i].c_str(),
+                                optionsForLegend[pointersForLegend.size()-1-leg_i].c_str());
         }
 
+
+        return thePlot;
       }
 
       static void GetHistoDependencies(vector<pair<string,string> >& output)
       {
       }
 
+      static vector<Plot> Produce(vector<Variable>* theVariables,
+                                  vector<ProcessClass>* theProcessClasses,
+                                  vector<Region>* theRegions,
+                                  vector<Channel>* theChannels,
+                                  HistoScrewdriver* theHistoScrewdriver,
+                                  OptionsScrewdriver theGlobalOptions)
+      {
+          vector<Plot> theOutput;
+          
+          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
+          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
+          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
+          {
+              vector<Histo1DEntries*> theBackgrounds;
+              vector<Histo1DEntries*> theSignals;
+
+              Variable* theVar     = &((*theVariables)[v]);
+              Region*   theRegion  = &((*theRegions)[r]);
+              Channel*  theChannel = &((*theChannels)[c]);
+      
+              DEBUG_MSG << "v = " << theVar->getTag() << " ; r = " << theRegion->getTag() << " ; c = " << theChannel->getTag() << endl;
+
+              // Now loop on the histos
+              for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+              {
+
+                  ProcessClass thisProcess = (*theProcessClasses)[i];
+
+                  // If this processClass is not a background nor signal, we skip it
+                  if ((thisProcess.getType() != "background")
+                   && (thisProcess.getType() != "signal"    )) continue;
+
+                  
+
+                  // If it it, we add it to the relevant backgrounds
+                  Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                                                                                            thisProcess.getTag(),
+                                                                                            theRegion->getTag(),
+                                                                                            theChannel->getTag());
+
+                  if (thisProcess.getType() != "background") theBackgrounds.push_back(thisHisto);
+                  if (thisProcess.getType() != "signal")     theSignals.push_back(thisHisto);
+              }
+
+              theOutput.push_back(
+                                    MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theGlobalOptions)
+                                 );
+   
+          }
+
+          return theOutput;
+      }
+
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(color);
          theHisto->SetLineColor(kBlack);
          theHisto->SetLineWidth(2);
       }
 	  
-	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, string generalOptions = "", string processClassOptions = "")
+	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(3);
@@ -157,7 +217,7 @@ namespace theDoctor
 		 theHisto->SetLineStyle(9);
 	  }
 
-      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, string generalOptions = "", string varOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
       { 
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);

@@ -263,6 +263,7 @@ namespace theDoctor
       {
          Histo1DDataMCRatio::GetHistoDependencies(output); 
          output.push_back(pair<string,string>("1DDataMCRatio",options));
+         output.push_back(pair<string,string>("1DSumData",options));
       }
 
      private:
