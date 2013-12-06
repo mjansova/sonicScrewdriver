@@ -68,8 +68,8 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-      mySonic.AddVariable("invariantMass",   "Invariant mass",         "GeV",    20,60,160 ,&(myEvent.invariantMass)              );
-      mySonic.AddVariable("MET",             "Missing E_{T}",          "GeV",    20,0,400  ,&(myEvent.MET)            ,"logY=true");
+      mySonic.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160 ,&(myEvent.invariantMass)              );
+      mySonic.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400  ,&(myEvent.MET)            ,"logY=true");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -115,15 +115,15 @@ int main (int argc, char *argv[])
 
      // Set options
 
-     mySonic.SetOption("1DSuperpRenorm",    "includeSignal",                    true);
+     mySonic.SetGlobalBoolOption  ("1DSuperpRenorm",    "includeSignal",                    true   );
      
-     mySonic.SetOption("1DStack",           "includeSignal",                    "stack");
-     mySonic.SetOption("1DStack",           "factorSignal",                     2);
+     mySonic.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
+     mySonic.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
 
-     mySonic.SetOption("DataMCComparison",  "includeSignal",                    "stack");
-     mySonic.SetOption("DataMCComparison",  "factorSignal",                     1);
+     mySonic.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
+     mySonic.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
      
-     mySonic.SetOption("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15);
+     mySonic.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
 
      // Schedule plots
      

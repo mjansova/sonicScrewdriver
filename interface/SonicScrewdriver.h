@@ -192,11 +192,10 @@ namespace theDoctor
       // #   Options management   #
       // ##########################
 
-      void SetOption(string category, string field, float value)  { thePlotScrewdriver.SetOption(category,field,value); }
-      void SetOption(string category, string field, string value) { thePlotScrewdriver.SetOption(category,field,value); }
-      void SetOption(string category, string field, bool value)   { thePlotScrewdriver.SetOption(category,field,value); }
-      void SetOption(string category, string field, int value)    { thePlotScrewdriver.SetOption(category,field,value); }
-      void SetOption(string category, string field, double value) { thePlotScrewdriver.SetOption(category,field,(float) value); }
+      void SetGlobalFloatOption(string category, string field, float value)   { thePlotScrewdriver.SetGlobalFloatOption (category,field,value); }
+      void SetGlobalStringOption(string category, string field, string value) { thePlotScrewdriver.SetGlobalStringOption(category,field,value); }
+      void SetGlobalBoolOption(string category, string field, bool value)     { thePlotScrewdriver.SetGlobalBoolOption  (category,field,value); }
+      void SetGlobalIntOption(string category, string field, int value)       { thePlotScrewdriver.SetGlobalIntOption   (category,field,value); }
 
       // ########################
       // #   Plots management   #
@@ -253,3 +252,4 @@ namespace theDoctor
 }
 
 #endif
+

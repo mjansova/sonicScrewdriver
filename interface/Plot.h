@@ -40,25 +40,6 @@ namespace theDoctor
       TCanvas* getCanvas() { return theCanvas; 	};
       TLegend* getLegend() { return theLegend; 	}; 
 
-      string infoFromCanvasName(string field)
-      {
-        string fieldTest;
-        stringstream stream(theCanvas->GetName());
-        while( getline(stream,fieldTest,'|') )
-        {
-            stringstream stream2(fieldTest);
-            string name; getline(stream2,name,':');
-            
-            if (name != field) continue;
-            
-            string value; getline(stream2,value,':');
-            return value;
-        }
-
-        return "";
-
-      }
-
       // Logarithm scale management
       void SetLogX() 
       { 
@@ -95,29 +76,28 @@ namespace theDoctor
       void Write(string outputFolder = "", string infoText = "", string options = "")
       {
         
-        // Draw the legend and top info before writing
-
         SetActive();
         if (thePads.size() != 0) thePads[0]->cd();
-
+        
+        // Draw the legend and top info before writing
         theLegend->Draw();
         AddToTopInfo(infoText);
         theTopInfo->Draw();
      
         if ((type == "2D") || (type == "2DProjectedTo1D"))
         {
-            string processClassName = infoFromCanvasName("processClass");
+            string processClassName = GetParameter("processClass");
             theCanvas->SetName(processClassName.c_str());
         }
         else if  (type == "3DProjectedTo2D")
         {
-            string processClassName = infoFromCanvasName("processClass");
-            string varZ = infoFromCanvasName("varZ");
+            string processClassName = GetParameter("processClass");
+            string varZ = GetParameter("variableZ");
             theCanvas->SetName((varZ+"|"+processClassName).c_str());
         }
         else
         {
-            string varName = infoFromCanvasName("var");
+            string varName = GetParameter("variable");
             theCanvas->SetName(varName.c_str());
         }
             
@@ -215,6 +195,9 @@ namespace theDoctor
 
       }
 
+      void SetParameter(string field, string value) { parameters[field] = value; }
+      string GetParameter(string field) { return parameters[field]; }
+
      private:
 
       TCanvas* theCanvas;	
@@ -223,6 +206,7 @@ namespace theDoctor
       vector<TPad*> thePads;
 
       string type;
+      std::map<string,string> parameters;
 
     };
 

@@ -134,8 +134,9 @@ namespace theDoctor
 
                 DEBUG_MSG << "make plot : " << plotType << " ; options = " << plotOptions << endl;
 
+                vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")
-                    Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 /*
                 if (plotType == "1DSuperRenorm")
                     Plot1DSuperpRenorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
@@ -150,6 +151,11 @@ namespace theDoctor
                 if (plotType == "3DProjectedTo2D")
                     Plot3DProjectedTo2D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 */
+
+                for (unsigned int j = 0 ; j < inputFromProducer.size() ; j++)
+                {
+                    thePlots.push_back(inputFromProducer[j]);
+                }
             }
 
         }
@@ -199,16 +205,22 @@ namespace theDoctor
 
                         for (unsigned int j = 0 ; j < thePlots.size() ; j++)
                         {
+                            DEBUG_MSG << "ploType = " << thePlots[j].getType() << endl;
+
                             if (thePlots[j].getType() != plotType) continue;
-                            if (thePlots[j].infoFromCanvasName("channel") != (*theChannels)[c].getTag()) continue;
-                            if (thePlots[j].infoFromCanvasName("region")  !=  (*theRegions)[r].getTag()) continue;
+                            DEBUG_MSG << endl;
+                            if (thePlots[j].GetParameter("channel") != (*theChannels)[c].getTag()) continue;
+                            DEBUG_MSG << endl;
+                            if (thePlots[j].GetParameter("region")  !=  (*theRegions)[r].getTag()) continue;
+
+                            DEBUG_MSG << endl;
 
                             string addPath = "";
                             // For 2D-histos, create a subfolder varX[vs]varY
                             if ((plotType == "2D") || (plotType == "2DProjectedTo1D") || (plotType == "3DProjectedTo2D"))
                             {
-                                string varX = thePlots[j].infoFromCanvasName("varX");
-                                string varY = thePlots[j].infoFromCanvasName("varY");
+                                string varX = thePlots[j].GetParameter("variableX");
+                                string varY = thePlots[j].GetParameter("variableY");
 
                                 addPath += "/" + varX + "[vs]" + varY;
                                 if (!regionDir->GetDirectory((varX+"[vs]"+varY).c_str()))
@@ -216,11 +228,13 @@ namespace theDoctor
 
                             }
 
+                            DEBUG_MSG << endl;
                             thePlots[j].Write(outputFolder+"/"+plotType
                                     +"/"+(*theChannels)[c].getTag()
                                     +"/"+(*theRegions)[r].getTag()
                                     +addPath,
                                     infoText,options);
+                            DEBUG_MSG << endl;
                         }
                     }
                 }
@@ -232,10 +246,10 @@ namespace theDoctor
         // #   Options management   #
         // ##########################
 
-        void SetOption(string category, string field, float value)  { theGlobalOptions.SetOption(category,field,value); }
-        void SetOption(string category, string field, string value) { theGlobalOptions.SetOption(category,field,value); }
-        void SetOption(string category, string field, bool value)   { theGlobalOptions.SetOption(category,field,value); }
-        void SetOption(string category, string field, int value)    { theGlobalOptions.SetOption(category,field,value); }
+        void SetGlobalFloatOption(string category, string field, float value)   { theGlobalOptions.SetGlobalFloatOption(category,field,value);  }
+        void SetGlobalStringOption(string category, string field, string value) { theGlobalOptions.SetGlobalStringOption(category,field,value); }
+        void SetGlobalBoolOption(string category, string field, bool value)     { theGlobalOptions.SetGlobalBoolOption(category,field,value);   }
+        void SetGlobalIntOption(string category, string field, int value)       { theGlobalOptions.SetGlobalIntOption(category,field,value);    }
 
         private:
 

@@ -29,14 +29,20 @@ namespace theDoctor
                            vector<Histo1DEntries*> theSignals,
                            OptionsScrewdriver theGlobalOptions)
       {
+
          string plotName = string("t:1DStack|v:")+theVar->getTag()
                                           +"|r:"+theRegion->getTag()
                                           +"|c:"+theChannel->getTag();
 
          Plot thePlot(plotName,"1DStack","");
+         thePlot.SetParameter("variable",theVar->getTag());
+         thePlot.SetParameter("region",theRegion->getTag());
+         thePlot.SetParameter("channel",theChannel->getTag());
 
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStack","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStack","factorSignal");
+         
+         DEBUG_MSG << "includeSignal = " << includeSignal << endl;
 
          string factorSignalStr;
          std::ostringstream s1;
@@ -103,14 +109,14 @@ namespace theDoctor
             for (unsigned int i = 0 ; i < theSignals.size() ; i++)
             {
                 // Get associated processClass
-                ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
+                ProcessClass* processClass = theSignals[i]->getProcessClass();
                     
                 TH1F* histoClone = theSignals[i]->getClone();
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->Scale(factorSignal);
                 
-                if (includeSignal == "stack") 
-					theStack->Add(histoClone);		
+                     if (includeSignal == "stack"      ) theStack->Add(histoClone);
+                else if (includeSignal == "superimpose") histoClone->Draw("hist same");
                 
 				// Add to legend
 		        pointersForLegend.insert(pointersForLegend.begin(),histoClone);
@@ -120,7 +126,6 @@ namespace theDoctor
                 else
         		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel()+"#times"+factorSignalStr);
                 
-                histoClone->Draw("hist same");
 
             }
 
@@ -187,8 +192,8 @@ namespace theDoctor
                                                                                             theRegion->getTag(),
                                                                                             theChannel->getTag());
 
-                  if (thisProcess.getType() != "background") theBackgrounds.push_back(thisHisto);
-                  if (thisProcess.getType() != "signal")     theSignals.push_back(thisHisto);
+                  if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
+                  if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
               }
 
               theOutput.push_back(

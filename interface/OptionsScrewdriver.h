@@ -76,20 +76,33 @@ namespace theDoctor
                 }
             }
 
-            void SetOption(string category, string field, string value)
-            { pair<string,string> name(category,field); theGlobalOptions_string[name] = value; }
+            void SetGlobalStringOption(string category, string field, string value)
+            { 
+                DEBUG_MSG << "(" << category << "," << field << ") => " << value << endl;
+                pair<string,string> name(category,field); theGlobalOptions_string[name] = value; }
 
-            void SetOption(string category, string field, float value)
-            { pair<string,string> name(category,field); theGlobalOptions_float[name] = value; }
+            void SetGlobalFloatOption(string category, string field, float value)
+            { 
+                DEBUG_MSG << "(" << category << "," << field << ") => " << value << endl;
+                pair<string,string> name(category,field); theGlobalOptions_float[name] = value; }
 
-            void SetOption(string category, string field, bool value)
-            { pair<string,string> name(category,field); theGlobalOptions_bool[name] = value; }
+            void SetGlobalBoolOption(string category, string field, bool value)
+            { 
+                DEBUG_MSG << "(" << category << "," << field << ") => " << value << endl;
+                pair<string,string> name(category,field); theGlobalOptions_bool[name] = value; }
 
-            void SetOption(string category, string field, int value)
-            { pair<string,string> name(category,field); theGlobalOptions_int[name] = value; }
+            void SetGlobalIntOption(string category, string field, int value)
+            { 
+                DEBUG_MSG << "(" << category << "," << field << ") => " << value << endl;
+                pair<string,string> name(category,field); theGlobalOptions_int[name] = value; }
 
             string GetGlobalStringOption(string category, string field)
-            { pair<string,string> name(category,field); return theGlobalOptions_string[name]; }
+            {
+                DEBUG_MSG << endl;
+
+                for (std::map<pair<string,string>,string>::iterator it=theGlobalOptions_string.begin(); it!=theGlobalOptions_string.end(); ++it)
+                    DEBUG_MSG << "(" << it->first.first << "," << it->first.second << ") => " << it->second << endl;
+                pair<string,string> name(category,field); return theGlobalOptions_string[name]; }
 
             float  GetGlobalFloatOption(string category, string field)
             { pair<string,string> name(category,field); return theGlobalOptions_float[name]; }
