@@ -54,18 +54,14 @@ namespace theDoctor
         {
             vector<pair<string,string> > dependencies;
 
-            if (plotType == "1DSuperpRenorm")     Plot1DSuperpRenorm    ::GetHistoDependencies(dependencies);
+                 if (plotType == "1DSuperpRenorm")     Plot1DSuperpRenorm    ::GetHistoDependencies(dependencies);
             else if (plotType == "1DStack")            Plot1DStack           ::GetHistoDependencies(dependencies);
-            else if (plotType == "1DFigureOfMerit")    Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies);
+            else if (plotType == "1DFigureOfMerit")    Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies,options);
             else if (plotType == "1DDataMCComparison") Plot1DDataMCComparison::GetHistoDependencies(dependencies);
             else if (plotType == "2D")                 Plot2D                ::GetHistoDependencies(dependencies);
             else if (plotType == "2DProjectedTo1D")    Plot2DProjectedTo1D   ::GetHistoDependencies(dependencies);
             else if (plotType == "3DProjectedTo2D")    Plot3DProjectedTo2D   ::GetHistoDependencies(dependencies);
-            else
-            {
-                WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl;
-                return;
-            }
+            else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
             // Schedule histo needed for plot
             for (unsigned int i = 0 ; i < dependencies.size() ; i++) ScheduleHisto(dependencies[i].first,dependencies[i].second);
@@ -112,18 +108,10 @@ namespace theDoctor
                 string options = "")
         {
             MakeHistoForPlots(theVariables,
-                    theProcessClasses,
-                    theRegions,
-                    theChannels,
-                    theHistoScrewdriver);
-
-            vector<Histo1DEntries>* the1DHistosEntries  = theHistoScrewdriver->Get1DHistosEntries();
-            //vector<Histo2D>* the2DHistosEntries  = theHistoScrewdriver->Get2DHistosEntries();
-            //vector<Histo3D>* the3DHistosEntries  = theHistoScrewdriver->Get3DHistosEntries();
-
-            vector<Histo1D>*   the1DHistosForPlots = theHistoScrewdriver->Get1DHistosForPlots();
-            //vector<Histo2D>* the2DHistosForPlots = theHistoScrewdriver->Get2DHistosForPlots();
-            //vector<Histo3D>* the3DHistosForPlots = theHistoScrewdriver->Get3DHistosForPlots();
+                              theProcessClasses,
+                              theRegions,
+                              theChannels,
+                              theHistoScrewdriver);
 
             // For each scheduled plot
             for (unsigned int i = 0 ; i < scheduledPlots.size() ; i++)
@@ -137,19 +125,19 @@ namespace theDoctor
                 vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")
                     inputFromProducer = Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
-                /*
-                if (plotType == "1DSuperRenorm")
-                    Plot1DSuperpRenorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                if (plotType == "1DSuperpRenorm")
+                    inputFromProducer = Plot1DSuperpRenorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 if (plotType == "1DFigureOfMerit")
-                    Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                /*
                 if (plotType == "1DDataMCComparison")
-                    Plot1DDataMCComparison::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = Plot1DDataMCComparison::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 if (plotType == "2D")
-                    Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 if (plotType == "2DProjectedTo1D")
-                    Plot2DProjectedTo1D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = Plot2DProjectedTo1D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 if (plotType == "3DProjectedTo2D")
-                    Plot3DProjectedTo2D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = Plot3DProjectedTo2D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
                 */
 
                 for (unsigned int j = 0 ; j < inputFromProducer.size() ; j++)
@@ -205,15 +193,9 @@ namespace theDoctor
 
                         for (unsigned int j = 0 ; j < thePlots.size() ; j++)
                         {
-                            DEBUG_MSG << "ploType = " << thePlots[j].getType() << endl;
-
                             if (thePlots[j].getType() != plotType) continue;
-                            DEBUG_MSG << endl;
                             if (thePlots[j].GetParameter("channel") != (*theChannels)[c].getTag()) continue;
-                            DEBUG_MSG << endl;
                             if (thePlots[j].GetParameter("region")  !=  (*theRegions)[r].getTag()) continue;
-
-                            DEBUG_MSG << endl;
 
                             string addPath = "";
                             // For 2D-histos, create a subfolder varX[vs]varY
@@ -228,13 +210,11 @@ namespace theDoctor
 
                             }
 
-                            DEBUG_MSG << endl;
                             thePlots[j].Write(outputFolder+"/"+plotType
                                     +"/"+(*theChannels)[c].getTag()
                                     +"/"+(*theRegions)[r].getTag()
                                     +addPath,
                                     infoText,options);
-                            DEBUG_MSG << endl;
                         }
                     }
                 }

@@ -35,8 +35,6 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
             
-          DEBUG_MSG << endl;
-
           float f = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","backgroundSystematicUncertainty");
 
           int nBins = theVar->getNbins(); 
@@ -46,6 +44,7 @@ namespace theDoctor
 
           for (int i = 1 ; i <= nBins ; i++)
           {
+
             float S;
             float B;
 
@@ -53,11 +52,11 @@ namespace theDoctor
                   if (cutType == 1) { S = signalHisto->Integral(i,nBins+1); B = backgrHisto->Integral(i,nBins+1); }
             // Keep-low-value case
             else if (cutType == -1) { S = signalHisto->Integral(0,i);       B = backgrHisto->Integral(0,i);       }
-          
+            
             if (B < 1) B = 1;
             float sOverSqrtB = 0.0;
             if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B);
-
+            
             theHisto->SetBinContent(i,sOverSqrtB);
             theHisto->SetBinError(i,0.0);
         
@@ -92,11 +91,12 @@ namespace theDoctor
 
               // Get the sumBackground
               Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
-                                                                                          theVar->getTag(),
-                                                                                          theRegion->getTag(),
-                                                                                          theChannel->getTag(),
-                                                                                          "");
+                                                                                        theVar->getTag(),
+                                                                                        theRegion->getTag(),
+                                                                                        theChannel->getTag(),
+                                                                                        "");
               // Get the cut type we're using for this variable
+              DEBUG_MSG << "histoParameters : " << histoParameters << endl;
               string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
               int cutType = 0;
                    if (cutType_ == string("keepLowValues"))  cutType = -1; 

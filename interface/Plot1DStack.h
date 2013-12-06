@@ -42,8 +42,6 @@ namespace theDoctor
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStack","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStack","factorSignal");
          
-         DEBUG_MSG << "includeSignal = " << includeSignal << endl;
-
          string factorSignalStr;
          std::ostringstream s1;
          s1 << factorSignal;
@@ -172,8 +170,6 @@ namespace theDoctor
               Region*   theRegion  = &((*theRegions)[r]);
               Channel*  theChannel = &((*theChannels)[c]);
       
-              DEBUG_MSG << "v = " << theVar->getTag() << " ; r = " << theRegion->getTag() << " ; c = " << theChannel->getTag() << endl;
-
               // Now loop on the histos
               for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
               {
