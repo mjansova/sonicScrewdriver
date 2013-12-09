@@ -34,10 +34,11 @@ namespace theDoctor
           else return *(autoFillPointer); 
       };
 
-      string getUnit() 	{ return unit; }; 
-      int getNbins() 	{ return nBins; }; 
-      float getMin() 	{ return min; 	}; 
-      float getMax() 	{ return max; 	}; 
+      string getUnit() 	  { return unit;  }; 
+      int getNbins() 	  { return nBins; }; 
+      float getMin() 	  { return min; 	}; 
+      float getMax() 	  { return max; 	}; 
+      float getBinWidth() { return (max - min) / (float) nBins; }
 
      private:
 

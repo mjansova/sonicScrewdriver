@@ -49,12 +49,7 @@ namespace theDoctor
 
          string xlabel(theVar->getLabel());
          string ylabel("Entries / ");
-         
-         // Get the bin width and concatenate it with ylabel
-         std::ostringstream s1;
-         s1.precision(3);
-         s1 << theBackgrounds[0]->getClone()->GetBinWidth(1);
-         ylabel += s1.str();
+         ylabel += floatToString(theVar->getBinWidth());
 
          // Add the unit
          if (theVar->getUnit() != "")
@@ -151,7 +146,8 @@ namespace theDoctor
                                   vector<Region>* theRegions,
                                   vector<Channel>* theChannels,
                                   HistoScrewdriver* theHistoScrewdriver,
-                                  OptionsScrewdriver theGlobalOptions)
+                                  OptionsScrewdriver theGlobalOptions,
+                                  string histoOptions)
       {
           vector<Plot> theOutput;
           

@@ -78,54 +78,59 @@ namespace theDoctor
                           string histoParameters)      
       {
 
+          string varName = OptionsScrewdriver::GetStringOption(histoParameters,"var");
           // Browse the (var x reg x chan) space
           for (unsigned int v = 0 ; v < theVariables->size() ; v++)
-          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
-          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
           {
               Variable*     theVar          = &((*theVariables)[v]);
-              Region*       theRegion       = &((*theRegions)[r]);
-              Channel*      theChannel      = &((*theChannels)[c]);
-                
-              DEBUG_MSG << "v = " << theVar->getTag() << " ; r = " << theRegion->getTag() << " ; c = " << theChannel->getTag() << endl;
+              if (theVar->getTag() != varName) continue;
 
-              // Get the sumBackground
-              Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
-                                                                                        theVar->getTag(),
-                                                                                        theRegion->getTag(),
-                                                                                        theChannel->getTag(),
-                                                                                        "");
-              // Get the cut type we're using for this variable
-              DEBUG_MSG << "histoParameters : " << histoParameters << endl;
-              string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
-              int cutType = 0;
-                   if (cutType_ == string("keepLowValues"))  cutType = -1; 
-              else if (cutType_ == string("keepHighValues")) cutType =  1; 
-              
-              // Loop on the signals
-              for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+              for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
+              for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
               {
-                  ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
-                  if (theProcessClass->getType() != "signal") continue;
+                  Region*       theRegion       = &((*theRegions)[r]);
+                  Channel*      theChannel      = &((*theChannels)[c]);
 
-                  Histo1DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
-                                                                                             theProcessClass->getTag(),
-                                                                                             theRegion->getTag(),
-                                                                                             theChannel->getTag());
+                  DEBUG_MSG << "v = " << theVar->getTag() << " ; r = " << theRegion->getTag() << " ; c = " << theChannel->getTag() << endl;
 
-                  // Produce the figure of merit histogram
-                  theHistoScrewdriver->Add1DHistoForPlots(
-                                                            Histo1DFigureOfMerit(theVar,
-                                                                                 theRegion,
-                                                                                 theChannel,
-                                                                                 thisSignal,
-                                                                                 theSumBackground,
-                                                                                 theGlobalOptions,
-                                                                                 cutType)
-                                                         );
-               }
+                  // Get the sumBackground
+                  Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                          theVar->getTag(),
+                          theRegion->getTag(),
+                          theChannel->getTag(),
+                          "");
+                  // Get the cut type we're using for this variable
+                  DEBUG_MSG << "histoParameters : " << histoParameters << endl;
+                  string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
+                  int cutType = 0;
+                  if (cutType_ == string("keepLowValues"))  cutType = -1; 
+                  else if (cutType_ == string("keepHighValues")) cutType =  1; 
+
+                  // Loop on the signals
+                  for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+                  {
+                      ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
+                      if (theProcessClass->getType() != "signal") continue;
+
+                      Histo1DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                              theProcessClass->getTag(),
+                              theRegion->getTag(),
+                              theChannel->getTag());
+
+                      // Produce the figure of merit histogram
+                      theHistoScrewdriver->Add1DHistoForPlots(
+                              Histo1DFigureOfMerit(theVar,
+                                  theRegion,
+                                  theChannel,
+                                  thisSignal,
+                                  theSumBackground,
+                                  theGlobalOptions,
+                                  cutType)
+                              );
+                  }
+              }
           }
-      }
+     }
 
 
      private:

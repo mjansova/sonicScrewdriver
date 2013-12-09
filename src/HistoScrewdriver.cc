@@ -84,6 +84,12 @@ int HistoScrewdriver::getIndexOfHisto1DForPlot(string tagType, string tagVar, st
 {
   for (unsigned int i = 0 ; i < the1DHistosForPlots.size() ; i++)
   {
+    /*DEBUG_MSG << "type = "    << the1DHistosForPlots[i].getHistoTypeTag()
+              << "channel = " << the1DHistosForPlots[i].getChannelTag()  
+              << "region = "  << the1DHistosForPlots[i].getRegionTag()   
+              << "var = "     << the1DHistosForPlots[i].getVariableTag() 
+              << endl; */
+
     if (the1DHistosForPlots[i].getHistoTypeTag()    != tagType   ) continue;
     if (the1DHistosForPlots[i].getChannelTag()      != tagChannel) continue;
     if (the1DHistosForPlots[i].getRegionTag()       != tagRegion ) continue;

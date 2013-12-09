@@ -124,20 +124,27 @@ namespace theDoctor
 
                 vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")
-                    inputFromProducer = Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = 
+                        Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 if (plotType == "1DSuperpRenorm")
-                    inputFromProducer = Plot1DSuperpRenorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = 
+                        Plot1DSuperpRenorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 if (plotType == "1DFigureOfMerit")
-                    inputFromProducer = Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
-                /*
+                    inputFromProducer = 
+                        Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 if (plotType == "1DDataMCComparison")
-                    inputFromProducer = Plot1DDataMCComparison::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = 
+                        Plot1DDataMCComparison::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                /*
                 if (plotType == "2D")
-                    inputFromProducer = Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = 
+                        Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 if (plotType == "2DProjectedTo1D")
-                    inputFromProducer = Plot2DProjectedTo1D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = 
+                        Plot2DProjectedTo1D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 if (plotType == "3DProjectedTo2D")
-                    inputFromProducer = Plot3DProjectedTo2D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions);
+                    inputFromProducer = 
+                        Plot3DProjectedTo2D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 */
 
                 for (unsigned int j = 0 ; j < inputFromProducer.size() ; j++)

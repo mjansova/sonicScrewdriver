@@ -27,6 +27,7 @@ namespace theDoctor
                            Channel* theChannel,
                            vector<Histo1DEntries*> theBackgrounds,
                            vector<Histo1DEntries*> theSignals,
+                           Histo1D* theSumBackground,
                            OptionsScrewdriver theGlobalOptions)
       {
 
@@ -41,11 +42,7 @@ namespace theDoctor
 
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStack","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStack","factorSignal");
-         
-         string factorSignalStr;
-         std::ostringstream s1;
-         s1 << factorSignal;
-         factorSignalStr = s1.str();
+         string factorSignalStr = floatToString(factorSignal);
          
          // Prepare the labels for x and y axis
          // xlabel = labelDeLaVariable (Unité)
@@ -53,12 +50,7 @@ namespace theDoctor
 
          string xlabel(theVar->getLabel());
          string ylabel("Entries / ");
-         
-         // Get the bin width and concatenate it with ylabel
-         std::ostringstream s2;
-         s2.precision(3);
-         s2 << theBackgrounds[0]->getClone()->GetBinWidth(1);
-         ylabel += s2.str();
+         ylabel += floatToString(theVar->getBinWidth());
 
          // Add the unit
          if (theVar->getUnit() != "")
@@ -95,15 +87,13 @@ namespace theDoctor
         }
 
         // Apply axis style and plot the stack
-        if (includeSignal != "stack")
-        {
-            theStack->Draw("HIST");
-            ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
-        }
+        theStack->Draw("HIST");
+        ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
 
 		// Add signal if specified in the options of the plot type
         if ((includeSignal != "") && (includeSignal != "no") && (includeSignal != "false"))
         {
+            TH1F* histoSumBackground = theSumBackground->getClone();
             for (unsigned int i = 0 ; i < theSignals.size() ; i++)
             {
                 // Get associated processClass
@@ -113,8 +103,10 @@ namespace theDoctor
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->Scale(factorSignal);
                 
-                     if (includeSignal == "stack"      ) theStack->Add(histoClone);
-                else if (includeSignal == "superimpose") histoClone->Draw("hist same");
+                if (includeSignal == "stack") 
+                    histoClone->Add(histoSumBackground);
+               
+                histoClone->Draw("hist same");
                 
 				// Add to legend
 		        pointersForLegend.insert(pointersForLegend.begin(),histoClone);
@@ -122,15 +114,7 @@ namespace theDoctor
                 if (factorSignal == 1.0)
         		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel());
                 else
-        		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel()+"#times"+factorSignalStr);
-                
-
-            }
-
-            if (includeSignal == "stack")
-            {
-                theStack->Draw("HIST");
-                ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
+        		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel()+"(#times"+factorSignalStr+")");
             }
         }
         
@@ -155,7 +139,8 @@ namespace theDoctor
                                   vector<Region>* theRegions,
                                   vector<Channel>* theChannels,
                                   HistoScrewdriver* theHistoScrewdriver,
-                                  OptionsScrewdriver theGlobalOptions)
+                                  OptionsScrewdriver theGlobalOptions,
+                                  string histoOptions)
       {
           vector<Plot> theOutput;
           
@@ -192,8 +177,15 @@ namespace theDoctor
                   if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
               }
 
+              Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                                                                                        theVar->getTag(),
+                                                                                        theRegion->getTag(),
+                                                                                        theChannel->getTag(),
+                                                                                        "");
               theOutput.push_back(
-                                    MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theGlobalOptions)
+                                    MakePlot(theVar,theRegion,theChannel,
+                                             theBackgrounds,theSignals,theSumBackground,
+                                             theGlobalOptions)
                                  );
    
           }

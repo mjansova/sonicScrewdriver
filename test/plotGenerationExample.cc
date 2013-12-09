@@ -174,7 +174,7 @@ int main (int argc, char *argv[])
   // ###################################
   
   mySonic.MakePlots();
-  mySonic.WritePlots("plots/");
+  mySonic.WritePlots("plots/","CMS Internal #sqrt{s} = 8 TeV, L = 20 fb^{-1}");
 
   cout << endl;
   cout << "   ┌──────────────────────────────┐ " << endl;

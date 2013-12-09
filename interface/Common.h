@@ -52,4 +52,6 @@ using namespace std;
 #define COLORPLOT_BLACK		kBlack
 #define COLORPLOT_GRAY		kGray
 
+string floatToString(float input);
+
 #endif

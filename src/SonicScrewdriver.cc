@@ -3,6 +3,14 @@
 
 using namespace theDoctor;
 
+string floatToString(float input)
+{
+    std::ostringstream ss;
+    ss.precision(3);
+    ss << input;
+    return ss.str();
+}
+
 SonicScrewdriver::SonicScrewdriver():
 theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels) { }
 
