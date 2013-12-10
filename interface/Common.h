@@ -28,6 +28,7 @@
 #include <TStyle.h>
 #include <TError.h>
 #include <THStack.h>
+#include <TPaletteAxis.h>
 
 using namespace std;
 

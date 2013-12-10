@@ -177,7 +177,7 @@ namespace theDoctor
 
           // Compute and draw the ratio
 
-          thePlot.AddPad(0,0.75,1,0.97);
+          thePlot.AddPad(0,0.72,1,0.95);
 
           TH1F* ratio = theDataMCRatio->getClone();
 

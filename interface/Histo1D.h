@@ -15,11 +15,11 @@ namespace theDoctor
       
      public:
 
-      Histo1D(Name theHistoType_,
+      Histo1D(Name      theHistoType_,
               Variable* theVar_, 
-              Region* theRegion_, 
-              Channel* theChannel_,
-              string theHistoParameters_ = "") :
+              Region*   theRegion_, 
+              Channel*  theChannel_,
+              string    theHistoParameters_ = "") :
       theHistoType(theHistoType_)
       {
           theVar          = theVar_;
@@ -45,13 +45,13 @@ namespace theDoctor
 
      protected:
 
-      TH1F* theHisto;
+      TH1F*         theHisto;
 
       Variable*     theVar;
       Region*       theRegion;
       Channel*      theChannel;
+
       Name          theHistoType;
-      
       string        theHistoParameters;
 
     };

@@ -27,8 +27,6 @@ namespace theDoctor
 
             theHisto->SetName(nameHisto.c_str());
 
-            DEBUG_MSG << endl;
-
             theHisto->Add(theSumData->getClone());
             theHisto->Divide(theSumBackground->getClone());
         
@@ -61,8 +59,6 @@ namespace theDoctor
                 Variable* theVar     = &((*theVariables)[v]);
                 Region*   theRegion  = &((*theRegions)[r]);
                 Channel*  theChannel = &((*theChannels)[c]);
-
-                DEBUG_MSG << "v = " << theVar->getTag() << " ; r = " << theRegion->getTag() << " ; c = " << theChannel->getTag() << endl;
 
                 Histo1D* theSumData = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumData",
                                                                                     theVar->getTag(),

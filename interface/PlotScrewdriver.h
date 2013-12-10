@@ -88,7 +88,7 @@ namespace theDoctor
 
                 DEBUG_MSG << " scheduledHisto : " << histoType << " ; " << histoOptions << endl;
 
-                if (histoType == "1DSumBackground") 
+                     if (histoType == "1DSumBackground") 
                     Histo1DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "1DSumData") 
                     Histo1DSumData      ::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
@@ -135,10 +135,10 @@ namespace theDoctor
                 if (plotType == "1DDataMCComparison")
                     inputFromProducer = 
                         Plot1DDataMCComparison::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
-                /*
                 if (plotType == "2D")
                     inputFromProducer = 
                         Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                /*
                 if (plotType == "2DProjectedTo1D")
                     inputFromProducer = 
                         Plot2DProjectedTo1D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);

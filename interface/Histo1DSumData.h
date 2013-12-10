@@ -18,8 +18,6 @@ namespace theDoctor
                      vector<Histo1DEntries*> theDatas) : 
       Histo1D(Name("1DSumData","Entries"),theVar_,theRegion_,theChannel_)
       {
-          DEBUG_MSG << endl;
-
           string nameHisto =  string("v:")+theVar->getTag()
                                    +"|r:" +theRegion->getTag()
                                    +"|c:" +theChannel->getTag()
@@ -32,8 +30,6 @@ namespace theDoctor
           {
               theHisto->Add(theDatas[i]->getClone());
           }
-
-          DEBUG_MSG << endl;
       }; 
 
       ~Histo1DSumData() { };
@@ -71,8 +67,6 @@ namespace theDoctor
               Region*   theRegion  = &((*theRegions)[r]);
               Channel*  theChannel = &((*theChannels)[c]);
       
-              DEBUG_MSG << "v = " << theVar->getTag() << " ; r = " << theRegion->getTag() << " ; c = " << theChannel->getTag() << endl;
-
               // Now loop on the histos
               for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
               {

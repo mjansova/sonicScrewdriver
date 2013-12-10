@@ -14,17 +14,20 @@ namespace theDoctor
       
      public:
 
-      Histo2D(Variable*   theXVar_,
+      Histo2D(Name        theHistoType_,
+              Variable*   theXVar_,
               Variable*   theYVar_,
               Region*     theRegion_,
               Channel*    theChannel_,
-              Name        theHistoType_) :
+              string      theHistoParameters_ = "") :
       theHistoType(theHistoType_)
       {
           theXVar = theXVar_;
           theYVar = theYVar_;
           theRegion       = theRegion_;
           theChannel      = theChannel_;
+          
+          theHistoParameters = theHistoParameters_;
 
           theHisto          = new TH2F("","",
                                        theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
@@ -36,25 +39,26 @@ namespace theDoctor
       ~Histo2D() { };
 
       // Accessors
-      TH2F*         getHisto()           { return theHisto;                  };
-      TH2F*         getClone()           { return (TH2F*) theHisto->Clone(); };
-      Variable*     getVariableX()       { return theXVar;                   };
-      string        getVariableXTag()    { return theXVar->getTag();         };
-      Variable*     getVariableY()       { return theYVar;                   };
-      string        getVariableYTag()    { return theYVar->getTag();         };
-      Region*       getRegion()          { return theRegion;                 };
-      string        getRegionTag()       { return theRegion->getTag();       };
-      Channel*      getChannel()         { return theChannel;                };
-      string        getChannelTag()      { return theChannel->getTag();      };
-      
+      TH2F*     getHisto()           { return theHisto;           };      TH2F*   getClone()        { return (TH2F*) theHisto->Clone(); };
+      Variable* getVariableX()       { return theXVar;            };      string  getVariableXTag() { return theXVar->getTag();         };
+      Variable* getVariableY()       { return theYVar;            };      string  getVariableYTag() { return theYVar->getTag();         };
+      Region*   getRegion()          { return theRegion;          };      string  getRegionTag()    { return theRegion->getTag();       };
+      Channel*  getChannel()         { return theChannel;         };      string  getChannelTag()   { return theChannel->getTag();      };
+
+      Name      getHistoType()       { return theHistoType;       };      string  getHistoTypeTag() { return theHistoType.getTag();     };
+      string    getHistoParameters() { return theHistoParameters; };
+
      protected:
 
         TH2F*     theHisto;
+        
         Variable* theXVar;
         Variable* theYVar;
         Region*   theRegion;
         Channel*  theChannel;
+        
         Name      theHistoType;
+        string    theHistoParameters;
 
     };
 

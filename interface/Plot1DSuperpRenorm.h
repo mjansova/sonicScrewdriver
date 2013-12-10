@@ -22,6 +22,62 @@ namespace theDoctor
       Plot1DSuperpRenorm();
       ~Plot1DSuperpRenorm();
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output)
+      {
+      }
+
+      static vector<Plot> Produce(vector<Variable>* theVariables,
+                                  vector<ProcessClass>* theProcessClasses,
+                                  vector<Region>* theRegions,
+                                  vector<Channel>* theChannels,
+                                  HistoScrewdriver* theHistoScrewdriver,
+                                  OptionsScrewdriver theGlobalOptions,
+                                  string histoOptions)
+      {
+          vector<Plot> theOutput;
+          
+          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
+          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
+          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
+          {
+              vector<Histo1DEntries*> theBackgrounds;
+              vector<Histo1DEntries*> theSignals;
+
+              Variable* theVar     = &((*theVariables)[v]);
+              Region*   theRegion  = &((*theRegions)[r]);
+              Channel*  theChannel = &((*theChannels)[c]);
+      
+              // Now loop on the histos
+              for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+              {
+
+                  ProcessClass thisProcess = (*theProcessClasses)[i];
+
+                  // If this processClass is not a background nor signal, we skip it
+                  if ((thisProcess.getType() != "background")
+                   && (thisProcess.getType() != "signal"    )) continue;
+
+                  
+
+                  // If it it, we add it to the relevant backgrounds
+                  Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                                                                                            thisProcess.getTag(),
+                                                                                            theRegion->getTag(),
+                                                                                            theChannel->getTag());
+
+                  if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
+                  if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
+              }
+
+              theOutput.push_back(
+                                    MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theGlobalOptions)
+                                 );
+   
+          }
+
+          return theOutput;
+      }
+
       static Plot MakePlot(Variable* theVar, 
                            Region* theRegion, 
                            Channel* theChannel,
@@ -29,8 +85,6 @@ namespace theDoctor
                            vector<Histo1DEntries*> theSignals,
                            OptionsScrewdriver theGlobalOptions)
       {
-
-         DEBUG_MSG << endl;
 
          string plotName = string("t:1DSuperpRenorm|v:")+theVar->getTag()
                                                  +"|r:"+theRegion->getTag()
@@ -66,7 +120,7 @@ namespace theDoctor
         TH1F* firstHisto = 0;
 
         // Now loop on the histos
-        for (int i = 0 ; i < theBackgrounds.size() ; i++)
+        for (unsigned int i = 0 ; i < theBackgrounds.size() ; i++)
         {
             // Get associated processClass
             ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
@@ -135,62 +189,6 @@ namespace theDoctor
         firstHisto->SetMaximum(globalMax * 1.1);
 
         return thePlot;
-      }
-
-      static void GetHistoDependencies(vector<pair<string,string> >& output)
-      {
-      }
-
-      static vector<Plot> Produce(vector<Variable>* theVariables,
-                                  vector<ProcessClass>* theProcessClasses,
-                                  vector<Region>* theRegions,
-                                  vector<Channel>* theChannels,
-                                  HistoScrewdriver* theHistoScrewdriver,
-                                  OptionsScrewdriver theGlobalOptions,
-                                  string histoOptions)
-      {
-          vector<Plot> theOutput;
-          
-          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
-          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
-          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
-          {
-              vector<Histo1DEntries*> theBackgrounds;
-              vector<Histo1DEntries*> theSignals;
-
-              Variable* theVar     = &((*theVariables)[v]);
-              Region*   theRegion  = &((*theRegions)[r]);
-              Channel*  theChannel = &((*theChannels)[c]);
-      
-              // Now loop on the histos
-              for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
-              {
-
-                  ProcessClass thisProcess = (*theProcessClasses)[i];
-
-                  // If this processClass is not a background nor signal, we skip it
-                  if ((thisProcess.getType() != "background")
-                   && (thisProcess.getType() != "signal"    )) continue;
-
-                  
-
-                  // If it it, we add it to the relevant backgrounds
-                  Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
-                                                                                            thisProcess.getTag(),
-                                                                                            theRegion->getTag(),
-                                                                                            theChannel->getTag());
-
-                  if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
-                  if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
-              }
-
-              theOutput.push_back(
-                                    MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theGlobalOptions)
-                                 );
-   
-          }
-
-          return theOutput;
       }
 
      private:

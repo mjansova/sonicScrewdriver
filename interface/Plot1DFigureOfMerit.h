@@ -22,6 +22,69 @@ namespace theDoctor
       Plot1DFigureOfMerit();
       ~Plot1DFigureOfMerit();
 
+      static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
+      {
+          Histo1DSumBackground::GetHistoDependencies(output); 
+          output.push_back(pair<string,string>("1DSumBackground",""));
+          output.push_back(pair<string,string>("1DFigureOfMerit",options));
+      }
+
+      static vector<Plot> Produce(vector<Variable>* theVariables,
+                                  vector<ProcessClass>* theProcessClasses,
+                                  vector<Region>* theRegions,
+                                  vector<Channel>* theChannels,
+                                  HistoScrewdriver* theHistoScrewdriver,
+                                  OptionsScrewdriver theGlobalOptions,
+                                  string histoOptions)
+      {
+          vector<Plot> theOutput;
+         
+          string varName = OptionsScrewdriver::GetStringOption(histoOptions,"var");
+          // Browse the (var x reg x chan) space
+          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
+          {
+
+              Variable* theVar = &((*theVariables)[v]);
+              if (theVar->getTag() != varName) continue;
+              
+              for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
+              for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
+              {
+                  vector<Histo1D*> theSignals;
+                  vector<ProcessClass*> theSignalProcessClasses;
+
+                  Region*   theRegion  = &((*theRegions)[r]);
+                  Channel*  theChannel = &((*theChannels)[c]);
+
+                  // Now loop on the histos
+                  for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+                  {
+
+                      ProcessClass thisProcess = (*theProcessClasses)[i];
+
+                      // If this processClass is not a signal, we skip it
+                      if (thisProcess.getType() != "signal") continue;
+
+                      // Get the histo
+                      Histo1D* thisHisto = theHistoScrewdriver->get1DHistoForPlotPointer("1DFigureOfMerit",
+                              theVar->getTag(),
+                              theRegion->getTag(),
+                              theChannel->getTag(),
+                              string("sig=")+thisProcess.getTag());
+                      // Add it to the vector
+                      theSignals.push_back(thisHisto);
+                      theSignalProcessClasses.push_back(&((*theProcessClasses)[i]));
+                  }
+
+                  theOutput.push_back(
+                          MakePlot(theVar,theRegion,theChannel,theSignals,theSignalProcessClasses,theGlobalOptions)
+                          );
+
+              }
+          }
+          return theOutput;
+      }
+
       static Plot MakePlot(Variable* theVar, 
                            Region* theRegion, 
                            Channel* theChannel,
@@ -91,69 +154,6 @@ namespace theDoctor
         firstHisto->SetMaximum(globalMax * 1.1);
 
         return thePlot;
-      }
-
-      static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
-      {
-          Histo1DSumBackground::GetHistoDependencies(output); 
-          output.push_back(pair<string,string>("1DSumBackground",""));
-          output.push_back(pair<string,string>("1DFigureOfMerit",options));
-      }
-
-      static vector<Plot> Produce(vector<Variable>* theVariables,
-                                  vector<ProcessClass>* theProcessClasses,
-                                  vector<Region>* theRegions,
-                                  vector<Channel>* theChannels,
-                                  HistoScrewdriver* theHistoScrewdriver,
-                                  OptionsScrewdriver theGlobalOptions,
-                                  string histoOptions)
-      {
-          vector<Plot> theOutput;
-         
-          string varName = OptionsScrewdriver::GetStringOption(histoOptions,"var");
-          // Browse the (var x reg x chan) space
-          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
-          {
-
-              Variable* theVar = &((*theVariables)[v]);
-              if (theVar->getTag() != varName) continue;
-              
-              for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
-              for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
-              {
-                  vector<Histo1D*> theSignals;
-                  vector<ProcessClass*> theSignalProcessClasses;
-
-                  Region*   theRegion  = &((*theRegions)[r]);
-                  Channel*  theChannel = &((*theChannels)[c]);
-
-                  // Now loop on the histos
-                  for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
-                  {
-
-                      ProcessClass thisProcess = (*theProcessClasses)[i];
-
-                      // If this processClass is not a signal, we skip it
-                      if (thisProcess.getType() != "signal") continue;
-
-                      // Get the histo
-                      Histo1D* thisHisto = theHistoScrewdriver->get1DHistoForPlotPointer("1DFigureOfMerit",
-                              theVar->getTag(),
-                              theRegion->getTag(),
-                              theChannel->getTag(),
-                              string("sig=")+thisProcess.getTag());
-                      // Add it to the vector
-                      theSignals.push_back(thisHisto);
-                      theSignalProcessClasses.push_back(&((*theProcessClasses)[i]));
-                  }
-
-                  theOutput.push_back(
-                          MakePlot(theVar,theRegion,theChannel,theSignals,theSignalProcessClasses,theGlobalOptions)
-                          );
-
-              }
-          }
-          return theOutput;
       }
 
      private:

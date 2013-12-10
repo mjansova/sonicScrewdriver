@@ -17,20 +17,16 @@ namespace theDoctor
                        ProcessClass* theProcessClass_,
                        Region* theRegion_,
                        Channel* theChannel_) :
-        Histo2D(theXVar_,theYVar_,theRegion_,theChannel_,Name("entries","Entries"))
+        Histo2D(Name("2DEntries","Entries"), theXVar_,theYVar_,theRegion_,theChannel_)
         {
-            theXVar = theXVar_;
-            theYVar = theYVar_;
             theProcessClass = theProcessClass_;
-            theRegion       = theRegion_;
-            theChannel      = theChannel_;
 
             string nameHisto =  string("vX:")+theXVar->getTag()
-                                +"|vY:"+theYVar->getTag()
-                                +"|p:"+theProcessClass->getTag()
-                                +"|r:"+theRegion->getTag()
-                                +"|c:"+theChannel->getTag()
-                                +"|t:" +theHistoType.getTag();
+                                     +"|vY:" +theYVar->getTag()
+                                     +"|p:"  +theProcessClass->getTag()
+                                     +"|r:"  +theRegion->getTag()
+                                     +"|c:"  +theChannel->getTag()
+                                     +"|t:"  +theHistoType.getTag();
 
             theHisto->SetName(nameHisto.c_str());
             theHistoRawEntries = new TH2F("","",
@@ -47,8 +43,8 @@ namespace theDoctor
         // Accessors
         TH2F*         getEntriesHisto()    { return theHistoRawEntries;                  };
         TH2F*         getEntriesClone()    { return (TH2F*) theHistoRawEntries->Clone(); };
-        ProcessClass* getProcessClass()    { return theProcessClass;                           };
-        string        getProcessClassTag() { return theProcessClass->getTag();                 };
+        ProcessClass* getProcessClass()    { return theProcessClass;                     };
+        string        getProcessClassTag() { return theProcessClass->getTag();           };
 
         // Editors
         void AutoFill(float weight = 1.0)

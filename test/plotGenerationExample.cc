@@ -112,6 +112,8 @@ int main (int argc, char *argv[])
   
      // Create histograms
      mySonic.Create1DHistos();
+     
+     mySonic.Add2DHisto("invariantMass","MET");
 
      // Set options
 
@@ -130,8 +132,8 @@ int main (int argc, char *argv[])
      mySonic.SchedulePlots("1DSuperpRenorm");
      mySonic.SchedulePlots("1DStack");
      mySonic.SchedulePlots("1DDataMCComparison");
-     
      mySonic.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
+     mySonic.SchedulePlots("2D");
 
   // ########################################
   // ##        Run over the events         ##
@@ -156,7 +158,7 @@ int main (int argc, char *argv[])
              if (myEvent.processType == 0) { currentDataset = string("foo1");  }
         else if (myEvent.processType == 1) { currentDataset = string("bar1");  }
         else if (myEvent.processType == 2) { currentDataset = string("muf1");  }
-        else if (myEvent.processType == 3) { currentDataset = string("data1");  }        
+        else if (myEvent.processType == 3) { currentDataset = string("data1"); } 
      
         // Reweight event to luminosity
         float weight = mySonic.GetDatasetLumiWeight(currentDataset);

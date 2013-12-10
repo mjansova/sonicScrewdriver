@@ -22,6 +22,70 @@ namespace theDoctor
       Plot1DStack();
       ~Plot1DStack();
 
+
+      static void GetHistoDependencies(vector<pair<string,string> >& output)
+      {
+      }
+
+      static vector<Plot> Produce(vector<Variable>* theVariables,
+                                  vector<ProcessClass>* theProcessClasses,
+                                  vector<Region>* theRegions,
+                                  vector<Channel>* theChannels,
+                                  HistoScrewdriver* theHistoScrewdriver,
+                                  OptionsScrewdriver theGlobalOptions,
+                                  string histoOptions)
+      {
+          vector<Plot> theOutput;
+          
+          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
+          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
+          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
+          {
+              vector<Histo1DEntries*> theBackgrounds;
+              vector<Histo1DEntries*> theSignals;
+
+              Variable* theVar     = &((*theVariables)[v]);
+              Region*   theRegion  = &((*theRegions)[r]);
+              Channel*  theChannel = &((*theChannels)[c]);
+      
+              // Now loop on the histos
+              for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+              {
+
+                  ProcessClass thisProcess = (*theProcessClasses)[i];
+
+                  // If this processClass is not a background nor signal, we skip it
+                  if ((thisProcess.getType() != "background")
+                   && (thisProcess.getType() != "signal"    )) continue;
+
+                  
+
+                  // If it it, we add it to the relevant backgrounds
+                  Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                                                                                            thisProcess.getTag(),
+                                                                                            theRegion->getTag(),
+                                                                                            theChannel->getTag());
+
+                  if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
+                  if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
+              }
+
+              Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                                                                                        theVar->getTag(),
+                                                                                        theRegion->getTag(),
+                                                                                        theChannel->getTag(),
+                                                                                        "");
+              theOutput.push_back(
+                                    MakePlot(theVar,theRegion,theChannel,
+                                             theBackgrounds,theSignals,theSumBackground,
+                                             theGlobalOptions)
+                                 );
+   
+          }
+
+          return theOutput;
+      }
+
       static Plot MakePlot(Variable* theVar, 
                            Region* theRegion, 
                            Channel* theChannel,
@@ -128,69 +192,6 @@ namespace theDoctor
 
 
         return thePlot;
-      }
-
-      static void GetHistoDependencies(vector<pair<string,string> >& output)
-      {
-      }
-
-      static vector<Plot> Produce(vector<Variable>* theVariables,
-                                  vector<ProcessClass>* theProcessClasses,
-                                  vector<Region>* theRegions,
-                                  vector<Channel>* theChannels,
-                                  HistoScrewdriver* theHistoScrewdriver,
-                                  OptionsScrewdriver theGlobalOptions,
-                                  string histoOptions)
-      {
-          vector<Plot> theOutput;
-          
-          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
-          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
-          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
-          {
-              vector<Histo1DEntries*> theBackgrounds;
-              vector<Histo1DEntries*> theSignals;
-
-              Variable* theVar     = &((*theVariables)[v]);
-              Region*   theRegion  = &((*theRegions)[r]);
-              Channel*  theChannel = &((*theChannels)[c]);
-      
-              // Now loop on the histos
-              for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
-              {
-
-                  ProcessClass thisProcess = (*theProcessClasses)[i];
-
-                  // If this processClass is not a background nor signal, we skip it
-                  if ((thisProcess.getType() != "background")
-                   && (thisProcess.getType() != "signal"    )) continue;
-
-                  
-
-                  // If it it, we add it to the relevant backgrounds
-                  Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
-                                                                                            thisProcess.getTag(),
-                                                                                            theRegion->getTag(),
-                                                                                            theChannel->getTag());
-
-                  if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
-                  if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
-              }
-
-              Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
-                                                                                        theVar->getTag(),
-                                                                                        theRegion->getTag(),
-                                                                                        theChannel->getTag(),
-                                                                                        "");
-              theOutput.push_back(
-                                    MakePlot(theVar,theRegion,theChannel,
-                                             theBackgrounds,theSignals,theSumBackground,
-                                             theGlobalOptions)
-                                 );
-   
-          }
-
-          return theOutput;
       }
 
      private:
