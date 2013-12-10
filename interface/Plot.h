@@ -16,17 +16,25 @@ namespace theDoctor
         public:
 
             // Plot constructor
-            Plot(string name_, string type_, string options = "")
+            Plot(string name_, string type_, OptionsScrewdriver theGlobalOptions, string options = "")
             {
                 theCanvas = new TCanvas(name_.c_str(),"",850,750);
                 theLegend = new TLegend(0.65,0.70,0.89,0.89);
-                theTopInfo = new TPaveText(0.1,0.915,0.8,0.95,"NDC");
-
-                PlaceLegend("topright",0.2,0.3);
+                theTopLeftInfo  = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
+                theTopRightInfo = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
 
                 PlotDefaultStyles::ApplyDefaultCanvasStyle(theCanvas);
                 PlotDefaultStyles::ApplyDefaultLegendStyle(theLegend);
-                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopInfo);
+                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopLeftInfo);
+                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopRightInfo);
+
+                theTopLeftInfo ->SetTextAlign(12);
+                theTopRightInfo->SetTextAlign(32);
+
+                string infoTopRight = theGlobalOptions.GetGlobalStringOption("Plot","infoTopRight");
+                string infoTopLeft  = theGlobalOptions.GetGlobalStringOption("Plot","infoTopLeft");
+                theTopLeftInfo->AddText(infoTopRight.c_str());
+                theTopRightInfo->AddText(infoTopLeft.c_str());
 
                 type = type_;
 
@@ -78,16 +86,43 @@ namespace theDoctor
             {
 
                 SetActive();
-                if (thePads.size() != 0) thePads[0]->cd();
+                
 
+                // Draw the top info
+                if (thePads.size() != 0)
+                {
+                    DEBUG_MSG << "type = " << type << endl;
+                    thePads[thePads.size()-1]->cd();
+                    theTopLeftInfo ->SetY1(0.75);
+                    theTopLeftInfo ->SetY2(0.9);
+                    theTopRightInfo->SetY1(0.75);
+                    theTopRightInfo->SetY2(0.9);
+                    theTopLeftInfo ->SetX1(    thePads[thePads.size()-1]->GetLeftMargin() -0.04);
+                    theTopLeftInfo ->SetX2(1.0-thePads[thePads.size()-1]->GetRightMargin()+0.04);
+                    theTopRightInfo->SetX1(    thePads[thePads.size()-1]->GetLeftMargin() -0.04);
+                    theTopRightInfo->SetX2(1.0-thePads[thePads.size()-1]->GetRightMargin()+0.04);
+                    theTopLeftInfo->Draw();
+                    theTopRightInfo->Draw();
+                    thePads[0]->cd();
+                
+                    PlaceLegend(thePads[0],"topright",0.2,0.3);
+                }
+                else
+                {
+                    theTopLeftInfo ->SetX1(    theCanvas->GetLeftMargin() -0.04);
+                    theTopLeftInfo ->SetX2(1.0-theCanvas->GetRightMargin()+0.04);
+                    theTopRightInfo->SetX1(    theCanvas->GetLeftMargin() -0.04);
+                    theTopRightInfo->SetX2(1.0-theCanvas->GetRightMargin()+0.04);
+
+                    theTopLeftInfo->Draw();
+                    theTopRightInfo->Draw();
+                
+                    PlaceLegend(theCanvas,"topright",0.2,0.3);
+                }
+                
                 // Draw the legend and top info before writing
                 theLegend->Draw();
-                AddToTopInfo(infoText);
-                DEBUG_MSG << endl;
-                theTopInfo->Draw();
-                DEBUG_MSG << endl;
                 SetActive();
-                DEBUG_MSG << endl;
 
                 if ((type == "2D") || (type == "2DProjectedTo1D"))
                 {
@@ -142,20 +177,17 @@ namespace theDoctor
                 }  
             };
 
-            // Info text edition
-            void AddToTopInfo(string text)
-            { theTopInfo->AddText(text.c_str()); };
-
             // Legend edition
             void AddToLegend(const TObject* obj, const char* label,Option_t* option)
             { theLegend->AddEntry(obj,label,option); };
 
-            void PlaceLegend(string place, float width, float height)
+            void PlaceLegend(TPad* pad, string place, float width, float height)
             {
-                float abs_right = 0.875;
-                float abs_left = 0.125;
-                float abs_top = 0.875;
-                float abs_bot = 0.125;
+
+                float abs_right = 1.0-0.03-pad->GetRightMargin();
+                float abs_left  = 1.0-0.03-pad->GetLeftMargin();
+                float abs_top   = 1.0-0.03-pad->GetTopMargin();
+                float abs_bot   = 1.0-0.03-pad->GetBottomMargin();
 
                 float x_min = 0.0;
                 float y_min = 0.0;
@@ -207,7 +239,8 @@ namespace theDoctor
 
             TCanvas* theCanvas;
             TLegend* theLegend;
-            TPaveText* theTopInfo;
+            TPaveText* theTopLeftInfo;
+            TPaveText* theTopRightInfo;
             vector<TPad*> thePads;
 
             string type;

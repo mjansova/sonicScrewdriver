@@ -99,7 +99,7 @@ namespace theDoctor
                                           +"|r:"+theRegion->getTag()
                                           +"|c:"+theChannel->getTag();
 
-         Plot thePlot(plotName,"1DStack","");
+         Plot thePlot(plotName,"1DStack",theGlobalOptions,"");
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());

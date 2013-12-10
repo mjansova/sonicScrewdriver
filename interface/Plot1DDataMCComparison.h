@@ -22,7 +22,80 @@ namespace theDoctor
      
       Plot1DDataMCComparison();
       ~Plot1DDataMCComparison();
-      
+     
+      static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
+      {
+          Histo1DDataMCRatio::GetHistoDependencies(output); 
+          output.push_back(pair<string,string>("1DDataMCRatio",options));
+          output.push_back(pair<string,string>("1DSumData",options));
+      }
+
+      static vector<Plot> Produce(vector<Variable>* theVariables,
+              vector<ProcessClass>* theProcessClasses,
+              vector<Region>* theRegions,
+              vector<Channel>* theChannels,
+              HistoScrewdriver* theHistoScrewdriver,
+              OptionsScrewdriver theGlobalOptions,
+              string histoOptions)
+      {
+          vector<Plot> theOutput;
+
+          // Browse the (var x reg x chan) space
+          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
+          for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
+          for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
+          {
+          
+              vector<Histo1DEntries*> theBackgrounds;
+              vector<Histo1DEntries*> theSignals;
+
+              Variable* theVar     = &((*theVariables)[v]);
+              Region*   theRegion  = &((*theRegions)[r]);
+              Channel*  theChannel = &((*theChannels)[c]);
+
+              // Now loop on the histos
+              for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
+              {
+
+                  ProcessClass thisProcess = (*theProcessClasses)[i];
+
+                  // If it it, we add it to the relevant backgrounds
+                  Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                                                                                            thisProcess.getTag(),
+                                                                                            theRegion->getTag(),
+                                                                                            theChannel->getTag());
+
+                  if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
+                  if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
+              }
+
+              Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                                                                                        theVar->getTag(),
+                                                                                        theRegion->getTag(),
+                                                                                        theChannel->getTag(),
+                                                                                        "");
+              Histo1D* theSumData       = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumData",
+                                                                                        theVar->getTag(),
+                                                                                        theRegion->getTag(),
+                                                                                        theChannel->getTag(),
+                                                                                        "");
+              Histo1D* theDataMCRatio   = theHistoScrewdriver->get1DHistoForPlotPointer("1DDataMCRatio",
+                                                                                        theVar->getTag(),
+                                                                                        theRegion->getTag(),
+                                                                                        theChannel->getTag(),
+                                                                                        "");
+              theOutput.push_back(
+                                  MakePlot(theVar,theRegion,theChannel,
+                                           theBackgrounds,theSignals,
+                                           theSumBackground,theSumData,theDataMCRatio,
+                                           theGlobalOptions)
+                                 );
+
+          }
+
+          return theOutput;
+      }
+
       static Plot MakePlot(Variable* theVar, 
                            Region* theRegion, 
                            Channel* theChannel,
@@ -38,7 +111,7 @@ namespace theDoctor
                                                       +"|r:"+theRegion->getTag()
                                                       +"|c:"+theChannel->getTag();
 
-          Plot thePlot(plotName,"1DDataMCComparison","");
+          Plot thePlot(plotName,"1DDataMCComparison",theGlobalOptions,"");
           thePlot.SetParameter("variable",theVar->getTag());
           thePlot.SetParameter("region",theRegion->getTag());
           thePlot.SetParameter("channel",theChannel->getTag());
@@ -73,7 +146,9 @@ namespace theDoctor
           // #################################
 
           // Create stack histo + another histo for the error plotting for the background sum
-          thePlot.AddPad(0,0,1,0.8);
+          TPad* theStackPad = thePlot.AddPad(0,0,1,0.8);
+          theStackPad->SetTopMargin(0.0);
+
           THStack* stackBackground = new THStack("","");
 
           // Now loop on the histos
@@ -177,7 +252,9 @@ namespace theDoctor
 
           // Compute and draw the ratio
 
-          thePlot.AddPad(0,0.72,1,0.95);
+          TPad* theRatioPad = thePlot.AddPad(0,0.8,1,1);
+          theRatioPad->SetBottomMargin(0.07);
+          theRatioPad->SetTopMargin(0.3);
 
           TH1F* ratio = theDataMCRatio->getClone();
 
@@ -216,83 +293,6 @@ namespace theDoctor
 
           return thePlot;
       }
-
-      static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
-      {
-          Histo1DDataMCRatio::GetHistoDependencies(output); 
-          output.push_back(pair<string,string>("1DDataMCRatio",options));
-          output.push_back(pair<string,string>("1DSumData",options));
-      }
-
-      static vector<Plot> Produce(vector<Variable>* theVariables,
-              vector<ProcessClass>* theProcessClasses,
-              vector<Region>* theRegions,
-              vector<Channel>* theChannels,
-              HistoScrewdriver* theHistoScrewdriver,
-              OptionsScrewdriver theGlobalOptions,
-              string histoOptions)
-      {
-          vector<Plot> theOutput;
-
-          // Browse the (var x reg x chan) space
-          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
-              for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
-                  for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
-                  {
-          
-                      vector<Histo1DEntries*> theBackgrounds;
-                      vector<Histo1DEntries*> theSignals;
-
-                      Variable* theVar     = &((*theVariables)[v]);
-                      Region*   theRegion  = &((*theRegions)[r]);
-                      Channel*  theChannel = &((*theChannels)[c]);
-
-                      // Now loop on the histos
-                      for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
-                      {
-
-                          ProcessClass thisProcess = (*theProcessClasses)[i];
-
-                          // If it it, we add it to the relevant backgrounds
-                          Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
-                                  thisProcess.getTag(),
-                                  theRegion->getTag(),
-                                  theChannel->getTag());
-
-                          if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
-                          if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
-                      }
-
-                      Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
-                                                                                                theVar->getTag(),
-                                                                                                theRegion->getTag(),
-                                                                                                theChannel->getTag(),
-                                                                                                "");
-                      Histo1D* theSumData       = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumData",
-                                                                                                theVar->getTag(),
-                                                                                                theRegion->getTag(),
-                                                                                                theChannel->getTag(),
-                                                                                                "");
-                      Histo1D* theDataMCRatio   = theHistoScrewdriver->get1DHistoForPlotPointer("1DDataMCRatio",
-                                                                                                theVar->getTag(),
-                                                                                                theRegion->getTag(),
-                                                                                                theChannel->getTag(),
-                                                                                                "");
-                      theOutput.push_back(
-                              MakePlot(theVar,theRegion,theChannel,
-                                       theBackgrounds,theSignals,
-                                       theSumBackground,theSumData,theDataMCRatio,
-                                       theGlobalOptions)
-                              );
-
-                  }
-
-          return theOutput;
-      }
-
-
-
-
 
      private:
 

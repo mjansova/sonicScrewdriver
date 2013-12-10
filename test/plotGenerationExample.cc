@@ -135,6 +135,11 @@ int main (int argc, char *argv[])
      mySonic.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
      mySonic.SchedulePlots("2D");
 
+     // Config plots
+
+     mySonic.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
+     mySonic.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
+
   // ########################################
   // ##        Run over the events         ##
   // ########################################
@@ -176,7 +181,7 @@ int main (int argc, char *argv[])
   // ###################################
   
   mySonic.MakePlots();
-  mySonic.WritePlots("plots/","CMS Internal #sqrt{s} = 8 TeV, L = 20 fb^{-1}");
+  mySonic.WritePlots("./plots/");
 
   cout << endl;
   cout << "   ┌──────────────────────────────┐ " << endl;

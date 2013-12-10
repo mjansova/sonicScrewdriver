@@ -64,15 +64,13 @@ namespace theDoctor
                                  OptionsScrewdriver theGlobalOptions)
             {
 
-                DEBUG_MSG << endl;
-
                 string plotName = string("t:2D|vX:")+theXVar->getTag()
                                             +"|vY:" +theYVar->getTag()
                                             +"|p:"  +theProcessClass->getTag()
                                             +"|r:"  +theRegion->getTag()
                                             +"|c:"  +theChannel->getTag();
 
-                Plot thePlot(plotName,"2D","");
+                Plot thePlot(plotName,"2D",theGlobalOptions,"");
                 thePlot.SetParameter("variableX",   theXVar->getTag());
                 thePlot.SetParameter("variableY",   theYVar->getTag());
                 thePlot.SetParameter("processClass",theProcessClass->getTag());
@@ -96,13 +94,14 @@ namespace theDoctor
                 ApplyHistoStyle(&thePlot,histoClone,theProcessClass->getColor(),theGlobalOptions,theProcessClass->getOptions());
                 ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theXVar->getOptions(),theYVar->getOptions());
 
+                thePlot.getCanvas()->SetRightMargin(0.1);
                 histoClone->Draw("COLZ");
                 thePlot.Update();
                 TPaletteAxis *pal = (TPaletteAxis*) histoClone->GetListOfFunctions()->FindObject("palette");
                 pal->SetX1NDC(0.901);
                 pal->SetY1NDC(0.1);
                 pal->SetX2NDC(0.93);
-                pal->SetY2NDC(0.9);
+                pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
 
                 return thePlot;
             }

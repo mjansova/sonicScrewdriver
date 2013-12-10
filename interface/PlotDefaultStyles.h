@@ -21,19 +21,20 @@ class PlotDefaultStyles
   {
 	 theAxis->SetTitle(label.c_str());
 	 theAxis->SetTitleFont(PLOTDEFAULTSTYLES_FONT+2);
-	 theAxis->SetTitleSize(0.06);
-	 theAxis->SetTitleOffset(0.7);
-	 theAxis->SetLabelFont(PLOTDEFAULTSTYLES_FONT+2);
+	 theAxis->SetTitleSize(0.05);
+	 theAxis->SetTitleOffset(0.9);
+	 theAxis->SetLabelFont(PLOTDEFAULTSTYLES_FONT+3);
+	 theAxis->SetLabelSize(22);
   }
 
   // PaveText style
   static void ApplyDefaultPaveTextStyle(TPaveText* thePaveText)
   {
 	 thePaveText->SetFillColor(kWhite);
+	 thePaveText->SetFillStyle(0);
 	 thePaveText->SetBorderSize(0);
-	 thePaveText->SetTextFont(PLOTDEFAULTSTYLES_FONT+2);
-	 thePaveText->SetTextAlign(12);
-	 thePaveText->SetTextSize(0.05);
+	 thePaveText->SetTextFont(PLOTDEFAULTSTYLES_FONT+3);
+	 thePaveText->SetTextSize(26);
   }
 
   // Legend style
@@ -43,6 +44,7 @@ class PlotDefaultStyles
 	 theLegend->SetFillColor(kWhite);
 	 theLegend->SetFillStyle(0);
 	 theLegend->SetTextFont(PLOTDEFAULTSTYLES_FONT+2);
+	 theLegend->SetTextSize(0.04);
   }
 
   // Canvas style
@@ -54,6 +56,8 @@ class PlotDefaultStyles
 	theCanvas->SetTicky();
 	theCanvas->SetFillColor(kWhite);
 	theCanvas->SetFillStyle(0);
+    theCanvas->SetRightMargin(0.05);
+    theCanvas->SetTopMargin(0.08);
   }
 
   // Pad
@@ -65,6 +69,8 @@ class PlotDefaultStyles
 	thePad->SetTicky();
 	thePad->SetFillColor(kWhite);
 	thePad->SetFillStyle(0);
+    thePad->SetRightMargin(0.05);
+    thePad->SetTopMargin(0.05);
   }
 
 

@@ -90,7 +90,7 @@ namespace theDoctor
                                                  +"|r:"+theRegion->getTag()
                                                  +"|c:"+theChannel->getTag();
 
-         Plot thePlot(plotName,"1DSuperpRenorm","");
+         Plot thePlot(plotName,"1DSuperpRenorm",theGlobalOptions,"");
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
