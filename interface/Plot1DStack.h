@@ -103,7 +103,9 @@ namespace theDoctor
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
-
+         thePlot.AddToInPlotInfo(theChannel->getLabel());
+         thePlot.AddToInPlotInfo(theRegion->getLabel());
+         
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStack","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStack","factorSignal");
          string factorSignalStr = floatToString(factorSignal);
@@ -213,6 +215,7 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
       { 
+         theStack->SetMaximum(theStack->GetMaximum() * 1.3);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
          theStack->SetTitle("");

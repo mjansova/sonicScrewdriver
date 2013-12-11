@@ -22,19 +22,23 @@ namespace theDoctor
                 theLegend = new TLegend(0.65,0.70,0.89,0.89);
                 theTopLeftInfo  = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theTopRightInfo = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
+                theInPlotInfo = new TPaveText(0.13,0.77,0.43,0.87,"NDC");
 
                 PlotDefaultStyles::ApplyDefaultCanvasStyle(theCanvas);
                 PlotDefaultStyles::ApplyDefaultLegendStyle(theLegend);
                 PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopLeftInfo);
                 PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopRightInfo);
+                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theInPlotInfo);
 
                 theTopLeftInfo ->SetTextAlign(12);
                 theTopRightInfo->SetTextAlign(32);
 
                 string infoTopRight = theGlobalOptions.GetGlobalStringOption("Plot","infoTopRight");
                 string infoTopLeft  = theGlobalOptions.GetGlobalStringOption("Plot","infoTopLeft");
-                theTopLeftInfo->AddText(infoTopRight.c_str());
+                theTopLeftInfo ->AddText(infoTopRight.c_str());
                 theTopRightInfo->AddText(infoTopLeft.c_str());
+
+                theInPlotInfo->SetTextAlign(11);
 
                 type = type_;
 
@@ -47,6 +51,11 @@ namespace theDoctor
             string getType()     { return type;      };
             TCanvas* getCanvas() { return theCanvas; };
             TLegend* getLegend() { return theLegend; }; 
+
+            void AddToInPlotInfo(string info)
+            {
+                if (info != "") theInPlotInfo->AddText(info.c_str());
+            }
 
             // Logarithm scale management
             void SetLogX() 
@@ -82,46 +91,60 @@ namespace theDoctor
                 return newPad;
             }
 
-            void Write(string outputFolder = "", string infoText = "", string options = "")
+            void DrawInfoText()
             {
+                TPad* plotTo;
 
-                SetActive();
-                
-
-                // Draw the top info
                 if (thePads.size() != 0)
                 {
-                    DEBUG_MSG << "type = " << type << endl;
-                    thePads[thePads.size()-1]->cd();
+                    // TODO : translate / generalize this in term of top margin and paveText height
                     theTopLeftInfo ->SetY1(0.75);
                     theTopLeftInfo ->SetY2(0.9);
                     theTopRightInfo->SetY1(0.75);
                     theTopRightInfo->SetY2(0.9);
-                    theTopLeftInfo ->SetX1(    thePads[thePads.size()-1]->GetLeftMargin() -0.04);
-                    theTopLeftInfo ->SetX2(1.0-thePads[thePads.size()-1]->GetRightMargin()+0.04);
-                    theTopRightInfo->SetX1(    thePads[thePads.size()-1]->GetLeftMargin() -0.04);
-                    theTopRightInfo->SetX2(1.0-thePads[thePads.size()-1]->GetRightMargin()+0.04);
-                    theTopLeftInfo->Draw();
-                    theTopRightInfo->Draw();
-                    thePads[0]->cd();
-                
-                    PlaceLegend(thePads[0],"topright",0.2,0.3);
+                    plotTo = thePads[thePads.size()-1];
                 }
                 else
-                {
-                    theTopLeftInfo ->SetX1(    theCanvas->GetLeftMargin() -0.04);
-                    theTopLeftInfo ->SetX2(1.0-theCanvas->GetRightMargin()+0.04);
-                    theTopRightInfo->SetX1(    theCanvas->GetLeftMargin() -0.04);
-                    theTopRightInfo->SetX2(1.0-theCanvas->GetRightMargin()+0.04);
+                    plotTo = theCanvas;
 
-                    theTopLeftInfo->Draw();
-                    theTopRightInfo->Draw();
+                plotTo->cd();
                 
-                    PlaceLegend(theCanvas,"topright",0.2,0.3);
-                }
-                
-                // Draw the legend and top info before writing
+                theTopLeftInfo ->SetX1(    plotTo->GetLeftMargin() -0.04);
+                theTopLeftInfo ->SetX2(1.0-plotTo->GetRightMargin()+0.04);
+                theTopRightInfo->SetX1(    plotTo->GetLeftMargin() -0.04);
+                theTopRightInfo->SetX2(1.0-plotTo->GetRightMargin()+0.04);
+
+                theTopLeftInfo->Draw();
+                theTopRightInfo->Draw();
+            }
+
+            void DrawLegend()
+            {
+                TPad* plotTo;
+                if (thePads.size() != 0) 
+                    plotTo = thePads[0];
+                else
+                    plotTo = theCanvas;
+
+                plotTo->cd();
+                                       
+                PlaceLegend(plotTo,"topright",0.2,0.3);
                 theLegend->Draw();
+
+                theInPlotInfo->SetX1(    plotTo->GetLeftMargin()+0.03);
+                theInPlotInfo->SetY1(1.0-plotTo->GetTopMargin()-0.15);
+                theInPlotInfo->SetX2(theInPlotInfo->GetX1() + 0.4);
+                theInPlotInfo->SetY2(theInPlotInfo->GetY1() + 0.1);
+
+                theInPlotInfo->Draw();
+
+            }
+                
+            void Write(string outputFolder = "", string infoText = "", string options = "")
+            {
+
+                DrawInfoText();
+                DrawLegend();
                 SetActive();
 
                 if ((type == "2D") || (type == "2DProjectedTo1D"))
@@ -241,6 +264,7 @@ namespace theDoctor
             TLegend* theLegend;
             TPaveText* theTopLeftInfo;
             TPaveText* theTopRightInfo;
+            TPaveText* theInPlotInfo;
             vector<TPad*> thePads;
 
             string type;

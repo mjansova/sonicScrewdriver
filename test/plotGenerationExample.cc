@@ -97,13 +97,13 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     mySonic.AddRegion("baseline","Baseline",&baselineSelector);
+     mySonic.AddRegion("baseline","Pre-selection",&baselineSelector);
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
-     mySonic.AddChannel("noChannel","",&noChannelSelector);
+     mySonic.AddChannel("noChannel","e/#mu-channel",&noChannelSelector);
 
   // ########################################
   // ##       Create histograms and        ##

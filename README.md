@@ -42,7 +42,6 @@ To-do list / ideas
 
 Important :
 - Optimise AutoFill : should check only once the regions and channel in AutoFill before dispatch
-- Fix infos displayed on plots (energy/lumi, + add region, channel, change emplacement)
 - Underflow/overflow management by default
 - Easy access to a given plot or histo
 - Global options configuration to set/change the default behavior (ex : font, line width, text colors ...)
@@ -54,7 +53,6 @@ Mid-long term :
 - Improve tables (auto-scale of column width ?)
 - Add daughter class to table for Data/MC or bkg/sig comparison
 - Add or fix latex/ascii export/import for tables
-- Improve ratio plots (lines, gap, scale) for data/MC comparisons plots
 - Lumi reweighting should be done per channel
 - Add surcharge operator +, -, x, and / for (int,Figure)
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)

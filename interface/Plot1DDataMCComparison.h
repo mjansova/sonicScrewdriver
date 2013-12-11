@@ -115,6 +115,9 @@ namespace theDoctor
           thePlot.SetParameter("variable",theVar->getTag());
           thePlot.SetParameter("region",theRegion->getTag());
           thePlot.SetParameter("channel",theChannel->getTag());
+         
+          thePlot.AddToInPlotInfo(theChannel->getLabel());
+          thePlot.AddToInPlotInfo(theRegion->getLabel());
 
           string includeSignal = theGlobalOptions.GetGlobalStringOption("DataMCComparison","includeSignal");
           float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "DataMCComparison","factorSignal");
@@ -329,6 +332,7 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver generalOptions, string varOptions = "")
       { 
+          theStack->SetMaximum(theStack->GetMaximum() * 1.3);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
           theStack->SetTitle("");
@@ -350,7 +354,6 @@ namespace theDoctor
           PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));
           theRatio->GetYaxis()->CenterTitle();
           theRatio->GetYaxis()->SetTickLength(0.015);
-          theRatio->GetYaxis()->SetLabelSize(0.15);
           theRatio->GetYaxis()->SetTitleSize(0.17);
           theRatio->GetYaxis()->SetTitleOffset(0.25);
           theRatio->SetMaximum(1.5);

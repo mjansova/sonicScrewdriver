@@ -76,6 +76,10 @@ namespace theDoctor
                 thePlot.SetParameter("processClass",theProcessClass->getTag());
                 thePlot.SetParameter("region",      theRegion->getTag());
                 thePlot.SetParameter("channel",     theChannel->getTag());
+          
+                thePlot.AddToInPlotInfo(theChannel->getLabel());
+                thePlot.AddToInPlotInfo(theRegion->getLabel());
+                thePlot.AddToInPlotInfo(theProcessClass->getLabel());
 
                 // Prepare the labels for x and y axis
                 // xlabel = labelDeLaVariable (Unité)

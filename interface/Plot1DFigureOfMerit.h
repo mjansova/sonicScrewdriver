@@ -38,8 +38,9 @@ namespace theDoctor
                                   string histoOptions)
       {
           vector<Plot> theOutput;
-         
-          string varName = OptionsScrewdriver::GetStringOption(histoOptions,"var");
+          
+          string varName              = OptionsScrewdriver::GetStringOption(histoOptions,"var");
+          
           // Browse the (var x reg x chan) space
           for (unsigned int v = 0 ; v < theVariables->size() ; v++)
           {
@@ -101,6 +102,9 @@ namespace theDoctor
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
+         
+         thePlot.AddToInPlotInfo(theChannel->getLabel());
+         thePlot.AddToInPlotInfo(theRegion->getLabel());
 
          // Prepare the labels for x and y axis
          // xlabel = labelDeLaVariable (Unité)
@@ -151,7 +155,7 @@ namespace theDoctor
         }
 
         // Set max value for the plot
-        firstHisto->SetMaximum(globalMax * 1.1);
+        firstHisto->SetMaximum(globalMax * 1.3);
 
         return thePlot;
       }

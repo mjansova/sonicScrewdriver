@@ -21,8 +21,8 @@
 #include "interface/Plot1DFigureOfMerit.h"
 #include "interface/Plot1DDataMCComparison.h"
 #include "interface/Plot2D.h"
-#include "interface/Plot2DProjectedTo1D.h"
-#include "interface/Plot3DProjectedTo2D.h"
+//#include "interface/Plot1DFrom2DProjection.h"
+//#include "interface/Plot2DFrom3DProjection.h"
 
 namespace theDoctor
 {
@@ -59,8 +59,8 @@ namespace theDoctor
             else if (plotType == "1DFigureOfMerit")    Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies,options);
             else if (plotType == "1DDataMCComparison") Plot1DDataMCComparison::GetHistoDependencies(dependencies);
             else if (plotType == "2D")                 Plot2D                ::GetHistoDependencies(dependencies);
-            else if (plotType == "2DProjectedTo1D")    Plot2DProjectedTo1D   ::GetHistoDependencies(dependencies);
-            else if (plotType == "3DProjectedTo2D")    Plot3DProjectedTo2D   ::GetHistoDependencies(dependencies);
+            //else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies);
+            //else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies);
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
             // Schedule histo needed for plot

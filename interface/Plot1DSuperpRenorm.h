@@ -94,6 +94,8 @@ namespace theDoctor
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
+         thePlot.AddToInPlotInfo(theChannel->getLabel());
+         thePlot.AddToInPlotInfo(theRegion->getLabel());
 
          bool includeSignal = theGlobalOptions.GetGlobalBoolOption("1DSuperpRenorm","includeSignal");
          
@@ -186,7 +188,7 @@ namespace theDoctor
         }
         
         // Set max value for the plot
-        firstHisto->SetMaximum(globalMax * 1.1);
+        firstHisto->SetMaximum(globalMax * 1.3);
 
         return thePlot;
       }
