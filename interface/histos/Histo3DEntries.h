@@ -1,7 +1,7 @@
 #ifndef Histo3DEntries_h
 #define Histo3DEntries_h
 
-#include "interface/Histo3D.h"
+#include "interface/histos/Histo3D.h"
 #include "interface/ProcessClass.h"
 
 namespace theDoctor

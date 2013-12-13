@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#include "interface/Histo2D.h"
+#include "interface/histos/Histo2D.h"
 #include "interface/ProcessClass.h"
 #include "interface/Figure.h"
 

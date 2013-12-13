@@ -2,7 +2,7 @@
 #define Histo1DEntries_h
 
 
-#include "interface/Histo1D.h"
+#include "interface/histos/Histo1D.h"
 #include "interface/ProcessClass.h"
 #include "interface/Figure.h"
 

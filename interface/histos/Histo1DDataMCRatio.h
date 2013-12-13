@@ -2,7 +2,7 @@
 #define Histo1DDataMCRatio_h
 
 
-#include "interface/Histo1D.h"
+#include "interface/histos/Histo1D.h"
 #include "interface/Figure.h"
 
 namespace theDoctor

@@ -5,9 +5,9 @@
 #include "interface/Variable.h"
 #include "interface/ProcessClass.h"
 #include "interface/Dataset.h"
-#include "interface/Histo1DEntries.h"
-#include "interface/Histo2DEntries.h"
-#include "interface/Histo3DEntries.h"
+#include "interface/histos/Histo1DEntries.h"
+#include "interface/histos/Histo2DEntries.h"
+#include "interface/histos/Histo3DEntries.h"
 
 namespace theDoctor
 {

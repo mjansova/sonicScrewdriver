@@ -9,20 +9,20 @@
 #include "interface/ProcessClass.h"
 
 // Histograms producers
-#include "interface/Histo1DEntries.h"
-#include "interface/Histo1DSumBackground.h"
-#include "interface/Histo1DSumData.h"
-#include "interface/Histo1DFigureOfMerit.h"
-#include "interface/Histo2DEntries.h"
+#include "interface/histos/Histo1DEntries.h"
+#include "interface/histos/Histo1DSumBackground.h"
+#include "interface/histos/Histo1DSumData.h"
+#include "interface/histos/Histo1DFigureOfMerit.h"
+#include "interface/histos/Histo2DEntries.h"
 
 // Plot producers
-#include "interface/Plot1DSuperpRenorm.h"
-#include "interface/Plot1DStack.h"
-#include "interface/Plot1DFigureOfMerit.h"
-#include "interface/Plot1DDataMCComparison.h"
-#include "interface/Plot2D.h"
-//#include "interface/Plot1DFrom2DProjection.h"
-//#include "interface/Plot2DFrom3DProjection.h"
+#include "interface/plots/Plot1DSuperpRenorm.h"
+#include "interface/plots/Plot1DStack.h"
+#include "interface/plots/Plot1DFigureOfMerit.h"
+#include "interface/plots/Plot1DDataMCComparison.h"
+#include "interface/plots/Plot2D.h"
+//#include "interface/plots/Plot1DFrom2DProjection.h"
+//#include "interface/plots/Plot2DFrom3DProjection.h"
 
 namespace theDoctor
 {

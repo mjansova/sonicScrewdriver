@@ -1,22 +1,22 @@
-#ifndef Histo1DSumData_h
-#define Histo1DSumData_h
+#ifndef Histo1DSumBackground_h
+#define Histo1DSumBackground_h
 
-#include "interface/Histo1D.h"
+#include "interface/histos/Histo1D.h"
 #include "interface/Figure.h"
 
 namespace theDoctor
 {
 
-    class Histo1DSumData : public Histo1D 
+    class Histo1DSumBackground : public Histo1D 
     {
       
      public:
 
-      Histo1DSumData(Variable* theVar_, 
-                     Region* theRegion_, 
-                     Channel* theChannel_,
-                     vector<Histo1DEntries*> theDatas) : 
-      Histo1D(Name("1DSumData","Entries"),theVar_,theRegion_,theChannel_)
+      Histo1DSumBackground(Variable* theVar_, 
+                           Region* theRegion_, 
+                           Channel* theChannel_,
+                           vector<Histo1DEntries*> theBackgrounds) : 
+      Histo1D(Name("1DSumBackground","Entries"),theVar_,theRegion_,theChannel_)
       {
           string nameHisto =  string("v:")+theVar->getTag()
                                    +"|r:" +theRegion->getTag()
@@ -26,13 +26,13 @@ namespace theDoctor
           theHisto->SetName(nameHisto.c_str());
 
           // Loop on the input histograms and add each of them to the histo
-          for (unsigned int i = 0 ; i < theDatas.size() ; i++)
+          for (unsigned int i = 0 ; i < theBackgrounds.size() ; i++)
           {
-              theHisto->Add(theDatas[i]->getClone());
+              theHisto->Add(theBackgrounds[i]->getClone());
           }
       }; 
 
-      ~Histo1DSumData() { };
+      ~Histo1DSumBackground() { };
   
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
@@ -61,7 +61,7 @@ namespace theDoctor
           for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
           {
 
-              vector<Histo1DEntries*> theDatas;
+              vector<Histo1DEntries*> theBackgrounds;
 
               Variable* theVar     = &((*theVariables)[v]);
               Region*   theRegion  = &((*theRegions)[r]);
@@ -70,19 +70,19 @@ namespace theDoctor
               // Now loop on the histos
               for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
               {
-                  // If this processClass is not data, we skip it
-                  if ((*theProcessClasses)[i].getType() != "data") continue;
+                  // If this processClass is not a background, we skip it
+                  if ((*theProcessClasses)[i].getType() != "background") continue;
                   // If it it, we add it to the relevant backgrounds
                   //
-                  Histo1DEntries* thisData = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
-                                                                                           (*theProcessClasses)[i].getTag(),
-                                                                                           theRegion->getTag(),
-                                                                                           theChannel->getTag());
-                  theDatas.push_back(thisData);
+                  Histo1DEntries* thisBackground = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                                                                                                 (*theProcessClasses)[i].getTag(),
+                                                                                                 theRegion->getTag(),
+                                                                                                 theChannel->getTag());
+                  theBackgrounds.push_back(thisBackground);
               }
 
               theHistoScrewdriver->Add1DHistoForPlots(
-                                                        Histo1DSumData(theVar,theRegion,theChannel,theDatas)
+                                                        Histo1DSumBackground(theVar,theRegion,theChannel,theBackgrounds)
                                                      );
           }
       }

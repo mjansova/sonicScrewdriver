@@ -6,9 +6,9 @@
 #include "interface/Plot.h"
 #include "interface/Variable.h"
 #include "interface/ProcessClass.h"
-#include "interface/Histo1D.h"
-#include "interface/Histo1DDataMCRatio.h"
-#include "interface/Histo2D.h"
+#include "interface/histos/Histo1D.h"
+#include "interface/histos/Histo1DDataMCRatio.h"
+#include "interface/histos/Histo2D.h"
 #include "interface/PlotDefaultStyles.h"
 #include "interface/OptionsScrewdriver.h"
 
