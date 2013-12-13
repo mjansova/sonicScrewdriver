@@ -1,54 +1,70 @@
-#ifndef Histo1DFigureOfMerit_h
-#define Histo1DFigureOfMerit_h
+#ifndef Histo2DFigureOfMeritForVarXBeingSignalParameter_h
+#define Histo2DFigureOfMeritForVarXBeingSignalParameter_h
 
 #include <math.h>
 
-#include "interface/Histo1D.h"
+#include "interface/Histo2D.h"
 #include "interface/ProcessClass.h"
 #include "interface/Figure.h"
-#include "interface/FigureOfMerit.h"
 
 namespace theDoctor
 {
 
-    class Histo1DFigureOfMerit : public Histo1D 
+    class Histo2DFigureOfMeritForVarXBeingSignalParameter : public Histo2D 
     {
       
      public:
 
-      ~Histo1DFigureOfMerit() { };
+      ~Histo2DFigureOfMeritForVarXBeingSignalParameter() { };
       
-      Histo1DFigureOfMerit(Variable* theVar, 
+      Histo2DFigureOfMeritForVarXBeingSignalParameter(Variable* theXVar,
+                           Variable* theYVar,
                            Region* theRegion, 
                            Channel* theChannel,
-                           Histo1DEntries* theSignal,
+                           Histo2DEntries* theSignal,
                            Histo1D* theSumBackground,
                            OptionsScrewdriver theGlobalOptions,
                            short int cutType) :
-      Histo1D(Name("1DFigureOfMerit","Figure of merit"),theVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
+      Histo2D(Name("2DFigureOfMeritForVarXBeingSignalParameter","Figure of merit"),theXVar,theYVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
       {
 
-          string nameHisto =  string("v:")+theVar->getTag()
+
+          string nameHisto =  string("vX:")+theXVar->getTag()
+                                   +"|vY:"+theYVar->getTag()
                                    +"|r:" +theRegion->getTag()
                                    +"|c:" +theChannel->getTag()
                                    +"|t:" +theHistoType.getTag()
                                    +"|s:" +theSignal->getProcessClassTag();
 
           theHisto->SetName(nameHisto.c_str());
-
-          // Compute the FOM histogram
-          TH1F* signalHisto = theSignal->getClone();
+              
           TH1F* backgrHisto = theSumBackground->getClone();
-          TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(signalHisto,backgrHisto,cutType,theGlobalOptions);
 
-          // Copy it to this histogram
-          int nBins = theFigureOfMeritHisto.GetNbinsX();
-          for (int i = 0 ; i <= nBins+1 ; i++)
+          int   nBinsX = theXVar->GetNbins(); 
+          float minX   = theXVar->getMin();
+          float maxX   = theXVar->getMax();
+
+          for (int i = 1 ; i < nBinsX+1 ; i++)
           {
-              theHisto->SetBinContent(i,theFigureOfMeritHisto.GetBinContent(i));
-              theHisto->SetBinError(i,theFigureOfMeritHisto.GetBinError(i));
-          }
+              int nBinsY = theFigureOfMeritHisto.GetNbinsY();
 
+              // Read bin i on x axis
+              TH1F tempSignalHisto("tempSignalHisto","",nBinsX,minX,maxX);
+              for (int j = 0 ; j <= nBinsY+1 ; j++)
+                  tempSignalHisto->SetBinContent(j,theSignal->GetBinContent(i,j));
+
+              // Compute the FOM histogram
+              TH1F* signalHisto = theSignal->getClone();
+              TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(signalHisto,backgrHisto,cutType,theGlobalOptions);
+
+              // Copy it to this histogram
+              for (int j = 0 ; j <= nBinsY+1 ; j++)
+              {
+                  theHisto->SetBinContent(i,j,theFigureOfMeritHisto.GetBinContent(j));
+                  theHisto->SetBinError(i,j,theFigureOfMeritHisto.GetBinError(j));
+              }
+
+          }
       }; 
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
@@ -80,7 +96,7 @@ namespace theDoctor
                   Channel*      theChannel      = &((*theChannels)[c]);
 
                   // Get the sumBackground
-                  Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                  Histo2D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
                           theVar->getTag(),
                           theRegion->getTag(),
                           theChannel->getTag(),
@@ -97,14 +113,14 @@ namespace theDoctor
                       ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
                       if (theProcessClass->getType() != "signal") continue;
 
-                      Histo1DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
+                      Histo2DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
                               theProcessClass->getTag(),
                               theRegion->getTag(),
                               theChannel->getTag());
 
                       // Produce the figure of merit histogram
                       theHistoScrewdriver->Add1DHistoForPlots(
-                              Histo1DFigureOfMerit(theVar,
+                              Histo2DFigureOfMeritForVarXBeingSignalParameter(theVar,
                                   theRegion,
                                   theChannel,
                                   thisSignal,
