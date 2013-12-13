@@ -30,11 +30,11 @@ namespace theDoctor
 
 
           string nameHisto =  string("vX:")+theXVar->getTag()
-                                   +"|vY:"+theYVar->getTag()
-                                   +"|r:" +theRegion->getTag()
-                                   +"|c:" +theChannel->getTag()
-                                   +"|t:" +theHistoType.getTag()
-                                   +"|s:" +theSignal->getProcessClassTag();
+                                   +"|vY:" +theYVar->getTag()
+                                   +"|r:"  +theRegion->getTag()
+                                   +"|c:"  +theChannel->getTag()
+                                   +"|t:"  +theHistoType.getTag()
+                                   +"|s:"  +theSignal->getProcessClassTag();
 
           theHisto->SetName(nameHisto.c_str());
               
@@ -82,12 +82,18 @@ namespace theDoctor
                           string histoParameters)      
       {
 
-          string varName = OptionsScrewdriver::GetStringOption(histoParameters,"var");
+          string varXName = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
+          string varYName = OptionsScrewdriver::GetStringOption(histoParameters,"varY");
+
           // Browse the (var x reg x chan) space
-          for (unsigned int v = 0 ; v < theVariables->size() ; v++)
+          for (unsigned int vX = 0 ; vX < theVariables->size() ; vX++)
+          for (unsigned int vY = 0 ; vY < theVariables->size() ; vY++)
           {
-              Variable*     theVar          = &((*theVariables)[v]);
-              if (theVar->getTag() != varName) continue;
+              Variable*     theXVar          = &((*theVariables)[vX]);
+              Variable*     theYVar          = &((*theVariables)[vY]);
+
+              if (theXVar->getTag() != varXName) continue;
+              if (theYVar->getTag() != varYName) continue;
 
               for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
               for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
@@ -96,13 +102,13 @@ namespace theDoctor
                   Channel*      theChannel      = &((*theChannels)[c]);
 
                   // Get the sumBackground
-                  Histo2D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
-                          theVar->getTag(),
-                          theRegion->getTag(),
-                          theChannel->getTag(),
-                          "");
+                  Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                                                                                            theYVar->getTag(),
+                                                                                            theRegion->getTag(),
+                                                                                            theChannel->getTag(),
+                                                                                            "");
                   // Get the cut type we're using for this variable
-                  string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
+                  string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutTypeVarY");
                   int cutType = 0;
                   if (cutType_ == string("keepLowValues"))  cutType = -1; 
                   else if (cutType_ == string("keepHighValues")) cutType =  1; 
@@ -113,20 +119,21 @@ namespace theDoctor
                       ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
                       if (theProcessClass->getType() != "signal") continue;
 
-                      Histo2DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
-                              theProcessClass->getTag(),
-                              theRegion->getTag(),
-                              theChannel->getTag());
+                      Histo2DEntries* thisSignal = theHistoScrewdriver->get2DHistoEntriesPointer(theYVar->getTag(),
+                                                                                                theXVar->getTag(),
+                                                                                                theProcessClass->getTag(),
+                                                                                                theRegion->getTag(),
+                                                                                                theChannel->getTag());
 
                       // Produce the figure of merit histogram
-                      theHistoScrewdriver->Add1DHistoForPlots(
-                              Histo2DFigureOfMeritForVarXBeingSignalParameter(theVar,
-                                  theRegion,
-                                  theChannel,
-                                  thisSignal,
-                                  theSumBackground,
-                                  theGlobalOptions,
-                                  cutType)
+                      theHistoScrewdriver->Add2DHistoForPlots(
+                              Histo2DFigureOfMeritForVarXBeingSignalParameter(theXVar,theYVar
+                                                                              theRegion,
+                                                                              theChannel,
+                                                                              thisSignal,
+                                                                              theSumBackground,
+                                                                              theGlobalOptions,
+                                                                              cutType)
                               );
                   }
               }
