@@ -1,7 +1,7 @@
 
-
 // System includes
 
+#include <stdlib.h>
 #include <iomanip>
 #include <cmath>
 #include <iostream>
@@ -28,8 +28,6 @@ typedef struct
 
     Float_t invariantMass;
     Float_t MET;
-
-    Float_t processType;
     Float_t leptonsFlavor;
 
 }
@@ -41,8 +39,13 @@ microEvent* myEventPointer;
 // #########################################################################""
 // #########################################################################""
 
+// Regions
 bool baselineSelector();
-bool noChannelSelector();
+
+// Channels
+bool combinedChannelSelector();
+bool eChannelSelector();
+bool muChannelSelector();
 
 int main (int argc, char *argv[])
 {
@@ -58,7 +61,7 @@ int main (int argc, char *argv[])
   // ####################
   
      // Create a sonic Screwdriver
-      SonicScrewdriver mySonic;
+      SonicScrewdriver myScrewdriver;
 
      // Create a container for the event
      microEvent myEvent;
@@ -68,8 +71,8 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-      mySonic.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160 ,&(myEvent.invariantMass)              );
-      mySonic.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400  ,&(myEvent.MET)            ,"logY=true");
+      myScrewdriver.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160 ,&(myEvent.invariantMass)              );
+      myScrewdriver.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400  ,&(myEvent.MET)            ,"logY=true");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -77,33 +80,35 @@ int main (int argc, char *argv[])
 
 	  // Backgrounds
 
-      mySonic.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_ORANGE);
-           mySonic.AddDataset("foo1","foo",25000,0.475);
+      myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_ORANGE);
+           myScrewdriver.AddDataset("foo","foo",12500,0.495);
   
-      mySonic.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_AZURE);
-           mySonic.AddDataset("bar1","bar",25000,0.475);
+      myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_AZURE);
+           myScrewdriver.AddDataset("bar","bar",12500,0.495);
 
 	  // Signal(s)
 
-      mySonic.AddProcessClass("muf",     "Muf",     "signal",     COLORPLOT_GREEN);
-           mySonic.AddDataset("muf1","muf",25000,0.05);
+      myScrewdriver.AddProcessClass("muf",     "Muf",     "signal",     COLORPLOT_GREEN);
+           myScrewdriver.AddDataset("muf","muf",12500,0.01);
 
 	  // Data
 
-      mySonic.AddProcessClass("data" ,   "Data",    "data",       COLORPLOT_BLACK);
-           mySonic.AddDataset("data1","data",1,25000);
+      myScrewdriver.AddProcessClass("data" ,   "Data",    "data",       COLORPLOT_BLACK);
+           myScrewdriver.AddDataset("data","data",1,12500);
   
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
-     mySonic.AddRegion("baseline","Pre-selection",&baselineSelector);
+     myScrewdriver.AddRegion("baseline","Pre-selection",&baselineSelector);
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
-     mySonic.AddChannel("noChannel","e/#mu-channel",&noChannelSelector);
+     myScrewdriver.AddChannel("combinedChannel","e/#mu-channel",&combinedChannelSelector);
+     myScrewdriver.AddChannel("eChannel",       "e-channel",    &eChannelSelector       );
+     myScrewdriver.AddChannel("muChannel",      "#mu-channel",  &muChannelSelector      );
 
   // ########################################
   // ##       Create histograms and        ##
@@ -111,85 +116,90 @@ int main (int argc, char *argv[])
   // ########################################
   
      // Create histograms
-     mySonic.Create1DHistos();
+     myScrewdriver.Create1DHistos();
      
-     mySonic.Add2DHisto("invariantMass","MET");
+     myScrewdriver.Add2DHisto("invariantMass","MET");
 
      // Set options
 
-     mySonic.SetGlobalBoolOption  ("1DSuperpRenorm",    "includeSignal",                    true   );
+     myScrewdriver.SetGlobalBoolOption  ("1DSuperpRenorm",    "includeSignal",                    true   );
      
-     mySonic.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
-     mySonic.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
+     myScrewdriver.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
+     myScrewdriver.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
 
-     mySonic.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
-     mySonic.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
+     myScrewdriver.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
+     myScrewdriver.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
      
-     mySonic.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
+     myScrewdriver.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
 
      // Schedule plots
      
-     mySonic.SchedulePlots("1DSuperpRenorm");
-     mySonic.SchedulePlots("1DStack");
-     mySonic.SchedulePlots("1DDataMCComparison");
-     mySonic.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
-     mySonic.SchedulePlots("2D");
+     myScrewdriver.SchedulePlots("1DSuperpRenorm");
+     myScrewdriver.SchedulePlots("1DStack");
+     myScrewdriver.SchedulePlots("1DDataMCComparison");
+     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
+     myScrewdriver.SchedulePlots("2D");
 
      // Config plots
 
-     mySonic.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
-     mySonic.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
+     myScrewdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
+     myScrewdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
 
   // ########################################
   // ##        Run over the events         ##
   // ########################################
+  
+     vector<string> datasetsList;
+     myScrewdriver.GetDatasetList(&datasetsList);
 
-     // Open the tree
-     //
-     TFile* f = new TFile("tree.root");
-     TTree* theTree;
-     f->GetObject("theTree",theTree);
-     theTree->SetBranchAddress("theBranch",&myEvent);
- 
-     // Loop over the events
+     cout << "   > Running on dataset : " << endl;
 
-     for (int i = 0 ; i < theTree->GetEntries() ; i++)
+     for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
      {
-        // Get the i-th entry
-        theTree->GetEntry(i);
-     
-        // Find which dataset the event is from
-        string currentDataset;
-             if (myEvent.processType == 0) { currentDataset = string("foo1");  }
-        else if (myEvent.processType == 1) { currentDataset = string("bar1");  }
-        else if (myEvent.processType == 2) { currentDataset = string("muf1");  }
-        else if (myEvent.processType == 3) { currentDataset = string("data1"); } 
-     
-        // Reweight event to luminosity
-        float weight = mySonic.GetDatasetLumiWeight(currentDataset);
-          
-        // Get the processClass associated to the current dataset
-        string currentProcessClass = mySonic.GetProcessClass(currentDataset);
-     
-        // Fill all the variables with autoFill-mode activated
-        mySonic.AutoFillProcessClass(currentProcessClass,weight);
+         // Get current dataset
+         string currentDataset = datasetsList[d];
+         string currentProcessClass = myScrewdriver.GetProcessClass(currentDataset); 
+    
+         cout << "                    " << currentDataset << endl; 
 
+         // Open dataset tree
+         TTree* theTree;
+         TFile* f = new TFile((string("trees/")+currentDataset+".root").c_str());
+         f->GetObject("theTree",theTree);
+         theTree->SetBranchAddress("theBranch",&myEvent);
+      
+         // Loop over the events
+         for (int i = 0 ; i < theTree->GetEntries() ; i++)
+         {
+            // Get the i-th entry
+            theTree->GetEntry(i);
+         
+            // Reweight event to luminosity
+            float weight = myScrewdriver.GetDatasetLumiWeight(currentDataset);
+              
+            // Fill all the variables
+            myScrewdriver.AutoFillProcessClass(currentProcessClass,weight);
+
+         }
      }
 
-  // ###################################
-  // ##   Make plots and write them   ##
-  // ###################################
-  
-  mySonic.MakePlots();
-  mySonic.WritePlots("./plots/");
+     // ###################################
+     // ##   Make plots and write them   ##
+     // ###################################
 
-  cout << endl;
-  cout << "   ┌──────────────────────────────┐ " << endl;
-  cout << "   │   Plot generation completed  │  " << endl;
-  cout << "   └──────────────────────────────┘" << endl; 
-  cout << endl;
+     cout << "   > Making and writing plots ... " << endl;
 
-  return (0);
+     system("mkdir -p ./plots/");
+     myScrewdriver.MakePlots();
+     myScrewdriver.WritePlots("./plots/");
+
+     cout << endl;
+     cout << "   ┌──────────────────────────────┐ " << endl;
+     cout << "   │   Plot generation completed  │ " << endl;
+     cout << "   └──────────────────────────────┘ " << endl; 
+     cout << endl;
+
+     return (0);
 
 }
 
@@ -198,8 +208,21 @@ bool baselineSelector()
     return true;
 }
 
-bool noChannelSelector()
+bool combinedChannelSelector()
 {
     return true;
 }
+
+bool eChannelSelector()
+{
+   if (myEventPointer->leptonsFlavor == 0) return true;
+   else                                    return false;
+}
+
+bool muChannelSelector()
+{
+   if (myEventPointer->leptonsFlavor == 1) return true;
+   else                                    return false;
+}
+
 

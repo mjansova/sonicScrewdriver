@@ -35,6 +35,7 @@ namespace theDoctor
                     // Keep-low-value case
                     else              { S = signalHisto->Integral(0,i);       B = backgrHisto->Integral(0,i);       }
 
+
                     if (B < 1) B = 1;
                     float sOverSqrtB = 0.0;
                     if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B);

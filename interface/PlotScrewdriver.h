@@ -78,7 +78,7 @@ namespace theDoctor
                 vector<Channel>* theChannels,
                 HistoScrewdriver* theHistoScrewdriver)
         {
-            DEBUG_MSG << "in make histo for plots" << endl;
+            //DEBUG_MSG << "in make histo for plots" << endl;
             for (unsigned int i = 0 ; i < scheduledHistos.size() ; i++)
             {
 
@@ -86,7 +86,7 @@ namespace theDoctor
                 string histoType = histo.first;
                 string histoOptions = histo.second;
 
-                DEBUG_MSG << " scheduledHisto : " << histoType << " ; " << histoOptions << endl;
+                //DEBUG_MSG << " scheduledHisto : " << histoType << " ; " << histoOptions << endl;
 
                      if (histoType == "1DSumBackground") 
                     Histo1DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
@@ -120,7 +120,7 @@ namespace theDoctor
                 string plotType          = plot.first;
                 string plotOptions       = plot.second;
 
-                DEBUG_MSG << "make plot : " << plotType << " ; options = " << plotOptions << endl;
+                //DEBUG_MSG << "make plot : " << plotType << " ; options = " << plotOptions << endl;
 
                 vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")

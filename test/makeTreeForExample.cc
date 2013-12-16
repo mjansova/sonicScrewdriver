@@ -1,5 +1,6 @@
 
 
+#include <stdlib.h>
 #include <iostream>
 
 #include "TTree.h"
@@ -11,16 +12,15 @@ using namespace std;
 typedef struct
 {
 
-	Float_t invariantMass;
-	Float_t MET;
+    Float_t invariantMass;
+    Float_t MET;
 
-	Float_t processType;
-	Float_t leptonsFlavor;
+    Float_t leptonsFlavor;
 
 }
 microEvent;
 
-#define ROOT_STRUCTURE_DESCRIPTION "invariantMass:MET:processType:leptonsFlavor"
+#define ROOT_STRUCTURE_DESCRIPTION "invariantMass:MET:leptonsFlavor"
 
 /*
 #########################################
@@ -51,50 +51,71 @@ microEvent;
 
 int main()
 {
- 
-	microEvent myEvent;
 
-  	TFile treeFile("tree.root","RECREATE","Tree");
-  	TTree *tree = new TTree("theTree","This is a tree for SonicScrewdriver testing.");
-  
-  	tree->Branch("theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
+    microEvent myEvent;
 
-	TRandom* gen = new TRandom();
+    system("mkdir -p ./trees/");
 
-	int bosonType = -1;
+    TFile treeFooFile( "trees/foo.root", "RECREATE","Tree"); TTree *foo  = new TTree("theTree","This is a tree for SonicScrewdriver testing.");
+    TFile treeBarFile( "trees/bar.root", "RECREATE","Tree"); TTree *bar  = new TTree("theTree","This is a tree for SonicScrewdriver testing.");
+    TFile treeMufFile( "trees/muf.root", "RECREATE","Tree"); TTree *muf  = new TTree("theTree","This is a tree for SonicScrewdriver testing.");
+    TFile treeDataFile("trees/data.root","RECREATE","Tree"); TTree *data = new TTree("theTree","This is a tree for SonicScrewdriver testing.");
 
-	for (int i = 0 ; i < 100000 ; i++)
-	{
+    foo->Branch( "theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
+    bar->Branch( "theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
+    muf->Branch( "theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
+    data->Branch("theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
 
-		myEvent.processType   = (int) (gen->Uniform()*4);
-		myEvent.leptonsFlavor = (int) (gen->Uniform()*2);
+    TRandom* gen = new TRandom();
 
-		int processTypeData = -1;
-		if (myEvent.processType == 3) processTypeData = (int) (gen->Uniform()*2*(1+0.05)); 
+    int bosonType = -1;
 
+    for (int i = 0 ; i < 50000 ; i++)
+    {
 
-		     if ((myEvent.processType == 0) || (processTypeData == 0))
-		{
-			myEvent.invariantMass = gen->Gaus(91,8);
-			myEvent.MET           = gen->Exp(30);
-		}
-		else if ((myEvent.processType == 1) || (processTypeData == 1))
-		{
-			myEvent.invariantMass = gen->Uniform()*200;
-			myEvent.MET           = gen->Exp(120);
-		}
-		else if ((myEvent.processType == 2) || (processTypeData == 2))
-		{
-			myEvent.invariantMass = gen->Gaus(125,8);
-			myEvent.MET           = gen->Exp(150);
-		}
+        // ProcessTypeMC : - 0 = foo
+        //                 - 1 = bar
+        //                 - 2 = muf (signal)
+        //                 - 3 = data (data)
 
-		tree->Fill();
-	}
+        int processTypeMC         = (int) (gen->Uniform()*4);
 
-    tree->Print();
-    treeFile.Write();
-    treeFile.Close();
+        // For data, generate 1% muf,
+        //                    49.5% foo,
+        //                    49.5% bar
+        int processTypeData = -1;
+        if (processTypeMC == 3) processTypeData = (int) (gen->Uniform()*2*(1+0.01)); 
 
-	return 0;
+        // "Generate" event if processTypeMC or processTypeData = i
+        if ((processTypeMC == 0) || (processTypeData == 0))
+        {
+            myEvent.invariantMass = gen->Gaus(91,16);
+            myEvent.MET           = gen->Exp(30);
+        }
+        else if ((processTypeMC == 1) || (processTypeData == 1))
+        {
+            myEvent.invariantMass = gen->Uniform()*200;
+            myEvent.MET           = gen->Exp(120);
+        }
+        else if ((processTypeMC == 2) || (processTypeData == 2))
+        {
+            myEvent.invariantMass = gen->Gaus(125,4);
+            myEvent.MET           = gen->Exp(150);
+        }
+
+        myEvent.leptonsFlavor = (int) (gen->Uniform()*2);
+
+             if (processTypeMC == 0) foo ->Fill();
+        else if (processTypeMC == 1) bar ->Fill();
+        else if (processTypeMC == 2) muf ->Fill();
+        else if (processTypeMC == 3) data->Fill();
+
+    }
+
+    treeFooFile.Write();  treeFooFile.Write();
+    treeBarFile.Write();  treeBarFile.Write();
+    treeMufFile.Write();  treeMufFile.Write();
+    treeDataFile.Write(); treeDataFile.Write();
+
+    return 0;
 }
