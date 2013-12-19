@@ -147,7 +147,13 @@ namespace theDoctor
                 DrawLegend();
                 SetActive();
 
-                if ((type == "2D") || (type == "2DProjectedTo1D"))
+                if (type == "1DFrom2DProjection")
+                {
+                    string varX = GetParameter("variableX");
+                    string varY = GetParameter("tagY");
+                    theCanvas->SetName((varX + "[vs]" + varY).c_str());
+                }
+                else if (type == "2D")
                 {
                     string processClassName = GetParameter("processClass");
                     theCanvas->SetName(processClassName.c_str());

@@ -84,18 +84,20 @@ int HistoScrewdriver::getIndexOfHisto1DForPlot(string tagType, string tagVar, st
 {
   for (unsigned int i = 0 ; i < the1DHistosForPlots.size() ; i++)
   {
-    /*DEBUG_MSG << "type = "    << the1DHistosForPlots[i].getHistoTypeTag()
-              << "channel = " << the1DHistosForPlots[i].getChannelTag()  
-              << "region = "  << the1DHistosForPlots[i].getRegionTag()   
-              << "var = "     << the1DHistosForPlots[i].getVariableTag() 
-              << endl; */
+    /*
+    DEBUG_MSG <<  "t = " << the1DHistosForPlots[i].getHistoTypeTag()
+              << " c = " << the1DHistosForPlots[i].getChannelTag()  
+              << " r = " << the1DHistosForPlots[i].getRegionTag()   
+              << " v = " << the1DHistosForPlots[i].getVariableTag() 
+              << endl;
+    */
 
-    if (the1DHistosForPlots[i].getHistoTypeTag()    != tagType   ) continue;
-    if (the1DHistosForPlots[i].getChannelTag()      != tagChannel) continue;
-    if (the1DHistosForPlots[i].getRegionTag()       != tagRegion ) continue;
-    if (the1DHistosForPlots[i].getVariableTag()     != tagVar    ) continue;
-    // TODO : check other parameters
-    //
+    if (the1DHistosForPlots[i].getHistoTypeTag()    != tagType         ) continue;
+    if (the1DHistosForPlots[i].getChannelTag()      != tagChannel      ) continue;
+    if (the1DHistosForPlots[i].getRegionTag()       != tagRegion       ) continue;
+    if (the1DHistosForPlots[i].getVariableTag()     != tagVar          ) continue;
+    if (the1DHistosForPlots[i].getHistoParameters() != otherParameters ) continue;
+    
     return i;
   }
   WARNING_MSG << "Unable to find histo for (type,var,region,channel,parameters) "
@@ -171,28 +173,24 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
 
 Histo1DEntries* HistoScrewdriver::get1DHistoEntriesPointer(string var, string processClass, string region, string channel)
 {
-  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
-  
-  if (indexHisto < 0) return 0;
-  else         return &(the1DHistosEntries[indexHisto]);
+    int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
+
+    if (indexHisto < 0) return 0;
+    else return &(the1DHistosEntries[indexHisto]);
 }
 
 Histo1D* HistoScrewdriver::get1DHistoForPlotPointer(string type, string var, string region, string channel, string otherParameters)
 {
-  int indexHisto = getIndexOfHisto1DForPlot(type,var,region,channel,otherParameters);
-  
-  if (indexHisto < 0) return 0;
-  else         return &(the1DHistosForPlots[indexHisto]);
+    int indexHisto = getIndexOfHisto1DForPlot(type,var,region,channel,otherParameters);
+    if (indexHisto < 0) return 0;
+    else return &(the1DHistosForPlots[indexHisto]);
 }
-
-
-
 
 TH1F* HistoScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
 {
-  int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
+    int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
     if (indexHisto < 0) return 0;
-  else         return the1DHistosEntries[indexHisto].getClone();
+    else return the1DHistosEntries[indexHisto].getClone();
 }
 
 TH1F* HistoScrewdriver::get1DHistoEntriesClone(string var, string processClass, string region, string channel)
@@ -284,30 +282,18 @@ void HistoScrewdriver::AutoFill2DProcessClass(string processClass, float weight)
   }
 }
 
-Histo2DEntries* HistoScrewdriver::get2DHistoPointer(string varX, string varY, string processClass, string region, string channel)
+Histo2DEntries* HistoScrewdriver::get2DHistoEntriesPointer(string varX, string varY, string processClass, string region, string channel)
 {
     int indexHisto = getIndexOfHisto2DEntries(varX,varY,processClass,region,channel);
-    if (indexHisto == -1) 
-    {   
-        WARNING_MSG << "Unable to find histo for (varX,varY,processClass,region,channel) "
-                                           << "= (" << varX          << "," 
-                                                    << varY          << "," 
-                                                    << processClass  << "," 
-                                                    << region        << ","
-                                                    << channel        << ")" << endl;
-        return 0; 
-    }
-    return &(the2DHistosEntries[indexHisto]);
+    if (indexHisto < 0) return 0; 
+    else return &(the2DHistosEntries[indexHisto]);
 }
 
 TH2F* HistoScrewdriver::get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
 {
-    return get2DHistoPointer(varX,varY,processClass,region,channel)->getClone();
-}
-
-TH2F* HistoScrewdriver::get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel)
-{
-    return get2DHistoPointer(varX,varY,processClass,region,channel)->getEntriesClone();
+    int indexHisto = getIndexOfHisto2DEntries(varX,varY,processClass,region,channel);
+    if (indexHisto < 0) return 0;
+    else return the2DHistosEntries[indexHisto].getClone();
 }
 
 vector<Histo2DEntries>* HistoScrewdriver::Get2DHistosEntries()
@@ -412,12 +398,9 @@ Histo3DEntries* HistoScrewdriver::get3DHistoPointer(string varX, string varY, st
 
 TH3F* HistoScrewdriver::get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel)
 {
-    return get3DHistoPointer(varX,varY,varZ,processClass,region,channel)->getClone();
-}
-
-TH3F* HistoScrewdriver::get3DHistoEntriesClone(string varX, string varY, string varZ, string processClass, string region, string channel)
-{
-    return get3DHistoPointer(varX,varY,varZ,processClass,region,channel)->getEntriesClone();
+    int indexHisto = getIndexOfHisto3DEntries(varX,varY,varZ,processClass,region,channel);
+    if (indexHisto < 0) return 0;
+    else return the3DHistosEntries[indexHisto].getClone();
 }
 
 vector<Histo3DEntries>* HistoScrewdriver::Get3DHistosEntries()

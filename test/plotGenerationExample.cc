@@ -28,7 +28,8 @@ typedef struct
 
     Float_t invariantMass;
     Float_t MET;
-    Float_t leptonsFlavor;
+    Float_t leptonPt;
+    Float_t leptonFlavor;
 
 }
 microEvent;
@@ -73,6 +74,7 @@ int main (int argc, char *argv[])
 
       myScrewdriver.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160 ,&(myEvent.invariantMass)              );
       myScrewdriver.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400  ,&(myEvent.MET)            ,"logY=true");
+      myScrewdriver.AddVariable("leptonPt",        "p_{T}(lepton)",          "GeV",    30,0,150  ,&(myEvent.leptonPt)       ,"");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -118,7 +120,7 @@ int main (int argc, char *argv[])
      // Create histograms
      myScrewdriver.Create1DHistos();
      
-     myScrewdriver.Add2DHisto("invariantMass","MET");
+     myScrewdriver.Add2DHisto("invariantMass","leptonPt");
 
      // Set options
 
@@ -139,6 +141,7 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DDataMCComparison");
      myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
      myScrewdriver.SchedulePlots("2D");
+     myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
 
      // Config plots
 
@@ -171,6 +174,7 @@ int main (int argc, char *argv[])
          // Loop over the events
          for (int i = 0 ; i < theTree->GetEntries() ; i++)
          {
+
             // Get the i-th entry
             theTree->GetEntry(i);
          
@@ -215,14 +219,14 @@ bool combinedChannelSelector()
 
 bool eChannelSelector()
 {
-   if (myEventPointer->leptonsFlavor == 0) return true;
-   else                                    return false;
+   if (myEventPointer->leptonFlavor == 0) return true;
+   else                                   return false;
 }
 
 bool muChannelSelector()
 {
-   if (myEventPointer->leptonsFlavor == 1) return true;
-   else                                    return false;
+   if (myEventPointer->leptonFlavor == 1) return true;
+   else                                   return false;
 }
 
 

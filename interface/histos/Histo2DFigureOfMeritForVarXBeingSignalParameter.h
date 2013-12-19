@@ -44,12 +44,14 @@ namespace theDoctor
           float minX   = theXVar->getMin();
           float maxX   = theXVar->getMax();
 
+          int   nBinsY = theYVar->GetNbins(); 
+          float minY   = theYVar->getMin();
+          float maxY   = theYVar->getMax();
+
           for (int i = 1 ; i < nBinsX+1 ; i++)
           {
-              int nBinsY = theFigureOfMeritHisto.GetNbinsY();
-
-              // Read bin i on x axis
-              TH1F tempSignalHisto("tempSignalHisto","",nBinsX,minX,maxX);
+              // Read y histogram for x=i
+              TH1F tempSignalHisto("tempSignalHisto","",nBinsY,minY,maxY);
               for (int j = 0 ; j <= nBinsY+1 ; j++)
                   tempSignalHisto->SetBinContent(j,theSignal->GetBinContent(i,j));
 

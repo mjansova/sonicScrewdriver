@@ -14,6 +14,7 @@
 #include "interface/histos/Histo1DSumData.h"
 #include "interface/histos/Histo1DFigureOfMerit.h"
 #include "interface/histos/Histo2DEntries.h"
+#include "interface/histos/Histo1DFrom2DProjection.h"
 
 // Plot producers
 #include "interface/plots/Plot1DSuperpRenorm.h"
@@ -21,7 +22,7 @@
 #include "interface/plots/Plot1DFigureOfMerit.h"
 #include "interface/plots/Plot1DDataMCComparison.h"
 #include "interface/plots/Plot2D.h"
-//#include "interface/plots/Plot1DFrom2DProjection.h"
+#include "interface/plots/Plot1DFrom2DProjection.h"
 //#include "interface/plots/Plot2DFrom3DProjection.h"
 
 namespace theDoctor
@@ -59,7 +60,7 @@ namespace theDoctor
             else if (plotType == "1DFigureOfMerit")    Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies,options);
             else if (plotType == "1DDataMCComparison") Plot1DDataMCComparison::GetHistoDependencies(dependencies);
             else if (plotType == "2D")                 Plot2D                ::GetHistoDependencies(dependencies);
-            //else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies);
+            else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies,options);
             //else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies);
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
@@ -86,7 +87,7 @@ namespace theDoctor
                 string histoType = histo.first;
                 string histoOptions = histo.second;
 
-                //DEBUG_MSG << " scheduledHisto : " << histoType << " ; " << histoOptions << endl;
+                DEBUG_MSG << " scheduledHisto : " << histoType << " ; " << histoOptions << endl;
 
                      if (histoType == "1DSumBackground") 
                     Histo1DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
@@ -96,9 +97,10 @@ namespace theDoctor
                     Histo1DDataMCRatio  ::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "1DFigureOfMerit")
                     Histo1DFigureOfMerit::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
+                else if (histoType == "1DFrom2DProjection")
+                    Histo1DFrom2DProjection::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
             }
         }
-
 
         void MakePlots(vector<Variable>* theVariables,
                 vector<ProcessClass>* theProcessClasses,
@@ -138,10 +140,10 @@ namespace theDoctor
                 if (plotType == "2D")
                     inputFromProducer = 
                         Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
-                /*
-                if (plotType == "2DProjectedTo1D")
+                if (plotType == "1DFrom2DProjection")
                     inputFromProducer = 
-                        Plot2DProjectedTo1D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                        Plot1DFrom2DProjection::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                /*
                 if (plotType == "3DProjectedTo2D")
                     inputFromProducer = 
                         Plot3DProjectedTo2D   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
@@ -168,7 +170,7 @@ namespace theDoctor
             ret = system(("rm -f "+outputFolder+"/1DFigureOfMerit.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DDataMCComparison.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2D.root").c_str());
-            ret = system(("rm -f "+outputFolder+"/2DProjectedTo1D.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/1DFrom2DProjection.root").c_str());
             ret = system(("rm -f "+outputFolder+"/3DProjectedTo2D.root").c_str());
             // Fix "ret not used" warning
             ret = ret + 1;
@@ -206,7 +208,7 @@ namespace theDoctor
 
                             string addPath = "";
                             // For 2D-histos, create a subfolder varX[vs]varY
-                            if ((plotType == "2D") || (plotType == "2DProjectedTo1D") || (plotType == "3DProjectedTo2D"))
+                            if ((plotType == "2D") || (plotType == "3DProjectedTo2D"))
                             {
                                 string varX = thePlots[j].GetParameter("variableX");
                                 string varY = thePlots[j].GetParameter("variableY");

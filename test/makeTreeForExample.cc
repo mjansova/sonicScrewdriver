@@ -15,12 +15,13 @@ typedef struct
     Float_t invariantMass;
     Float_t MET;
 
-    Float_t leptonsFlavor;
+    Float_t leptonPt;
+    Float_t leptonFlavor;
 
 }
 microEvent;
 
-#define ROOT_STRUCTURE_DESCRIPTION "invariantMass:MET:leptonsFlavor"
+#define ROOT_STRUCTURE_DESCRIPTION "invariantMass:MET:leptonPt:leptonFlavor"
 
 /*
 #########################################
@@ -91,19 +92,22 @@ int main()
         {
             myEvent.invariantMass = gen->Gaus(91,16);
             myEvent.MET           = gen->Exp(30);
+            myEvent.leptonPt      = gen->Gaus(myEvent.invariantMass / 3.0, 20.0);
         }
         else if ((processTypeMC == 1) || (processTypeData == 1))
         {
             myEvent.invariantMass = gen->Uniform()*200;
             myEvent.MET           = gen->Exp(120);
+            myEvent.leptonPt      = gen->Gaus(myEvent.MET / 10.0, 20.0);
         }
         else if ((processTypeMC == 2) || (processTypeData == 2))
         {
             myEvent.invariantMass = gen->Gaus(125,4);
             myEvent.MET           = gen->Exp(150);
+            myEvent.leptonPt      = gen->Gaus((myEvent.invariantMass + myEvent.MET) / 5.0, 15.0);
         }
 
-        myEvent.leptonsFlavor = (int) (gen->Uniform()*2);
+        myEvent.leptonFlavor = (int) (gen->Uniform()*2);
 
              if (processTypeMC == 0) foo ->Fill();
         else if (processTypeMC == 1) bar ->Fill();

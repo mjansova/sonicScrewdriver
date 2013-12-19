@@ -56,7 +56,7 @@ namespace theDoctor
       void Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight = 1.0);
       void AutoFill2DProcessClass(string processClass, float weight = 1.0);
 
-      Histo2DEntries* get2DHistoPointer(string varX, string varY, string processClass, string region, string channel);
+      Histo2DEntries* get2DHistoEntriesPointer(string varX, string varY, string processClass, string region, string channel);
       TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
       TH2F* get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel);
       vector<Histo2DEntries>* Get2DHistosEntries();

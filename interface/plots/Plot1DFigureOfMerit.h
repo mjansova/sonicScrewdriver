@@ -121,10 +121,6 @@ namespace theDoctor
              ylabel += string(" ") + theVar->getUnit();
          }
 
-         vector<TH1F*>  pointersForLegend;
-         vector<string> labelsForLegend;
-         vector<string> optionsForLegend;
-
         float globalMax = 0.0;
         TH1F* firstHisto = 0;
         
@@ -146,7 +142,7 @@ namespace theDoctor
             }
             else            { histoClone->Draw("hist E0 same"); }
 
-            // Get the max value after normalization
+            // Get the max value
             if (globalMax < histoClone->GetMaximum())
                 globalMax = histoClone->GetMaximum();
 
