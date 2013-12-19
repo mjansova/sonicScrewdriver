@@ -25,7 +25,7 @@ using namespace theDoctor;
 
 typedef struct
 {
-
+    Float_t mMuf;
     Float_t invariantMass;
     Float_t MET;
     Float_t leptonPt;
@@ -41,20 +41,21 @@ microEvent* myEventPointer;
 // #########################################################################""
 
 // Regions
-bool baselineSelector();
+bool preSelection_allmMuf();
+bool preSelection();
 
 // Channels
-bool combinedChannelSelector();
-bool eChannelSelector();
-bool muChannelSelector();
+bool combinedChannel();
+bool eChannel();
+bool muChannel();
 
 int main (int argc, char *argv[])
 {
 
   cout << endl;
-  cout << "   ┌──────────────────────────────┐ " << endl;
+  cout << "   ┌──────────────────────────────┐  " << endl;
   cout << "   │   Starting plot generation   │  " << endl;
-  cout << "   └──────────────────────────────┘" << endl; 
+  cout << "   └──────────────────────────────┘  " << endl; 
   cout << endl;
 
   // ####################
@@ -72,9 +73,10 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-      myScrewdriver.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160 ,&(myEvent.invariantMass)              );
-      myScrewdriver.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400  ,&(myEvent.MET)            ,"logY=true");
-      myScrewdriver.AddVariable("leptonPt",        "p_{T}(lepton)",          "GeV",    30,0,150  ,&(myEvent.leptonPt)       ,"");
+      myScrewdriver.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160     ,&(myEvent.invariantMass)              );
+      myScrewdriver.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400      ,&(myEvent.MET)            ,"logY=true");
+      myScrewdriver.AddVariable("leptonPt",        "p_{T}(lepton)",          "GeV",    30,0,150      ,&(myEvent.leptonPt)       ,"");
+      myScrewdriver.AddVariable("mMuf",            "True muf mass",          "GeV",    20,114.5,135.5,&(myEvent.mMuf)           ,"");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -102,15 +104,16 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     myScrewdriver.AddRegion("baseline","Pre-selection",&baselineSelector);
+     myScrewdriver.AddRegion("preSelection","Pre-selection, m(muf) = 125 GeV",&preSelection);
+     myScrewdriver.AddRegion("preSelection_allmMuf","Pre-selection",&preSelection_allmMuf);
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
-     myScrewdriver.AddChannel("combinedChannel","e/#mu-channel",&combinedChannelSelector);
-     myScrewdriver.AddChannel("eChannel",       "e-channel",    &eChannelSelector       );
-     myScrewdriver.AddChannel("muChannel",      "#mu-channel",  &muChannelSelector      );
+     myScrewdriver.AddChannel("combinedChannel","e/#mu-channel",&combinedChannel);
+     myScrewdriver.AddChannel("eChannel",       "e-channel",    &eChannel       );
+     myScrewdriver.AddChannel("muChannel",      "#mu-channel",  &muChannel      );
 
   // ########################################
   // ##       Create histograms and        ##
@@ -207,23 +210,30 @@ int main (int argc, char *argv[])
 
 }
 
-bool baselineSelector()
+bool preSelection()
+{
+    if ((myEventPointer->mMuf == -1) 
+     || (myEventPointer->mMuf == 125)) return true;
+    else return false;
+}
+
+bool preSelection_allmMuf()
 {
     return true;
 }
 
-bool combinedChannelSelector()
+bool combinedChannel()
 {
     return true;
 }
 
-bool eChannelSelector()
+bool eChannel()
 {
    if (myEventPointer->leptonFlavor == 0) return true;
    else                                   return false;
 }
 
-bool muChannelSelector()
+bool muChannel()
 {
    if (myEventPointer->leptonFlavor == 1) return true;
    else                                   return false;

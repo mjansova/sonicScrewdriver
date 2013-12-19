@@ -64,8 +64,6 @@ namespace theDoctor
                                  OptionsScrewdriver theGlobalOptions)
             {
 
-                DEBUG_MSG << endl;
-
                 string plotName = string("t:2D|vX:")+theXVar->getTag()
                                             +"|vY:" +theYVar->getTag()
                                             +"|p:"  +theProcessClass->getTag()
@@ -78,12 +76,10 @@ namespace theDoctor
                 thePlot.SetParameter("processClass",theProcessClass->getTag());
                 thePlot.SetParameter("region",      theRegion->getTag());
                 thePlot.SetParameter("channel",     theChannel->getTag());
-                DEBUG_MSG << endl;
-          
+                
                 thePlot.AddToInPlotInfo(theChannel->getLabel());
                 thePlot.AddToInPlotInfo(theRegion->getLabel());
                 thePlot.AddToInPlotInfo(theProcessClass->getLabel());
-                DEBUG_MSG << endl;
 
                 // Prepare the labels for x and y axis
                 // xlabel = labelDeLaVariable (Unité)
@@ -93,7 +89,6 @@ namespace theDoctor
                 string ylabel(theYVar->getLabel());
                 string zlabel("Entries");
 
-                DEBUG_MSG << endl;
                 // Add the unit
                 if (theXVar->getUnit() != "") xlabel += string(" [") + theXVar->getUnit() + string("]");
                 if (theYVar->getUnit() != "") ylabel += string(" [") + theYVar->getUnit() + string("]");
@@ -102,18 +97,19 @@ namespace theDoctor
 
                 ApplyHistoStyle(&thePlot,histoClone,theProcessClass->getColor(),theGlobalOptions,theProcessClass->getOptions());
                 ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theXVar->getOptions(),theYVar->getOptions());
-                DEBUG_MSG << endl;
 
                 thePlot.getCanvas()->SetRightMargin(0.1);
                 histoClone->Draw("COLZ");
                 thePlot.Update();
                 TPaletteAxis *pal = (TPaletteAxis*) histoClone->GetListOfFunctions()->FindObject("palette");
-                pal->SetX1NDC(0.901);
-                pal->SetY1NDC(0.1);
-                pal->SetX2NDC(0.93);
-                pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
+                if (pal != 0) 
+                {
+                    pal->SetX1NDC(0.901);
+                    pal->SetY1NDC(0.1);
+                    pal->SetX2NDC(0.93);
+                    pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
+                }
 
-                DEBUG_MSG << endl;
                 return thePlot;
             }
 

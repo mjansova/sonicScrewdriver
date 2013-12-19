@@ -12,6 +12,8 @@ using namespace std;
 typedef struct
 {
 
+    Float_t mMuf;
+
     Float_t invariantMass;
     Float_t MET;
 
@@ -21,7 +23,7 @@ typedef struct
 }
 microEvent;
 
-#define ROOT_STRUCTURE_DESCRIPTION "invariantMass:MET:leptonPt:leptonFlavor"
+#define ROOT_STRUCTURE_DESCRIPTION "mMuf:invariantMass:MET:leptonPt:leptonFlavor"
 
 /*
 #########################################
@@ -38,7 +40,7 @@ microEvent;
 #                                       #
 #   b) bar                              #
 #     -> invariant mass ~flat           #
-#     -> higher MET                     #
+#     -> medium MET                     #
 #                                       #
 #   c) muf                              #
 #     -> invariant mass peak at ~125GeV #
@@ -50,11 +52,15 @@ microEvent;
 #########################################
 */
 
+void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType);
+
 int main()
 {
 
     microEvent myEvent;
+    TRandom* gen = new TRandom();
 
+    // Create the trees
     system("mkdir -p ./trees/");
 
     TFile treeFooFile( "trees/foo.root", "RECREATE","Tree"); TTree *foo  = new TTree("theTree","This is a tree for SonicScrewdriver testing.");
@@ -67,59 +73,60 @@ int main()
     muf->Branch( "theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
     data->Branch("theBranch",&myEvent,ROOT_STRUCTURE_DESCRIPTION);
 
-    TRandom* gen = new TRandom();
-
-    int bosonType = -1;
-
+    // Fill the trees 
     for (int i = 0 ; i < 50000 ; i++)
     {
 
-        // ProcessTypeMC : - 0 = foo
-        //                 - 1 = bar
-        //                 - 2 = muf (signal)
-        //                 - 3 = data (data)
+        fillEventWithProcessType(&myEvent, gen, 0);
+        foo->Fill();
+        
+        fillEventWithProcessType(&myEvent, gen, 1);
+        bar->Fill();
 
-        int processTypeMC         = (int) (gen->Uniform()*4);
+        fillEventWithProcessType(&myEvent, gen, 2);
+        myEvent.mMuf = -1;
+        muf->Fill();
 
         // For data, generate 1% muf,
         //                    49.5% foo,
         //                    49.5% bar
-        int processTypeData = -1;
-        if (processTypeMC == 3) processTypeData = (int) (gen->Uniform()*2*(1+0.01)); 
-
-        // "Generate" event if processTypeMC or processTypeData = i
-        if ((processTypeMC == 0) || (processTypeData == 0))
-        {
-            myEvent.invariantMass = gen->Gaus(91,16);
-            myEvent.MET           = gen->Exp(30);
-            myEvent.leptonPt      = gen->Gaus(myEvent.invariantMass / 3.0, 20.0);
-        }
-        else if ((processTypeMC == 1) || (processTypeData == 1))
-        {
-            myEvent.invariantMass = gen->Uniform()*200;
-            myEvent.MET           = gen->Exp(120);
-            myEvent.leptonPt      = gen->Gaus(myEvent.MET / 10.0, 20.0);
-        }
-        else if ((processTypeMC == 2) || (processTypeData == 2))
-        {
-            myEvent.invariantMass = gen->Gaus(125,4);
-            myEvent.MET           = gen->Exp(150);
-            myEvent.leptonPt      = gen->Gaus((myEvent.invariantMass + myEvent.MET) / 5.0, 15.0);
-        }
-
-        myEvent.leptonFlavor = (int) (gen->Uniform()*2);
-
-             if (processTypeMC == 0) foo ->Fill();
-        else if (processTypeMC == 1) bar ->Fill();
-        else if (processTypeMC == 2) muf ->Fill();
-        else if (processTypeMC == 3) data->Fill();
-
+        int processTypeData = (int) (gen->Uniform()*2*(1+0.01)); 
+        fillEventWithProcessType(&myEvent, gen, processTypeData);
+        data->Fill();
     }
 
-    treeFooFile.Write();  treeFooFile.Write();
-    treeBarFile.Write();  treeBarFile.Write();
-    treeMufFile.Write();  treeMufFile.Write();
-    treeDataFile.Write(); treeDataFile.Write();
+    // Write the trees
+    treeFooFile.Write();  
+    treeBarFile.Write();  
+    treeMufFile.Write();  
+    treeDataFile.Write(); 
 
     return 0;
+}
+
+void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType)
+{
+    if (processType == 0)
+    {
+        myEvent->mMuf          = -1;
+        myEvent->invariantMass = gen->Gaus(91,16);
+        myEvent->MET           = gen->Exp(30);
+        myEvent->leptonPt      = gen->Gaus(myEvent->invariantMass / 3.0, 20.0);
+    }
+    else if (processType == 1)
+    {
+        myEvent->mMuf          = -1;
+        myEvent->invariantMass = gen->Uniform()*200;
+        myEvent->MET           = gen->Exp(90);
+        myEvent->leptonPt      = gen->Gaus(myEvent->MET / 10.0, 20.0);
+    }
+    else if (processType == 2)
+    {
+        myEvent->mMuf          = (int) (((int) gen->Uniform()*10)*2 + 115);
+        myEvent->invariantMass = gen->Gaus(myEvent->mMuf,(myEvent->mMuf-110)/40);
+        myEvent->MET           = gen->Exp(150);
+        myEvent->leptonPt      = gen->Gaus((myEvent->mMuf + myEvent->MET) / 5.0, 15.0);
+    }
+
+    myEvent->leptonFlavor = (int) (gen->Uniform()*2);
 }
