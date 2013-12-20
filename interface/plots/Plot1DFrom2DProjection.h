@@ -24,6 +24,7 @@ namespace theDoctor
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
+          Histo1DFrom2DProjection::GetHistoDependencies(output,options); 
           output.push_back(pair<string,string>("1DFrom2DProjection",options));
       }
 
@@ -37,11 +38,12 @@ namespace theDoctor
       {
           vector<Plot> theOutput;
           
-          string varXName = OptionsScrewdriver::GetStringOption(plotOptions,"varX");
-          string varYName = OptionsScrewdriver::GetStringOption(plotOptions,"varY");
+          string varXName       = OptionsScrewdriver::GetStringOption(plotOptions,"varX");
+          string varYName       = OptionsScrewdriver::GetStringOption(plotOptions,"varY");
+          string projectionType = OptionsScrewdriver::GetStringOption(plotOptions,"projectionType");
   
           string optionsTag =  string("vY=")+varYName
-                                   +",proj="+OptionsScrewdriver::GetStringOption(plotOptions,"projectionType");
+                                   +",proj="+projectionType;
 
           // Browse the (var x reg x chan) space
           for (unsigned int vX = 0 ; vX < theVariables->size() ; vX++)
@@ -66,6 +68,12 @@ namespace theDoctor
                   for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
                   {
                       ProcessClass thisProcess = (*theProcessClasses)[i];
+                    
+                      if ((projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
+                       || (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter"))
+                      {
+                          if (thisProcess.getType() != "signal") continue;
+                      }
 
                       // Get the histo
                       Histo1D* thisHisto = theHistoScrewdriver->get1DHistoForPlotPointer("1DFrom2DProjection",
@@ -73,7 +81,7 @@ namespace theDoctor
                                                                                          theRegion->getTag(),
                                                                                          theChannel->getTag(),
                                                                                          optionsTag+",p="+thisProcess.getTag());
-
+                      
                       // Add it to the vector
                       theHistos.push_back(thisHisto);
                       theHistosProcessClasses.push_back(&((*theProcessClasses)[i]));

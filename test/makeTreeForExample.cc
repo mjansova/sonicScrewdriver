@@ -125,7 +125,7 @@ void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int proce
         if (isData) myEvent->mMuf = 125.0;
         else        myEvent->mMuf = ((int) (gen->Uniform()*11)*2) + 115;
 
-        myEvent->invariantMass = gen->Gaus(myEvent->mMuf,(myEvent->mMuf-110)/10);
+        myEvent->invariantMass = gen->Gaus(myEvent->mMuf,(myEvent->mMuf-110)/5);
         myEvent->MET           = gen->Exp(150);
         myEvent->leptonPt      = gen->Gaus((myEvent->mMuf + myEvent->MET) / 5.0, 15.0);
 

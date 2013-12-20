@@ -112,8 +112,8 @@ int main (int argc, char *argv[])
   // ##########################
    
      myScrewdriver.AddChannel("combinedChannel","e/#mu-channel",&combinedChannel);
-     myScrewdriver.AddChannel("eChannel",       "e-channel",    &eChannel       );
-     myScrewdriver.AddChannel("muChannel",      "#mu-channel",  &muChannel      );
+     //myScrewdriver.AddChannel("eChannel",       "e-channel",    &eChannel       );
+     //myScrewdriver.AddChannel("muChannel",      "#mu-channel",  &muChannel      );
 
   // ########################################
   // ##       Create histograms and        ##
@@ -143,9 +143,16 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DSuperpRenorm");
      myScrewdriver.SchedulePlots("1DStack");
      myScrewdriver.SchedulePlots("1DDataMCComparison");
-     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=MET,cutType=keepHighValues");
+     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
      myScrewdriver.SchedulePlots("2D");
-     myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
+     //myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
+      myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
+                                                    +",projectionType=mean"
+                                                    +",tagY=meanMass,labelY=Mean invariant mass");
+     myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
+                                                    +",projectionType=cutOptimalFigureOfMeritForVarXBeingSignalParameter,cutType=keepHighValues"
+                                                    +",tagY=bestCut,labelY=Best cut");
+                                                    
 
      // Config plots
 

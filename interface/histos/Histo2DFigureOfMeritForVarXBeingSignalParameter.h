@@ -28,7 +28,6 @@ namespace theDoctor
       Histo2D(Name("2DFigureOfMeritForVarXBeingSignalParameter","Figure of merit"),theXVar,theYVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
       {
 
-
           string nameHisto =  string("vX:")+theXVar->getTag()
                                    +"|vY:" +theYVar->getTag()
                                    +"|r:"  +theRegion->getTag()
@@ -38,26 +37,23 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
               
+          TH2F* sigHisto    = theSignal->getClone();
           TH1F* backgrHisto = theSumBackground->getClone();
 
-          int   nBinsX = theXVar->GetNbins(); 
-          float minX   = theXVar->getMin();
-          float maxX   = theXVar->getMax();
-
-          int   nBinsY = theYVar->GetNbins(); 
+          int   nBinsX = theXVar->getNbins(); 
+          int   nBinsY = theYVar->getNbins(); 
           float minY   = theYVar->getMin();
           float maxY   = theYVar->getMax();
 
           for (int i = 1 ; i < nBinsX+1 ; i++)
           {
               // Read y histogram for x=i
-              TH1F tempSignalHisto("tempSignalHisto","",nBinsY,minY,maxY);
+              TH1F tempSignalHisto("","",nBinsY,minY,maxY);
               for (int j = 0 ; j <= nBinsY+1 ; j++)
-                  tempSignalHisto->SetBinContent(j,theSignal->GetBinContent(i,j));
+                  tempSignalHisto.SetBinContent(j,sigHisto->GetBinContent(i,j));
 
               // Compute the FOM histogram
-              TH1F* signalHisto = theSignal->getClone();
-              TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(signalHisto,backgrHisto,cutType,theGlobalOptions);
+              TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(&tempSignalHisto,backgrHisto,cutType,theGlobalOptions);
 
               // Copy it to this histogram
               for (int j = 0 ; j <= nBinsY+1 ; j++)
@@ -110,7 +106,7 @@ namespace theDoctor
                                                                                             theChannel->getTag(),
                                                                                             "");
                   // Get the cut type we're using for this variable
-                  string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutTypeVarY");
+                  string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
                   int cutType = 0;
                   if (cutType_ == string("keepLowValues"))  cutType = -1; 
                   else if (cutType_ == string("keepHighValues")) cutType =  1; 
@@ -121,22 +117,22 @@ namespace theDoctor
                       ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
                       if (theProcessClass->getType() != "signal") continue;
 
-                      Histo2DEntries* thisSignal = theHistoScrewdriver->get2DHistoEntriesPointer(theYVar->getTag(),
-                                                                                                theXVar->getTag(),
-                                                                                                theProcessClass->getTag(),
-                                                                                                theRegion->getTag(),
-                                                                                                theChannel->getTag());
+                      Histo2DEntries* thisSignal = theHistoScrewdriver->get2DHistoEntriesPointer(theXVar->getTag(),
+                                                                                                 theYVar->getTag(),
+                                                                                                 theProcessClass->getTag(),
+                                                                                                 theRegion->getTag(),
+                                                                                                 theChannel->getTag());
 
                       // Produce the figure of merit histogram
                       theHistoScrewdriver->Add2DHistoForPlots(
-                              Histo2DFigureOfMeritForVarXBeingSignalParameter(theXVar,theYVar
+                              Histo2DFigureOfMeritForVarXBeingSignalParameter(theXVar,theYVar,
                                                                               theRegion,
                                                                               theChannel,
                                                                               thisSignal,
                                                                               theSumBackground,
                                                                               theGlobalOptions,
                                                                               cutType)
-                              );
+                               );
                   }
               }
           }

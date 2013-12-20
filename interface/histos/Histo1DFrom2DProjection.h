@@ -18,6 +18,11 @@ namespace theDoctor
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
+          string projectionType = OptionsScrewdriver::GetStringOption(options,"projectionType");
+
+          if ((projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
+          ||  (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter"))
+              output.push_back(pair<string,string>("2DFigureOfMeritForVarXBeingSignalParameter",options));
       }
 
       static void Produce(vector<Variable>* theVariables,
@@ -29,8 +34,9 @@ namespace theDoctor
                           string histoParameters)      
       {
 
-          string varXName = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
-          string varYName = OptionsScrewdriver::GetStringOption(histoParameters,"varY");
+          string varXName       = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
+          string varYName       = OptionsScrewdriver::GetStringOption(histoParameters,"varY");
+          string projectionType = OptionsScrewdriver::GetStringOption(histoParameters,"projectionType");
 
           // Browse the (var x reg x chan) space
           for (unsigned int vX = 0 ; vX < theVariables->size() ; vX++)
@@ -50,22 +56,51 @@ namespace theDoctor
                   Channel*      theChannel      = &((*theChannels)[c]);
                   ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
 
-                  Histo2DEntries* thisProcessHisto = theHistoScrewdriver->get2DHistoEntriesPointer(theXVar->getTag(),
-                                                                                                   theYVar->getTag(),
-                                                                                                   theProcessClass->getTag(),
-                                                                                                   theRegion->getTag(),
-                                                                                                   theChannel->getTag());
+                  if ((projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
+                   || (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter"))
+                  {
+                      if (theProcessClass->getType() != "signal") continue;
 
-                  // Produce the figure of merit histogram
-                  theHistoScrewdriver->Add1DHistoForPlots(
-                          Histo1DFrom2DProjection(theXVar,
-                                                  theYVar,
-                                                  theRegion,
-                                                  theChannel,
-                                                  thisProcessHisto,
-                                                  theGlobalOptions,
-                                                  histoParameters)
-                                                         );
+                      Histo2D* thisProcessHisto = theHistoScrewdriver->get2DHistoForPlotPointer("2DFigureOfMeritForVarXBeingSignalParameter",
+                                                                                                theXVar->getTag(),
+                                                                                                theYVar->getTag(),
+                                                                                                theRegion->getTag(),
+                                                                                                theChannel->getTag(),
+                                                                                                string("sig=")+theProcessClass->getTag());
+                      // Produce the plot
+                      theHistoScrewdriver->Add1DHistoForPlots(
+                              Histo1DFrom2DProjection(theXVar,
+                                                      theYVar,
+                                                      theRegion,
+                                                      theChannel,
+                                                      theProcessClass,
+                                                      thisProcessHisto,
+                                                      theGlobalOptions,
+                                                      histoParameters)
+                                                             );
+
+
+                  }
+                  else
+                  {
+                      Histo2DEntries* thisProcessHisto = theHistoScrewdriver->get2DHistoEntriesPointer(theXVar->getTag(),
+                                                                                                       theYVar->getTag(),
+                                                                                                       theProcessClass->getTag(),
+                                                                                                       theRegion->getTag(),
+                                                                                                       theChannel->getTag());
+
+                      // Produce the plot
+                      theHistoScrewdriver->Add1DHistoForPlots(
+                              Histo1DFrom2DProjection(theXVar,
+                                                      theYVar,
+                                                      theRegion,
+                                                      theChannel,
+                                                      theProcessClass,
+                                                      thisProcessHisto,
+                                                      theGlobalOptions,
+                                                      histoParameters)
+                                                             );
+                  }
               }
           }
      }
@@ -77,19 +112,20 @@ namespace theDoctor
                               Variable* theYVar, 
                               Region*   theRegion, 
                               Channel*  theChannel,
-                              Histo2DEntries* theInputHisto,
+                              ProcessClass* theProcessClass,
+                              Histo2D* theInputHisto,
                               OptionsScrewdriver theGlobalOptions,
                               string histoParameters) :
       Histo1D(Name("1DFrom2DProjection",""),theXVar,theRegion,theChannel,string("vY=")+theYVar->getTag()
                                                                              +",proj="+OptionsScrewdriver::GetStringOption(histoParameters,"projectionType")
-                                                                                +",p="+theInputHisto->getProcessClassTag())
+                                                                                +",p="+theProcessClass->getTag())
       {
 
           string nameHisto =  string("v:")+theXVar->getTag()
                                    +"|r:" +theRegion->getTag()
                                    +"|c:" +theChannel->getTag()
                                    +"|t:" +theHistoType.getTag()
-                                   +"|p:" +theInputHisto->getProcessClassTag();
+                                   +"|p:" +theProcessClass->getTag();
 
           theHisto->SetName(nameHisto.c_str());
 
@@ -117,15 +153,26 @@ namespace theDoctor
                   theHisto->SetBinContent(i,iIshBinHisto.GetMean() );
                   theHisto->SetBinError(  i,iIshBinHisto.GetMeanError());
               }
+              else if (projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
+              {
+                  theHisto->SetBinContent(i,iIshBinHisto.GetMaximum() );
+                  theHisto->SetBinError(  i,0.0);
+              }
+              else if (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter")
+              {
+                  theHisto->SetBinContent(i,iIshBinHisto.GetBinCenter(iIshBinHisto.GetMaximumBin()));
+                  theHisto->SetBinError(  i,0.0);
+              }
               else
               {
                   theHisto->SetBinContent(i,0.0);
                   theHisto->SetBinError(  i,0.0);
-              } 
+              }
+
+
           }
 
-      }; 
-
+      };
 
      private:
 

@@ -14,6 +14,7 @@
 #include "interface/histos/Histo1DSumData.h"
 #include "interface/histos/Histo1DFigureOfMerit.h"
 #include "interface/histos/Histo2DEntries.h"
+#include "interface/histos/Histo2DFigureOfMeritForVarXBeingSignalParameter.h"
 #include "interface/histos/Histo1DFrom2DProjection.h"
 
 // Plot producers
@@ -79,10 +80,8 @@ namespace theDoctor
                 vector<Channel>* theChannels,
                 HistoScrewdriver* theHistoScrewdriver)
         {
-            //DEBUG_MSG << "in make histo for plots" << endl;
             for (unsigned int i = 0 ; i < scheduledHistos.size() ; i++)
             {
-
                 pair<string,string> histo = scheduledHistos[i];
                 string histoType = histo.first;
                 string histoOptions = histo.second;
@@ -99,6 +98,8 @@ namespace theDoctor
                     Histo1DFigureOfMerit::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "1DFrom2DProjection")
                     Histo1DFrom2DProjection::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
+                else if (histoType == "2DFigureOfMeritForVarXBeingSignalParameter")
+                    Histo2DFigureOfMeritForVarXBeingSignalParameter::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
             }
         }
 
@@ -178,7 +179,8 @@ namespace theDoctor
             for (unsigned int i = 0 ; i < scheduledPlots.size() ; i++)
             {
                 pair<string,string> plot = scheduledPlots[i];
-                string plotType = plot.first;
+                string plotType       = plot.first;
+                string plotParameters = plot.second;
                 TFile outputFile((outputFolder+"/"+plotType+".root").c_str(),"UPDATE");
 
                 for (unsigned int c = 0; c < theChannels->size() ; c++)

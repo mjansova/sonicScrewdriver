@@ -138,12 +138,6 @@ namespace theDoctor
 
       void Create1DHistos();
 
-      //
-      // *** Manual fill of the var-processClass specified histogram.
-      //
-
-      void Fill(string var,	string processClass, float value, float weight = 1.0);
-      
       // *** Apply scale factor on an histogram
       
       void ApplyScaleFactor(string var,	string processClass, string region, string channel, Figure scaleFactor);
@@ -162,12 +156,6 @@ namespace theDoctor
       
       void Add2DHisto(string varX, string varY);
 
-      //
-      // *** Manual fill of the varX-varY-processClass specified histogram.
-      //
-
-      void Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight = 1.0);
- 
             // ########################
             // #  Histo3DEntries management  #
             // ########################
@@ -181,12 +169,6 @@ namespace theDoctor
       // 
       
       void Add3DHisto(string varX, string varY, string varZ);
-
-      //
-      // *** Manual fill of the varX-varY-varZ-processClass specified histogram.
-      //
-
-      void Fill(string varX, string varY, string varZ, string processClass, float valueX, float valueY, float valueZ, float weight = 1.0);
 
       // ##########################
       // #   Options management   #

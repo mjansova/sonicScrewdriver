@@ -20,9 +20,51 @@ namespace theDoctor
       HistoScrewdriver(vector<Variable>*, vector<ProcessClass>*, vector<Region>*, vector<Channel>*);
       ~HistoScrewdriver();
 
-
-      void AutoFillProcessClass(string processClass, float weight = 1.0);
+      void Create1DHistosEntries();
+      void AutoFillProcessClass(string processClass, float weight);
+      Figure GetYieldAndError(string var, string processClass, string region, string channel);
       
+      vector<Histo1DEntries>* Get1DHistosEntries();
+      vector<Histo2DEntries>* Get2DHistosEntries();
+      vector<Histo3DEntries>* Get3DHistosEntries();
+
+      vector<Histo1D>* Get1DHistosForPlots() { return &the1DHistosForPlots; } 
+      vector<Histo2D>* Get2DHistosForPlots() { return &the2DHistosForPlots; }
+      vector<Histo3D>* Get3DHistosForPlots() { return &the3DHistosForPlots; }
+
+      void AutoFill1DProcessClass(string processClass, float weight = 1.0);
+
+      void ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor);
+
+      Histo1DEntries* get1DHistoEntriesPointer(string var, string processClass, string region, string channel);
+      Histo1D* get1DHistoForPlotPointer(string type, string var, string region, string channel, string options);
+      TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
+      TH1F* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
+
+      // 2D histos
+     
+      void Add2DHistoEntries(string varX, string varY); 
+      void AutoFill2DProcessClass(string processClass, float weight = 1.0);
+
+      Histo2DEntries* get2DHistoEntriesPointer(string varX, string varY, string processClass, string region, string channel);
+      Histo2D* get2DHistoForPlotPointer(string type, string varX, string varY, string region, string channel, string options);
+      TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
+      TH2F* get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel);
+      
+      // 3D histos
+      void Add3DHistoEntries(string varX, string varY, string varZ); 
+      void AutoFill3DProcessClass(string processClass, float weight = 1.0);
+      
+      Histo3DEntries* get3DHistoPointer(string varX, string varY, string varZ, string processClass, string region, string channel);
+      TH3F* get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel);
+      TH3F* get3DHistoEntriesClone(string varX, string varY, string varZ, string processClass, string region, string channel);
+
+      void Add1DHistoForPlots(Histo1D theHisto) { the1DHistosForPlots.push_back(theHisto); }
+      void Add2DHistoForPlots(Histo2D theHisto) { the2DHistosForPlots.push_back(theHisto); }
+      void Add3DHistoForPlots(Histo3D theHisto) { the3DHistosForPlots.push_back(theHisto); }
+
+    private:
+
       int getIndexOfVariable(string tag);
       int getIndexOfProcessClass(string tag);
       int getIndexOfRegion(string tag);
@@ -32,57 +74,7 @@ namespace theDoctor
       int getIndexOfHisto3DEntries(string tagVarX, string tagVarY, string tagVarZ, string tagProcessClass, string tagRegion, string tagChannel);
       
       int getIndexOfHisto1DForPlot(string type, string tagVar, string tagRegion, string tagChannel, string otherParameters = "");
-
-
-      // 1D histos
-     
-      void Create1DHistosEntries();
-
-      void Fill(string var, string processClass, float value, float weight = 1.0);
-      void Fill(string var,	string processClass, string region, string channel, float value, float weight = 1.0);
-      void AutoFill1DProcessClass(string processClass, float weight = 1.0);
-
-      void ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor);
-
-      Histo1DEntries* get1DHistoEntriesPointer(string var, string processClass, string region, string channel);
-      Histo1D* get1DHistoForPlotPointer(string type, string var, string region, string channel, string options);
-      TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
-      TH1F* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
-      vector<Histo1DEntries>* Get1DHistosEntries();
-
-      // 2D histos
-     
-      void Add2DHistoEntries(string varX, string varY); 
-      void Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight = 1.0);
-      void AutoFill2DProcessClass(string processClass, float weight = 1.0);
-
-      Histo2DEntries* get2DHistoEntriesPointer(string varX, string varY, string processClass, string region, string channel);
-      TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
-      TH2F* get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel);
-      vector<Histo2DEntries>* Get2DHistosEntries();
-      
-      // 3D histos
-      void Add3DHistoEntries(string varX, string varY, string varZ); 
-      void Fill(string varX, string varY, string varZ, string processClass, float valueX, float valueY, float valueZ, float weight = 1.0);
-      void AutoFill3DProcessClass(string processClass, float weight = 1.0);
-      
-      Histo3DEntries* get3DHistoPointer(string varX, string varY, string varZ, string processClass, string region, string channel);
-      TH3F* get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel);
-      TH3F* get3DHistoEntriesClone(string varX, string varY, string varZ, string processClass, string region, string channel);
-      vector<Histo3DEntries>* Get3DHistosEntries();
-
-      // TODO - rename and make something more customazible/clean
-      Figure GetYieldAndError(string var, string processClass, string region, string channel);
-
-      void Add1DHistoForPlots(Histo1D theHisto) { the1DHistosForPlots.push_back(theHisto); }
-      void Add2DHistoForPlots(Histo2D theHisto) { the2DHistosForPlots.push_back(theHisto); }
-      void Add3DHistoForPlots(Histo3D theHisto) { the3DHistosForPlots.push_back(theHisto); }
-
-      vector<Histo1D>* Get1DHistosForPlots() { return &the1DHistosForPlots; } 
-      vector<Histo2D>* Get2DHistosForPlots() { return &the2DHistosForPlots; }
-      vector<Histo3D>* Get3DHistosForPlots() { return &the3DHistosForPlots; }
-
-     private:
+      int getIndexOfHisto2DForPlot(string type, string tagVarX, string tagVarY, string tagRegion, string tagChannel, string otherParameters = "");
 
       vector<Variable>*      theVariables;
       vector<ProcessClass>*  theProcessClasses;

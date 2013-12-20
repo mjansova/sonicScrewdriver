@@ -108,14 +108,10 @@ string SonicScrewdriver::GetProcessClass(string dataset)
 }
   
 float SonicScrewdriver::GetLumi()
-{
-    return theLumi;
-}
+{ return theLumi; }
 
 void SonicScrewdriver::SetLumi(float inputLumi)
-{
-    theLumi = inputLumi;
-}
+{ theLumi = inputLumi; }
 
 // #####################################
 // #   Regions & channels management   #
@@ -141,9 +137,6 @@ void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight)
 void SonicScrewdriver::Create1DHistos()
 {	theHistoScrewdriver.Create1DHistosEntries();	}
 
-void SonicScrewdriver::Fill(string var,	string processClass, float value, float weight)
-{	theHistoScrewdriver.Fill(var,processClass,value,weight); }
-
 void SonicScrewdriver::ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor)
 {	theHistoScrewdriver.ApplyScaleFactor(var,processClass,region, channel, scaleFactor);	}
 
@@ -152,62 +145,35 @@ void SonicScrewdriver::ApplyScaleFactor(string var, string processClass, string 
 		// ###########################
  
 void SonicScrewdriver::Add2DHisto(string varX, string varY)
-{
-  theHistoScrewdriver.Add2DHistoEntries(varX,varY);
-}
+{ theHistoScrewdriver.Add2DHistoEntries(varX,varY); }
   
-void SonicScrewdriver::Fill(string varX, string varY, string processClass, float valueX, float valueY, float weight)
-{ 	theHistoScrewdriver.Fill(varX,varY,processClass,valueX,valueY,weight);	}
-
 		// ###########################
 		// #   3D histo management   #
 		// ###########################
  
 void SonicScrewdriver::Add3DHisto(string varX, string varY, string varZ) 
-{
-  theHistoScrewdriver.Add3DHistoEntries(varX,varY,varZ);
-}
+{ theHistoScrewdriver.Add3DHistoEntries(varX,varY,varZ); }
   
-void SonicScrewdriver::Fill(string varX, string varY, string varZ, string processClass, float valueX, float valueY, float valueZ, float weight)
-{ 	theHistoScrewdriver.Fill(varX,varY,varZ,processClass,valueX,valueY,valueZ,weight);	}
-
-
 // ###########################
 // #     Plots management    #
 // ###########################
 void SonicScrewdriver::SchedulePlots(string plotType, string options)
-{
-    thePlotScrewdriver.SchedulePlots(plotType,options);
-}
+{ thePlotScrewdriver.SchedulePlots(plotType,options); }
 
 void SonicScrewdriver::MakePlots(string options)
-{
-	thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theHistoScrewdriver,options);
-}
+{ thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theHistoScrewdriver,options); }
 
 void SonicScrewdriver::WritePlots(string outputFolder, string infoText, string options)
-{
-	thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder,infoText,options);
-}
-
-
+{ thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder,infoText,options); }
 
 Figure SonicScrewdriver::GetYieldAndError(string var, string processClass,string region,string channel)
-{
-    return theHistoScrewdriver.GetYieldAndError(var,processClass,region,channel);
-}
+{ return theHistoScrewdriver.GetYieldAndError(var,processClass,region,channel); }
 
 vector<Histo1DEntries>* SonicScrewdriver::Get1DHistosEntries()
-{
-    return theHistoScrewdriver.Get1DHistosEntries();
-}
+{ return theHistoScrewdriver.Get1DHistosEntries(); }
 
 vector<Histo2DEntries>* SonicScrewdriver::Get2DHistosEntries()
-{
-    return theHistoScrewdriver.Get2DHistosEntries();
-}
+{ return theHistoScrewdriver.Get2DHistosEntries(); }
 
 vector<Histo3DEntries>* SonicScrewdriver::Get3DHistosEntries()
-{
-    return theHistoScrewdriver.Get3DHistosEntries();
-}
+{ return theHistoScrewdriver.Get3DHistosEntries(); }

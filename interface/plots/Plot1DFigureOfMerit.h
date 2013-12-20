@@ -110,7 +110,7 @@ namespace theDoctor
          // xlabel = labelDeLaVariable (Unité)
          // ylabel = Normalized entries / largeurDeBin Unité
 
-         string xlabel(theVar->getLabel());
+         string xlabel(string("Cut on ")+theVar->getLabel());
          string ylabel("Entries / ");
          ylabel += floatToString(theVar->getBinWidth());
 
