@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
       myScrewdriver.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160     ,&(myEvent.invariantMass)              );
       myScrewdriver.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400      ,&(myEvent.MET)            ,"logY=true");
       myScrewdriver.AddVariable("leptonPt",        "p_{T}(lepton)",          "GeV",    30,0,150      ,&(myEvent.leptonPt)       ,"");
-      myScrewdriver.AddVariable("mMuf",            "True muf mass",          "GeV",    20,114.5,135.5,&(myEvent.mMuf)           ,"");
+      myScrewdriver.AddVariable("mMuf",            "True muf mass",          "GeV",    11,114,136    ,&(myEvent.mMuf)           ,"");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -85,20 +85,20 @@ int main (int argc, char *argv[])
 	  // Backgrounds
 
       myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_ORANGE);
-           myScrewdriver.AddDataset("foo","foo",12500,0.495);
+           myScrewdriver.AddDataset("foo","foo",50000,0.495);
   
       myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_AZURE);
-           myScrewdriver.AddDataset("bar","bar",12500,0.495);
+           myScrewdriver.AddDataset("bar","bar",50000,0.495);
 
 	  // Signal(s)
 
       myScrewdriver.AddProcessClass("muf",     "Muf",     "signal",     COLORPLOT_GREEN);
-           myScrewdriver.AddDataset("muf","muf",12500,0.01);
+           myScrewdriver.AddDataset("muf","muf",50000 / 11,0.01);
 
 	  // Data
 
       myScrewdriver.AddProcessClass("data" ,   "Data",    "data",       COLORPLOT_BLACK);
-           myScrewdriver.AddDataset("data","data",1,12500);
+           myScrewdriver.AddDataset("data","data",-1,50000);
   
   // ##########################
   // ##    Create Regions    ##
@@ -124,6 +124,7 @@ int main (int argc, char *argv[])
      myScrewdriver.Create1DHistos();
      
      myScrewdriver.Add2DHisto("invariantMass","leptonPt");
+     myScrewdriver.Add2DHisto("mMuf","invariantMass");
 
      // Set options
 
@@ -142,7 +143,7 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DSuperpRenorm");
      myScrewdriver.SchedulePlots("1DStack");
      myScrewdriver.SchedulePlots("1DDataMCComparison");
-     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
+     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=MET,cutType=keepHighValues");
      myScrewdriver.SchedulePlots("2D");
      myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
 
@@ -209,6 +210,10 @@ int main (int argc, char *argv[])
      return (0);
 
 }
+
+// ##########################################
+// ##   Regions and channels definitions   ##
+// ##########################################
 
 bool preSelection()
 {

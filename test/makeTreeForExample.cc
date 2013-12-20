@@ -52,7 +52,7 @@ microEvent;
 #########################################
 */
 
-void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType);
+void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType, bool isData = false);
 
 int main()
 {
@@ -84,14 +84,14 @@ int main()
         bar->Fill();
 
         fillEventWithProcessType(&myEvent, gen, 2);
-        myEvent.mMuf = -1;
         muf->Fill();
 
         // For data, generate 1% muf,
         //                    49.5% foo,
         //                    49.5% bar
         int processTypeData = (int) (gen->Uniform()*2*(1+0.01)); 
-        fillEventWithProcessType(&myEvent, gen, processTypeData);
+        fillEventWithProcessType(&myEvent, gen, processTypeData,true);
+        myEvent.mMuf = -1;
         data->Fill();
     }
 
@@ -104,7 +104,7 @@ int main()
     return 0;
 }
 
-void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType)
+void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType, bool isData)
 {
     if (processType == 0)
     {
@@ -122,10 +122,14 @@ void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int proce
     }
     else if (processType == 2)
     {
-        myEvent->mMuf          = (int) (((int) gen->Uniform()*10)*2 + 115);
-        myEvent->invariantMass = gen->Gaus(myEvent->mMuf,(myEvent->mMuf-110)/40);
+        if (isData) myEvent->mMuf = 125.0;
+        else        myEvent->mMuf = ((int) (gen->Uniform()*11)*2) + 115;
+
+        myEvent->invariantMass = gen->Gaus(myEvent->mMuf,(myEvent->mMuf-110)/10);
         myEvent->MET           = gen->Exp(150);
         myEvent->leptonPt      = gen->Gaus((myEvent->mMuf + myEvent->MET) / 5.0, 15.0);
+
+        if (isData) myEvent->mMuf = -1.0;
     }
 
     myEvent->leptonFlavor = (int) (gen->Uniform()*2);
