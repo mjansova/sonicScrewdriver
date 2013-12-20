@@ -25,12 +25,12 @@ Features
 Usage
 -----
 
-An example is available in test/. 
+An example is provided in `test/`. 
 After setting up your environment, just do :
 
-    ./cmdCompile.sh && ./makeTreeForExample && ./plotGenerationExample
+    make && make test
 
-And browse the plots/ folder.
+And browse the plots in `test/plots/`.
 
 Disclaimer
 ----------

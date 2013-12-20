@@ -12,22 +12,26 @@ ROOTGLIBS     = $(shell root-config --libs)
 # Linux with egcs
 DEFINES       = 
 CXX           = g++
-CXXFLAGS	  = -O -Wall -fPIC $(DEFINES)
-LD		      = g++ 
-LDFLAGS 	  = -g -O -Wall -fPIC -Wl,--no-undefined
-SOFLAGS		  = -shared
+CXXFLAGS      = -O -Wall -fPIC $(DEFINES)
+LD            = g++ 
+LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined
+SOFLAGS       = -shared
 
-CXXFLAGS	+= $(ROOTCFLAGS) -I./
-LIBS		= $(ROOTLIBS)  -lEG 
-GLIBS		= $(ROOTGLIBS)
+CXXFLAGS      += $(ROOTCFLAGS) -I./
+LIBS          = $(ROOTLIBS)  -lEG 
 #------------------------------------------------------------------------------
-SOURCES		= $(wildcard src/*.cc)
-HEADERS		= $(wildcard interface/*.h)
-OBJECTS		= $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-SOBJECTS	= $(SOURCES:.$(SrcSuf)=.$(DllSuf))
-
+SOURCES       = $(wildcard src/*.cc)
+OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
+#------------------------------------------------------------------------------
 
 all:  libSonicScrewdriver.so
+
+libSonicScrewdriver.so: $(OBJECTS) 
+	@echo "Building libSonicScrewdriver..."
+	$(LD) -L${ROOTSYS}/lib $+ -o $@ $(LIBS) $(SOFLAGS) $(LDFLAGS)
+
+test:
+	@make -C test test
 
 clean:
 	@echo "Cleaning..."
@@ -35,9 +39,8 @@ clean:
 
 .SUFFIXES: .$(SrcSuf) .C .o .so
 
-libSonicScrewdriver.so: $(OBJECTS) 
-	@echo "Building libSonicScrewdriver..."
-	$(LD) -L${ROOTSYS}/lib $+ -o $@ $(LIBS) $(SOFLAGS) $(LDFLAGS)
+.PHONY : test
+
 
  
 
