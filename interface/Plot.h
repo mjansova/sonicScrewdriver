@@ -41,6 +41,7 @@ namespace theDoctor
                 theInPlotInfo->SetTextAlign(11);
 
                 type = type_;
+                hasBeenWritten = false;
 
                 SetActive();
             };
@@ -143,6 +144,8 @@ namespace theDoctor
             void Write(string outputFolder = "", string infoText = "", string options = "")
             {
 
+                if (hasBeenWritten) return;
+                
                 DrawInfoText();
                 DrawLegend();
                 SetActive();
@@ -181,8 +184,7 @@ namespace theDoctor
                     string shortPlotName = theCanvas->GetName();
 
                     // TODO Should do something clean about the output directory
-                    int ret;
-                    ret = system((string("mkdir -p ")+outputFolder).c_str());
+                    system((string("mkdir -p ")+outputFolder).c_str());
                     string epsOutput = outputFolder+"/"+shortPlotName+".eps";  
                     string pngOutput = outputFolder+"/"+shortPlotName+".png";  
 
@@ -192,18 +194,17 @@ namespace theDoctor
                     gErrorIgnoreLevel = kWarning;
 
                     string eraseBeforeCreationEps("rm -f "+epsOutput);
-                    ret = system(eraseBeforeCreationEps.c_str());
+                    system(eraseBeforeCreationEps.c_str());
                     theCanvas->SaveAs(epsOutput.c_str());
 
                     // Convert to png
                     string eraseBeforeCreationPng("rm -f "+pngOutput);
-                    ret = system(eraseBeforeCreationPng.c_str());
+                    system(eraseBeforeCreationPng.c_str());
                     string convertCommand("convert -density 130 "+epsOutput+" "+pngOutput+" 2> /dev/null");
-                    ret = system(convertCommand.c_str());
+                    system(convertCommand.c_str());
+                }
 
-                    // Remove "ret not used" warning
-                    ret = ret + 1;
-                }  
+                hasBeenWritten = true;
             };
 
             // Legend edition
@@ -275,6 +276,10 @@ namespace theDoctor
 
             string type;
             std::map<string,string> parameters;
+
+            // TODO : might be a dirty solution to the problem
+            // Should find another way to do this if possible
+            bool hasBeenWritten;
 
     };
 

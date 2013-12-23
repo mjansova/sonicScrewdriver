@@ -12,7 +12,7 @@ ROOTGLIBS     = $(shell root-config --libs)
 # Linux with egcs
 DEFINES       = 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES)
+CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined
 SOFLAGS       = -shared
