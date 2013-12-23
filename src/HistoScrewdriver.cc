@@ -217,10 +217,9 @@ int HistoScrewdriver::getIndexOfHisto2DEntries(string tagVarX, string tagVarY, s
 
 int HistoScrewdriver::getIndexOfHisto2DForPlot(string type, string tagVarX, string tagVarY, string tagRegion, string tagChannel, string otherParameters)
 {
-    DEBUG_MSG << endl;
   for (unsigned int i = 0 ; i < the2DHistosForPlots.size() ; i++)
   {
-
+/*
       DEBUG_MSG <<  "t = " << the2DHistosForPlots[i].getHistoTypeTag()
               << " c = " << the2DHistosForPlots[i].getChannelTag()  
               << " r = " << the2DHistosForPlots[i].getRegionTag()   
@@ -228,7 +227,7 @@ int HistoScrewdriver::getIndexOfHisto2DForPlot(string type, string tagVarX, stri
               << " vY = " << the2DHistosForPlots[i].getVariableYTag() 
               << " p = " << the2DHistosForPlots[i].getHistoParameters() 
               << endl;
-
+*/
     if (the2DHistosForPlots[i].getHistoTypeTag()    != type            ) continue;
     if (the2DHistosForPlots[i].getChannelTag()      != tagChannel      ) continue;
     if (the2DHistosForPlots[i].getRegionTag()       != tagRegion       ) continue;
@@ -337,7 +336,44 @@ int HistoScrewdriver::getIndexOfHisto3DEntries(string tagVarX, string tagVarY, s
   }
   return -1;
 }
- 
+
+int HistoScrewdriver::getIndexOfHisto3DForPlot(string type, string tagVarX, string tagVarY, string tagVarZ, string tagRegion, string tagChannel, string otherParameters)
+{
+  for (unsigned int i = 0 ; i < the3DHistosForPlots.size() ; i++)
+  {
+/*
+      DEBUG_MSG <<  "t = " << the3DHistosForPlots[i].getHistoTypeTag()
+              << " c = "   << the3DHistosForPlots[i].getChannelTag()  
+              << " r = "   << the3DHistosForPlots[i].getRegionTag()   
+              << " vX = "  << the3DHistosForPlots[i].getVariableXTag() 
+              << " vY = "  << the3DHistosForPlots[i].getVariableYTag() 
+              << " vZ = "  << the3DHistosForPlots[i].getVariableZTag() 
+              << " p = "   << the3DHistosForPlots[i].getHistoParameters() 
+              << endl;
+*/
+    if (the3DHistosForPlots[i].getHistoTypeTag()    != type            ) continue;
+    if (the3DHistosForPlots[i].getChannelTag()      != tagChannel      ) continue;
+    if (the3DHistosForPlots[i].getRegionTag()       != tagRegion       ) continue;
+    if (the3DHistosForPlots[i].getVariableXTag()    != tagVarX         ) continue;
+    if (the3DHistosForPlots[i].getVariableYTag()    != tagVarY         ) continue;
+    if (the3DHistosForPlots[i].getVariableZTag()    != tagVarZ         ) continue;
+    if (the3DHistosForPlots[i].getHistoParameters() != otherParameters ) continue;
+    
+    return i;
+  }
+  WARNING_MSG << "Unable to find histo for (type,varX,varY,varZ,region,channel,parameters) "
+              << "= (" << type       << ","
+                       << tagVarX    << "," 
+                       << tagVarY    << ","
+                       << tagVarZ    << ","
+                       << tagRegion  << ","
+                       << tagChannel << "," 
+                       << otherParameters << ")" << endl;
+  return -1;
+}
+
+
+
 void HistoScrewdriver::Add3DHistoEntries(string varX, string varY, string varZ) 
 {
   
@@ -378,7 +414,7 @@ void HistoScrewdriver::AutoFill3DProcessClass(string processClass, float weight)
   }
 }
 
-Histo3DEntries* HistoScrewdriver::get3DHistoPointer(string varX, string varY, string varZ, string processClass, string region, string channel)
+Histo3DEntries* HistoScrewdriver::get3DHistoEntriesPointer(string varX, string varY, string varZ, string processClass, string region, string channel)
 {
     int indexHisto = getIndexOfHisto3DEntries(varX,varY,varZ,processClass,region,channel);
     if (indexHisto == -1) 
@@ -393,6 +429,13 @@ Histo3DEntries* HistoScrewdriver::get3DHistoPointer(string varX, string varY, st
         return 0; 
     }
     return &(the3DHistosEntries[indexHisto]);
+}
+
+Histo3D* HistoScrewdriver::get3DHistoForPlotPointer(string type, string varX, string varY, string varZ, string region, string channel, string otherParameters)
+{
+    int indexHisto = getIndexOfHisto3DForPlot(type,varX,varY,varZ,region,channel,otherParameters);
+    if (indexHisto < 0) return 0;
+    else return &(the3DHistosForPlots[indexHisto]);
 }
 
 TH3F* HistoScrewdriver::get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel)

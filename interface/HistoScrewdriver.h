@@ -55,7 +55,8 @@ namespace theDoctor
       void Add3DHistoEntries(string varX, string varY, string varZ); 
       void AutoFill3DProcessClass(string processClass, float weight = 1.0);
       
-      Histo3DEntries* get3DHistoPointer(string varX, string varY, string varZ, string processClass, string region, string channel);
+      Histo3DEntries* get3DHistoEntriesPointer(string varX, string varY, string varZ, string processClass, string region, string channel);
+      Histo3D* get3DHistoForPlotPointer(string type, string varX, string varY, string varZ, string region, string channel, string options);
       TH3F* get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel);
       TH3F* get3DHistoEntriesClone(string varX, string varY, string varZ, string processClass, string region, string channel);
 
@@ -75,6 +76,7 @@ namespace theDoctor
       
       int getIndexOfHisto1DForPlot(string type, string tagVar, string tagRegion, string tagChannel, string otherParameters = "");
       int getIndexOfHisto2DForPlot(string type, string tagVarX, string tagVarY, string tagRegion, string tagChannel, string otherParameters = "");
+      int getIndexOfHisto3DForPlot(string type, string tagVarX, string tagVarY, string tagVarZ, string tagRegion, string tagChannel, string otherParameters = "");
 
       vector<Variable>*      theVariables;
       vector<ProcessClass>*  theProcessClasses;

@@ -18,7 +18,7 @@ namespace theDoctor
                        ProcessClass* theProcessClass_,
                        Region* theRegion_,
                        Channel* theChannel_) :
-        Histo3D(theXVar_,theYVar_,theZVar_,theRegion_,theChannel_,Name("entries","Entries"))
+        Histo3D(Name("3DEntries","Entries"), theXVar_,theYVar_,theZVar_,theRegion_,theChannel_)
         {
             theXVar = theXVar_;
             theYVar = theYVar_;
