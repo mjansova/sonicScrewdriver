@@ -163,7 +163,7 @@ namespace theDoctor
 
         }
 
-        void WritePlots(vector<Channel>* theChannels, vector<Region>* theRegions, string outputFolder, string infoText, string options = "")
+        void WritePlots(vector<Channel>* theChannels, vector<Region>* theRegions, string outputFolder)
         {
 
             TDirectory* channelDir = 0;
@@ -215,7 +215,7 @@ namespace theDoctor
 
                             string addPath = "";
                             // For 2D-histos, create a subfolder varX[vs]varY
-                            if ((plotType == "2D") || (plotType == "3DProjectedTo2D"))
+                            if (plotType == "2D")
                             {
                                 string varX = thePlots[j].GetParameter("variableX");
                                 string varY = thePlots[j].GetParameter("variableY");
@@ -223,14 +223,20 @@ namespace theDoctor
                                 addPath += "/" + varX + "[vs]" + varY;
                                 if (!regionDir->GetDirectory((varX+"[vs]"+varY).c_str()))
                                 { varDir = regionDir->mkdir((varX+"[vs]"+varY).c_str()); varDir->cd(); }
-
+                            }
+                            else if (plotType == "3DProjectedTo2D")
+                            {
+                                string varX = thePlots[j].GetParameter("variableX");
+                                string varY = thePlots[j].GetParameter("variableY");
+                                string tagZ = thePlots[j].GetParameter("tagZ");
+                                addPath += "/" + varX + "|" + varY + "[vs]" +tagZ;
+                                if (!regionDir->GetDirectory((varX+"|"+varY+"[vs]"+tagZ).c_str()))
+                                { varDir = regionDir->mkdir((varX+"|"+varY+"[vs]"+tagZ).c_str()); varDir->cd(); }
                             }
 
-                            thePlots[j].Write(outputFolder+"/"+plotType
-                                    +"/"+(*theChannels)[c].getTag()
-                                    +"/"+(*theRegions)[r].getTag()
-                                    +addPath,
-                                    infoText,options);
+                            thePlots[j].Write(outputFolder,
+                                    plotType+"/"+(*theChannels)[c].getTag()+"/"+(*theRegions)[r].getTag()+addPath,
+                                    theGlobalOptions);
                         }
                     }
                 }

@@ -141,7 +141,7 @@ namespace theDoctor
 
             }
                 
-            void Write(string outputFolder = "", string infoText = "", string options = "")
+            void Write(string outputFolder, string category, OptionsScrewdriver theGlobalOptions)
             {
 
                 if (hasBeenWritten) return;
@@ -156,16 +156,10 @@ namespace theDoctor
                     string varY = GetParameter("tagY");
                     theCanvas->SetName((varX + "[vs]" + varY).c_str());
                 }
-                else if (type == "2D")
+                else if ((type == "2D") || (type == "2DFrom3DProjection"))
                 {
                     string processClassName = GetParameter("processClass");
                     theCanvas->SetName(processClassName.c_str());
-                }
-                else if  (type == "3DProjectedTo2D")
-                {
-                    string processClassName = GetParameter("processClass");
-                    string varZ = GetParameter("variableZ");
-                    theCanvas->SetName((varZ+"|"+processClassName).c_str());
                 }
                 else
                 {
@@ -176,32 +170,54 @@ namespace theDoctor
                 // Write root output
                 theCanvas->Write();
 
-                // Optionnal export in png and eps 
-                if (OptionsScrewdriver::GetBoolOption(options,"exportPngAndEps"))
+                bool exportPng = theGlobalOptions.GetGlobalBoolOption("Plot","exportPng");
+                bool exportEps = theGlobalOptions.GetGlobalBoolOption("Plot","exportEps");
+                bool exportPdf = theGlobalOptions.GetGlobalBoolOption("Plot","exportPdf");
+
+                // Optionnal export other formats 
+                if (exportPng || exportEps || exportPdf)
                 {
-                    if (outputFolder.find("[") != string::npos) outputFolder.replace(outputFolder.find("["),1,"_");
-                    if (outputFolder.find("]") != string::npos) outputFolder.replace(outputFolder.find("]"),1,"_");
+                    if (category.find("[") != string::npos) category.replace(category.find("["),1,"_");
+                    if (category.find("]") != string::npos) category.replace(category.find("]"),1,"_");
                     string shortPlotName = theCanvas->GetName();
+                    if (shortPlotName.find("[") != string::npos) shortPlotName.replace(shortPlotName.find("["),1,"_");
+                    if (shortPlotName.find("]") != string::npos) shortPlotName.replace(shortPlotName.find("]"),1,"_");
 
-                    // TODO Should do something clean about the output directory
-                    system((string("mkdir -p ")+outputFolder).c_str());
-                    string epsOutput = outputFolder+"/"+shortPlotName+".eps";  
-                    string pngOutput = outputFolder+"/"+shortPlotName+".png";  
-
-                    // Save eps
-                    // TODO move this line elsewhere
-                    // (remove useless info message from root)
+                    string epsFolder = "./"+outputFolder+"/eps/"+category+"/";  string epsFile = epsFolder+shortPlotName+".eps";  
+                    string pngFolder = "./"+outputFolder+"/png/"+category+"/";  string pngFile = pngFolder+shortPlotName+".png";  
+                    string pdfFolder = "./"+outputFolder+"/pdf/"+category+"/";  string pdfFile = pdfFolder+shortPlotName+".pdf";  
+                    
                     gErrorIgnoreLevel = kWarning;
 
-                    string eraseBeforeCreationEps("rm -f "+epsOutput);
-                    system(eraseBeforeCreationEps.c_str());
-                    theCanvas->SaveAs(epsOutput.c_str());
+                    if (exportEps)
+                    {
+                        system((string("mkdir -p ")+epsFolder).c_str());
+                        string eraseBeforeCreationEps("rm -f "+epsFile);
+                        system(eraseBeforeCreationEps.c_str());
+                        theCanvas->SaveAs(epsFile.c_str());
+                    }
 
-                    // Convert to png
-                    string eraseBeforeCreationPng("rm -f "+pngOutput);
-                    system(eraseBeforeCreationPng.c_str());
-                    string convertCommand("convert -density 130 "+epsOutput+" "+pngOutput+" 2> /dev/null");
-                    system(convertCommand.c_str());
+                    if (exportPdf || exportPng)
+                    {
+                        system((string("mkdir -p ")+pngFolder).c_str());
+                        string eraseBeforeCreationPdf("rm -f "+pdfFile);
+                        system(eraseBeforeCreationPdf.c_str());
+                        theCanvas->SaveAs(pdfFile.c_str());
+                    }
+
+                    if (exportPng)
+                    {
+                        system((string("mkdir -p ")+pdfFolder).c_str());
+                        string eraseBeforeCreationPng("rm -f "+pngFile);
+                        system(eraseBeforeCreationPng.c_str());
+                        string convertCommand("ls "+pdfFile+" > /dev/null && convert -trim "+pdfFile+" "+pngFile);
+                        system(convertCommand.c_str());
+                        if (!exportPdf)
+                        {
+                            string erasePdf("rm -f "+pdfFile);
+                            system(erasePdf.c_str());
+                        }
+                    }
                 }
 
                 hasBeenWritten = true;

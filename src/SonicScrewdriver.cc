@@ -163,8 +163,8 @@ void SonicScrewdriver::SchedulePlots(string plotType, string options)
 void SonicScrewdriver::MakePlots(string options)
 { thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theHistoScrewdriver,options); }
 
-void SonicScrewdriver::WritePlots(string outputFolder, string infoText, string options)
-{ thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder,infoText,options); }
+void SonicScrewdriver::WritePlots(string outputFolder)
+{ thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder); }
 
 Figure SonicScrewdriver::GetYieldAndError(string var, string processClass,string region,string channel)
 { return theHistoScrewdriver.GetYieldAndError(var,processClass,region,channel); }

@@ -152,7 +152,7 @@ namespace theDoctor
         for (unsigned int i = 0 ; i < theHistos.size() ; i++)
         {
             // Get associated processClass
-            ProcessClass* processClass = theHistosProcessClasses[i];
+            //ProcessClass* processClass = theHistosProcessClasses[i];
             
             // Get the histo
             TH2F* histoClone = theHistos[i]->getClone();

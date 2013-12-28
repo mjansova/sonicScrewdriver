@@ -196,7 +196,7 @@ namespace theDoctor
       //
       // *** Ask the plotScrewdriver to write the plots
       //
-      void WritePlots(string outputFolder, string infoText = "", string options = "");
+      void WritePlots(string outputFolder);
 
       Figure GetYieldAndError(string var, string processClass,string region,string channel);
 

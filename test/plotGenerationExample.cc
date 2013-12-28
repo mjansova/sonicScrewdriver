@@ -152,12 +152,15 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
                                                     +",projectionType=cutOptimalFigureOfMeritForVarXBeingSignalParameter,cutType=keepHighValues"
                                                     +",tagY=bestCut,labelY=Best cut");
-                                                    
 
      // Config plots
 
      myScrewdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
      myScrewdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
+     
+     myScrewdriver.SetGlobalBoolOption("Plot", "exportPdf", false);
+     myScrewdriver.SetGlobalBoolOption("Plot", "exportEps", false);
+     myScrewdriver.SetGlobalBoolOption("Plot", "exportPng", false);
 
   // ########################################
   // ##        Run over the events         ##
