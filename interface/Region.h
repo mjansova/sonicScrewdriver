@@ -15,19 +15,23 @@ namespace theDoctor
       Name(tag_,plotLabel_, options_)
       {
             selector = selector_;
+            flag = false;
       }; 
 
       ~Region() 
       { 
       };
 
-      bool passSelection() { return selector(); };
+      bool passSelection()       { return selector(); };
+      bool getSelectionFlag()    { return flag;       };
+      void updateSelectionFlag() { flag = selector(); };
 
       // Accessors
 
      private:
 
       bool (*selector)();
+      bool flag;
 
     };
 

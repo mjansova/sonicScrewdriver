@@ -41,7 +41,6 @@ To-do list / ideas
 ------------------
 
 Important :
-- Optimise AutoFill : should check only once the regions and channel in AutoFill before dispatch
 - Underflow/overflow management by default
 - Easy access to a given plot or histo
 - Global options configuration to set/change the default behavior (ex : font, line width, text colors ...)

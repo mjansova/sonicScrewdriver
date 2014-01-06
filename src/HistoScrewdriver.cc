@@ -53,9 +53,19 @@ int HistoScrewdriver::getIndexOfChannel(string tag)
 
 void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight)
 {
+    UpdateRegionsAndChannels();
     AutoFill1DProcessClass(processClass,weight);
     AutoFill2DProcessClass(processClass,weight);
     AutoFill3DProcessClass(processClass,weight);
+}
+
+void HistoScrewdriver::UpdateRegionsAndChannels()
+{
+    for (int i = 0 ; i < theRegions->size() ; i++)
+        (*theRegions)[i].updateSelectionFlag();
+
+    for (int i = 0 ; i < theChannels->size() ; i++)
+        (*theChannels)[i].updateSelectionFlag();
 }
 
 // ###########################
@@ -143,8 +153,8 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
     if (the1DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the1DHistosEntries[i].getRegion()->passSelection()) continue;
-    if (!the1DHistosEntries[i].getChannel()->passSelection()) continue;
+    if (!the1DHistosEntries[i].getRegion()->getSelectionFlag()) continue;
+    if (!the1DHistosEntries[i].getChannel()->getSelectionFlag()) continue;
 
     the1DHistosEntries[i].AutoFill(weight);
   }
@@ -281,8 +291,8 @@ void HistoScrewdriver::AutoFill2DProcessClass(string processClass, float weight)
     if (the2DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the2DHistosEntries[i].getRegion()->passSelection()) continue;
-    if (!the2DHistosEntries[i].getChannel()->passSelection()) continue;
+    if (!the2DHistosEntries[i].getRegion()->getSelectionFlag()) continue;
+    if (!the2DHistosEntries[i].getChannel()->getSelectionFlag()) continue;
 
     the2DHistosEntries[i].AutoFill(weight);
   }
@@ -407,8 +417,8 @@ void HistoScrewdriver::AutoFill3DProcessClass(string processClass, float weight)
     if (the3DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     // Check region and channel selection
-    if (!the3DHistosEntries[i].getRegion()->passSelection()) continue;
-    if (!the3DHistosEntries[i].getChannel()->passSelection()) continue;
+    if (!the3DHistosEntries[i].getRegion()->getSelectionFlag()) continue;
+    if (!the3DHistosEntries[i].getChannel()->getSelectionFlag()) continue;
 
     the3DHistosEntries[i].AutoFill(weight);
   }

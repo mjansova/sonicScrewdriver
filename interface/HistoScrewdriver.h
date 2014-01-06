@@ -66,6 +66,8 @@ namespace theDoctor
 
     private:
 
+      void UpdateRegionsAndChannels();
+
       int getIndexOfVariable(string tag);
       int getIndexOfProcessClass(string tag);
       int getIndexOfRegion(string tag);
