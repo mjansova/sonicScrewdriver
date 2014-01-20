@@ -34,14 +34,25 @@ namespace theDoctor
       virtual ~Histo1D() { };
 
       // Accessors
-      TH1F*     getHisto()           { return theHisto;                  };
-      TH1F*     getClone()           { return (TH1F*) theHisto->Clone(); };
+      TH1F*     getHisto()           const { return theHisto;                  };
+      TH1F*     getClone()           const { return (TH1F*) theHisto->Clone(); };
       
-      Variable* getVariable()        { return theVar;             };  string  getVariableTag()  { return theVar->getTag();      };
-      Region*   getRegion()          { return theRegion;          };  string  getRegionTag()    { return theRegion->getTag();   };
-      Channel*  getChannel()         { return theChannel;         };  string  getChannelTag()   { return theChannel->getTag();  };
-      Name      getHistoType()       { return theHistoType;       };  string  getHistoTypeTag() { return theHistoType.getTag(); };
-      string    getHistoParameters() { return theHistoParameters; };
+      Variable* getVariable()        const { return theVar;             };  string  getVariableTag()  const { return theVar->getTag();      };
+      Region*   getRegion()          const { return theRegion;          };  string  getRegionTag()    const { return theRegion->getTag();   };
+      Channel*  getChannel()         const { return theChannel;         };  string  getChannelTag()   const { return theChannel->getTag();  };
+      Name      getHistoType()       const { return theHistoType;       };  string  getHistoTypeTag() const { return theHistoType.getTag(); };
+      string    getHistoParameters() const { return theHistoParameters; };
+
+      void dump() const
+      {
+          cout 
+          << "theHisto = "           <<   theHisto            << endl
+          << "theVar = "             <<   theVar              << endl
+          << "theRegion = "          <<   theRegion           << endl
+          << "theChannel = "         <<   theChannel          << endl
+          << "theHistoParameters = " <<   theHistoParameters  << endl;
+
+      }
 
      protected:
 

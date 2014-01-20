@@ -67,7 +67,7 @@ namespace theDoctor
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
-          output.push_back(pair<string,string>("1DSumBackground",options));
+          output.push_back(pair<string,string>("1DSumBackground",""));
       }
 
 

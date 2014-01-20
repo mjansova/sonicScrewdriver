@@ -128,7 +128,7 @@ int main (int argc, char *argv[])
 
      // Set options
 
-     myScrewdriver.SetGlobalBoolOption  ("1DSuperpRenorm",    "includeSignal",                    true   );
+     myScrewdriver.SetGlobalBoolOption  ("1DSuperimposed",    "includeSignal",                    true   );
      
      myScrewdriver.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
      myScrewdriver.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
@@ -140,7 +140,7 @@ int main (int argc, char *argv[])
 
      // Schedule plots
      
-     myScrewdriver.SchedulePlots("1DSuperpRenorm");
+     myScrewdriver.SchedulePlots("1DSuperimposed");
      myScrewdriver.SchedulePlots("1DStack");
      myScrewdriver.SchedulePlots("1DDataMCComparison");
      myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");

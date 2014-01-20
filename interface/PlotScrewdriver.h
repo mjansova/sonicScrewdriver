@@ -18,13 +18,15 @@
 #include "interface/histos/Histo3DFigureOfMeritForVarXYBeingSignalParameter.h"
 #include "interface/histos/Histo1DFrom2DProjection.h"
 #include "interface/histos/Histo2DFrom3DProjection.h"
+#include "interface/histos/Histo2DSumBackground.h"
 
 // Plot producers
-#include "interface/plots/Plot1DSuperpRenorm.h"
+#include "interface/plots/Plot1DSuperimposed.h"
 #include "interface/plots/Plot1DStack.h"
 #include "interface/plots/Plot1DFigureOfMerit.h"
 #include "interface/plots/Plot1DDataMCComparison.h"
 #include "interface/plots/Plot2D.h"
+#include "interface/plots/Plot2DSuperimposed.h"
 #include "interface/plots/Plot1DFrom2DProjection.h"
 #include "interface/plots/Plot2DFrom3DProjection.h"
 
@@ -58,17 +60,24 @@ namespace theDoctor
         {
             vector<pair<string,string> > dependencies;
 
-                 if (plotType == "1DSuperpRenorm")     Plot1DSuperpRenorm    ::GetHistoDependencies(dependencies);
+                 if (plotType == "1DSuperimposed")     Plot1DSuperimposed    ::GetHistoDependencies(dependencies);
             else if (plotType == "1DStack")            Plot1DStack           ::GetHistoDependencies(dependencies);
             else if (plotType == "1DFigureOfMerit")    Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies,options);
             else if (plotType == "1DDataMCComparison") Plot1DDataMCComparison::GetHistoDependencies(dependencies);
             else if (plotType == "2D")                 Plot2D                ::GetHistoDependencies(dependencies);
+            else if (plotType == "2DSuperimposed")     Plot2DSuperimposed    ::GetHistoDependencies(dependencies);
             else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies,options);
             else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies,options);
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
+            DEBUG_MSG << "plottype : " << plotType << " ; deps : " << endl;
+
             // Schedule histo needed for plot
-            for (unsigned int i = 0 ; i < dependencies.size() ; i++) ScheduleHisto(dependencies[i].first,dependencies[i].second);
+            for (unsigned int i = 0 ; i < dependencies.size() ; i++) 
+            {
+                DEBUG_MSG << "   " << dependencies[i].first << endl;
+                ScheduleHisto(dependencies[i].first,dependencies[i].second);
+            }
 
             // Schedule plot
             pair<string,string> plot(plotType,options);
@@ -82,6 +91,7 @@ namespace theDoctor
                 vector<Channel>* theChannels,
                 HistoScrewdriver* theHistoScrewdriver)
         {
+            DEBUG_MSG << "n scheduled histo : " << scheduledHistos.size() << endl;
             for (unsigned int i = 0 ; i < scheduledHistos.size() ; i++)
             {
                 pair<string,string> histo = scheduledHistos[i];
@@ -100,12 +110,16 @@ namespace theDoctor
                     Histo1DFigureOfMerit::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "1DFrom2DProjection")
                     Histo1DFrom2DProjection::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
+                else if (histoType == "2DSumBackground") 
+                    Histo2DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "2DFigureOfMeritForVarXBeingSignalParameter")
                     Histo2DFigureOfMeritForVarXBeingSignalParameter::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "2DFrom3DProjection")
                     Histo2DFrom3DProjection::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "3DFigureOfMeritForVarXYBeingSignalParameter")
                     Histo3DFigureOfMeritForVarXYBeingSignalParameter::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
+                
+                DEBUG_MSG << " done." << endl;
 
             }
         }
@@ -136,9 +150,9 @@ namespace theDoctor
                 if (plotType == "1DStack")
                     inputFromProducer = 
                         Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
-                else if (plotType == "1DSuperpRenorm")
+                else if (plotType == "1DSuperimposed")
                     inputFromProducer = 
-                        Plot1DSuperpRenorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                        Plot1DSuperimposed    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DFigureOfMerit")
                     inputFromProducer = 
                         Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
@@ -148,6 +162,9 @@ namespace theDoctor
                 else if (plotType == "2D")
                     inputFromProducer = 
                         Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                else if (plotType == "2DSuperimposed")
+                    inputFromProducer = 
+                        Plot2DSuperimposed    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DFrom2DProjection")
                     inputFromProducer = 
                         Plot1DFrom2DProjection::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
@@ -172,10 +189,11 @@ namespace theDoctor
 
             int ret;
             ret = system(("rm -f "+outputFolder+"/1DStack.root").c_str());
-            ret = system(("rm -f "+outputFolder+"/1DSuperpRenorm.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/1DSuperimposed.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFigureOfMerit.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DDataMCComparison.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2D.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/2DSuperimposed.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFrom2DProjection.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2DFrom3DPRojection.root").c_str());
             // Fix "ret not used" warning
@@ -215,7 +233,7 @@ namespace theDoctor
 
                             string addPath = "";
                             // For 2D-histos, create a subfolder varX[vs]varY
-                            if (plotType == "2D")
+                            if ((plotType == "2D") || (plotType == "2DSuperimposed"))
                             {
                                 string varX = thePlots[j].GetParameter("variableX");
                                 string varY = thePlots[j].GetParameter("variableY");

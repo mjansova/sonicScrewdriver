@@ -18,11 +18,15 @@ namespace theDoctor
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
+
           string projectionType = OptionsScrewdriver::GetStringOption(options,"projectionType");
 
           if ((projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
           ||  (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter"))
+          {
+              Histo2DFigureOfMeritForVarXBeingSignalParameter::GetHistoDependencies(output); 
               output.push_back(pair<string,string>("2DFigureOfMeritForVarXBeingSignalParameter",options));
+          }
       }
 
       static void Produce(vector<Variable>* theVariables,

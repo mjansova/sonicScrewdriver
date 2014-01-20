@@ -25,6 +25,8 @@ namespace theDoctor
 
       static void GetHistoDependencies(vector<pair<string,string> >& output)
       {
+          Histo1DSumBackground::GetHistoDependencies(output); 
+          output.push_back(pair<string,string>("1DSumBackground",""));
       }
 
       static vector<Plot> Produce(vector<Variable>* theVariables,

@@ -21,8 +21,8 @@ namespace theDoctor
       Histo1DFigureOfMerit(Variable* theVar, 
                            Region* theRegion, 
                            Channel* theChannel,
-                           Histo1DEntries* theSignal,
-                           Histo1D* theSumBackground,
+                           const Histo1DEntries* theSignal,
+                           const Histo1D* theSumBackground,
                            OptionsScrewdriver theGlobalOptions,
                            short int cutType) :
       Histo1D(Name("1DFigureOfMerit","Figure of merit"),theVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
@@ -36,10 +36,7 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
 
-          // Compute the FOM histogram
-          TH1F* signalHisto = theSignal->getClone();
-          TH1F* backgrHisto = theSumBackground->getClone();
-          TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(signalHisto,backgrHisto,cutType,theGlobalOptions);
+          TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(theSignal->getHisto(),theSumBackground->getHisto(),cutType,theGlobalOptions);
 
           // Copy it to this histogram
           int nBins = theFigureOfMeritHisto.GetNbinsX();
@@ -48,7 +45,7 @@ namespace theDoctor
               theHisto->SetBinContent(i,theFigureOfMeritHisto.GetBinContent(i));
               theHisto->SetBinError(i,theFigureOfMeritHisto.GetBinError(i));
           }
-
+          DEBUG_MSG << "var = " << theSumBackground->getVariable() << "bkg =    " << theSumBackground->getHisto() << endl;
       }; 
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
@@ -80,11 +77,12 @@ namespace theDoctor
                   Channel*      theChannel      = &((*theChannels)[c]);
 
                   // Get the sumBackground
-                  Histo1D* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
-                          theVar->getTag(),
-                          theRegion->getTag(),
-                          theChannel->getTag(),
-                          "");
+                  Histo1D const* theSumBackground = theHistoScrewdriver->get1DHistoForPlotPointer("1DSumBackground",
+                                                                                                  theVar->getTag(),
+                                                                                                  theRegion->getTag(),
+                                                                                                  theChannel->getTag(),
+                                                                                                  "");
+
                   // Get the cut type we're using for this variable
                   string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
                   int cutType = 0;
@@ -96,22 +94,28 @@ namespace theDoctor
                   {
                       ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
                       if (theProcessClass->getType() != "signal") continue;
-
+                  
                       Histo1DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
                               theProcessClass->getTag(),
                               theRegion->getTag(),
                               theChannel->getTag());
 
+                      DEBUG_MSG << endl;
+                      theSumBackground->dump();
                       // Produce the figure of merit histogram
-                      theHistoScrewdriver->Add1DHistoForPlots(
-                              Histo1DFigureOfMerit(theVar,
+                      Histo1DFigureOfMerit tmp(theVar,
                                   theRegion,
                                   theChannel,
                                   thisSignal,
                                   theSumBackground,
                                   theGlobalOptions,
-                                  cutType)
-                              );
+                                  cutType);
+                      DEBUG_MSG << endl;
+                      theSumBackground->dump();
+                      theHistoScrewdriver->Add1DHistoForPlots(tmp);
+                      DEBUG_MSG << endl;
+                      theSumBackground->dump();
+            DEBUG_MSG << endl;
                   }
               }
           }

@@ -61,10 +61,10 @@ void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight)
 
 void HistoScrewdriver::UpdateRegionsAndChannels()
 {
-    for (int i = 0 ; i < theRegions->size() ; i++)
+    for (unsigned int i = 0 ; i < theRegions->size() ; i++)
         (*theRegions)[i].updateSelectionFlag();
 
-    for (int i = 0 ; i < theChannels->size() ; i++)
+    for (unsigned int i = 0 ; i < theChannels->size() ; i++)
         (*theChannels)[i].updateSelectionFlag();
 }
 

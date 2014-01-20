@@ -156,7 +156,7 @@ namespace theDoctor
                     string varY = GetParameter("tagY");
                     theCanvas->SetName((varX + "[vs]" + varY).c_str());
                 }
-                else if ((type == "2D") || (type == "2DFrom3DProjection"))
+                else if ((type == "2D") || (type == "2DFrom3DProjection") || (type == "2DSuperimposed"))
                 {
                     string processClassName = GetParameter("processClass");
                     theCanvas->SetName(processClassName.c_str());
@@ -199,7 +199,7 @@ namespace theDoctor
 
                     if (exportPdf || exportPng)
                     {
-                        system((string("mkdir -p ")+pngFolder).c_str());
+                        system((string("mkdir -p ")+pdfFolder).c_str());
                         string eraseBeforeCreationPdf("rm -f "+pdfFile);
                         system(eraseBeforeCreationPdf.c_str());
                         theCanvas->SaveAs(pdfFile.c_str());
@@ -207,7 +207,7 @@ namespace theDoctor
 
                     if (exportPng)
                     {
-                        system((string("mkdir -p ")+pdfFolder).c_str());
+                        system((string("mkdir -p ")+pngFolder).c_str());
                         string eraseBeforeCreationPng("rm -f "+pngFile);
                         system(eraseBeforeCreationPng.c_str());
                         string convertCommand("ls "+pdfFile+" > /dev/null && convert -trim "+pdfFile+" "+pngFile);

@@ -1,5 +1,5 @@
-#ifndef Plot1DSuperpRenorm_h
-#define Plot1DSuperpRenorm_h
+#ifndef Plot1DSuperimposed_h
+#define Plot1DSuperimposed_h
 
 #include "interface/Common.h"
 
@@ -14,13 +14,13 @@
 namespace theDoctor
 {
 
-    class Plot1DSuperpRenorm 
+    class Plot1DSuperimposed 
     {
       
      public:
      
-      Plot1DSuperpRenorm();
-      ~Plot1DSuperpRenorm();
+      Plot1DSuperimposed();
+      ~Plot1DSuperimposed();
 
       static void GetHistoDependencies(vector<pair<string,string> >& output)
       {
@@ -86,18 +86,18 @@ namespace theDoctor
                            OptionsScrewdriver theGlobalOptions)
       {
 
-         string plotName = string("t:1DSuperpRenorm|v:")+theVar->getTag()
+         string plotName = string("t:1DSuperimposed|v:")+theVar->getTag()
                                                  +"|r:"+theRegion->getTag()
                                                  +"|c:"+theChannel->getTag();
 
-         Plot thePlot(plotName,"1DSuperpRenorm",theGlobalOptions,"");
+         Plot thePlot(plotName,"1DSuperimposed",theGlobalOptions,"");
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
          thePlot.AddToInPlotInfo(theChannel->getLabel());
          thePlot.AddToInPlotInfo(theRegion->getLabel());
 
-         bool includeSignal = theGlobalOptions.GetGlobalBoolOption("1DSuperpRenorm","includeSignal");
+         bool includeSignal = theGlobalOptions.GetGlobalBoolOption("1DSuperimposed","includeSignal");
          
          // Prepare the labels for x and y axis
          // xlabel = labelDeLaVariable (Unité)

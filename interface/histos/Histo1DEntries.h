@@ -38,12 +38,12 @@ namespace theDoctor
       ~Histo1DEntries() { };
 
       // Accessors
-      ProcessClass*  getProcessClass()     { return theProcessClass;       };  
-      string         getProcessClassTag()  { return theProcessClass->getTag(); };
-      TH1F* 		 getEntriesHisto()     { return theHistoRawEntries;                   };
-      TH1F*          getEntriesClone()     { return (TH1F*) theHistoRawEntries->Clone();  };
+      ProcessClass*  getProcessClass()     const { return theProcessClass;       };  
+      string         getProcessClassTag()  const { return theProcessClass->getTag(); };
+      TH1F* 		 getEntriesHisto()     const { return theHistoRawEntries;                   };
+      TH1F*          getEntriesClone()     const { return (TH1F*) theHistoRawEntries->Clone();  };
 
-      Figure GetYieldAndError()
+      Figure GetYieldAndError() const
       {
           double error;
           double yield = theHisto->IntegralAndError(0,theHisto->GetNbinsX()+1,error);
@@ -52,18 +52,18 @@ namespace theDoctor
       }
 
       // Editors
-      void AutoFill(float weight = 1.0)
+      void AutoFill(float weight = 1.0) const
       {
           Fill(theVar->getAutoFillValue(),weight);
       }
           
-      void Fill(float value = 1.0, float weight = 1.0)
+      void Fill(float value = 1.0, float weight = 1.0) const
       {
           theHisto->Fill(value,weight);
           theHistoRawEntries->Fill(value);
       }
       
-      void ApplyScaleFactor(Figure scaleFactor)
+      void ApplyScaleFactor(Figure scaleFactor) const
       { 
             TH1F histoScaleFactor("histoScaleFactor","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
         

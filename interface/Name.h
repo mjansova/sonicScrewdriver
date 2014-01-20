@@ -22,12 +22,12 @@ namespace theDoctor
 
       ~Name() { };
 
-      string getTag()   { return tag; };
-      string getLabel() { return plotLabel; };
-      string getOptions() { return options; };
+      string getTag()     const { return tag; };
+      string getLabel()   const { return plotLabel; };
+      string getOptions() const { return options; };
 
-      const char* getTagC()   { return tag.c_str(); };
-      const char* getLabelC() { return plotLabel.c_str(); };
+      const char* getTagC()   const { return tag.c_str(); };
+      const char* getLabelC() const { return plotLabel.c_str(); };
       
      private:
 
