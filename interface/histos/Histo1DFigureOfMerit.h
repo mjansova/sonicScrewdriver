@@ -45,7 +45,7 @@ namespace theDoctor
               theHisto->SetBinContent(i,theFigureOfMeritHisto.GetBinContent(i));
               theHisto->SetBinError(i,theFigureOfMeritHisto.GetBinError(i));
           }
-          DEBUG_MSG << "var = " << theSumBackground->getVariable() << "bkg =    " << theSumBackground->getHisto() << endl;
+          //DEBUG_MSG << "var = " << theSumBackground->getVariable() << "bkg =    " << theSumBackground->getHisto() << endl;
       }; 
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
@@ -100,7 +100,6 @@ namespace theDoctor
                               theRegion->getTag(),
                               theChannel->getTag());
 
-                      DEBUG_MSG << endl;
                       theSumBackground->dump();
                       // Produce the figure of merit histogram
                       Histo1DFigureOfMerit tmp(theVar,
@@ -110,12 +109,9 @@ namespace theDoctor
                                   theSumBackground,
                                   theGlobalOptions,
                                   cutType);
-                      DEBUG_MSG << endl;
                       theSumBackground->dump();
                       theHistoScrewdriver->Add1DHistoForPlots(tmp);
-                      DEBUG_MSG << endl;
                       theSumBackground->dump();
-            DEBUG_MSG << endl;
                   }
               }
           }

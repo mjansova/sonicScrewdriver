@@ -70,14 +70,9 @@ namespace theDoctor
             else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies,options);
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
-            DEBUG_MSG << "plottype : " << plotType << " ; deps : " << endl;
-
             // Schedule histo needed for plot
             for (unsigned int i = 0 ; i < dependencies.size() ; i++) 
-            {
-                DEBUG_MSG << "   " << dependencies[i].first << endl;
                 ScheduleHisto(dependencies[i].first,dependencies[i].second);
-            }
 
             // Schedule plot
             pair<string,string> plot(plotType,options);
@@ -91,14 +86,11 @@ namespace theDoctor
                 vector<Channel>* theChannels,
                 HistoScrewdriver* theHistoScrewdriver)
         {
-            DEBUG_MSG << "n scheduled histo : " << scheduledHistos.size() << endl;
             for (unsigned int i = 0 ; i < scheduledHistos.size() ; i++)
             {
                 pair<string,string> histo = scheduledHistos[i];
                 string histoType = histo.first;
                 string histoOptions = histo.second;
-
-                DEBUG_MSG << " scheduledHisto : " << histoType << " ; " << histoOptions << endl;
 
                      if (histoType == "1DSumBackground") 
                     Histo1DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
@@ -119,8 +111,6 @@ namespace theDoctor
                 else if (histoType == "3DFigureOfMeritForVarXYBeingSignalParameter")
                     Histo3DFigureOfMeritForVarXYBeingSignalParameter::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 
-                DEBUG_MSG << " done." << endl;
-
             }
         }
 
@@ -143,8 +133,6 @@ namespace theDoctor
                 pair<string,string> plot = scheduledPlots[i];
                 string plotType          = plot.first;
                 string plotOptions       = plot.second;
-
-                //DEBUG_MSG << "make plot : " << plotType << " ; options = " << plotOptions << endl;
 
                 vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")
