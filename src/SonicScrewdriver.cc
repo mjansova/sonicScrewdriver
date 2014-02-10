@@ -177,3 +177,15 @@ vector<Histo2DEntries>* SonicScrewdriver::Get2DHistosEntries()
 
 vector<Histo3DEntries>* SonicScrewdriver::Get3DHistosEntries()
 { return theHistoScrewdriver.Get3DHistosEntries(); }
+
+TH1F* SonicScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
+{ return theHistoScrewdriver.get1DHistoClone(var,processClass,region,channel); }
+
+TH1F* SonicScrewdriver::get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
+{ return theHistoScrewdriver.get1DCompositeHistoClone(var,type,region,channel,otherParameters); }
+
+TH2F* SonicScrewdriver::get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
+{ return theHistoScrewdriver.get2DHistoClone(varX,varY,processClass,region,channel); }
+
+TH2F* SonicScrewdriver::get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
+{ return theHistoScrewdriver.get2DCompositeHistoClone(varX,varY,type,region,channel,otherParameters); }

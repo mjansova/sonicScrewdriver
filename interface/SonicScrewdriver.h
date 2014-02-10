@@ -204,6 +204,11 @@ namespace theDoctor
       vector<Histo2DEntries>* Get2DHistosEntries();
       vector<Histo3DEntries>* Get3DHistosEntries();
 
+      TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
+      TH1F* get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
+      TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
+      TH2F* get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
+
      private:
 
       // *** Container for the variables

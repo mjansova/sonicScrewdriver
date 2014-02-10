@@ -100,7 +100,7 @@ namespace theDoctor
                               theRegion->getTag(),
                               theChannel->getTag());
 
-                      theSumBackground->dump();
+                      //theSumBackground->dump();
                       // Produce the figure of merit histogram
                       Histo1DFigureOfMerit tmp(theVar,
                                   theRegion,
@@ -109,9 +109,9 @@ namespace theDoctor
                                   theSumBackground,
                                   theGlobalOptions,
                                   cutType);
-                      theSumBackground->dump();
+                      //theSumBackground->dump();
                       theHistoScrewdriver->Add1DHistoForPlots(tmp);
-                      theSumBackground->dump();
+                      //theSumBackground->dump();
                   }
               }
           }

@@ -40,6 +40,7 @@ namespace theDoctor
       Histo1D* get1DHistoForPlotPointer(string type, string var, string region, string channel, string options);
       TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
       TH1F* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
+      TH1F* get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
 
       // 2D histos
      
@@ -50,6 +51,7 @@ namespace theDoctor
       Histo2D* get2DHistoForPlotPointer(string type, string varX, string varY, string region, string channel, string options);
       TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
       TH2F* get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel);
+      TH2F* get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
       
       // 3D histos
       void Add3DHistoEntries(string varX, string varY, string varZ); 
