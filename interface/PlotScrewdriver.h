@@ -259,6 +259,8 @@ namespace theDoctor
         void SetGlobalBoolOption(string category, string field, bool value)     { theGlobalOptions.SetGlobalBoolOption(category,field,value);   }
         void SetGlobalIntOption(string category, string field, int value)       { theGlobalOptions.SetGlobalIntOption(category,field,value);    }
 
+        OptionsScrewdriver GetGlobalOptions() { return theGlobalOptions; }
+
         private:
 
         OptionsScrewdriver theGlobalOptions;

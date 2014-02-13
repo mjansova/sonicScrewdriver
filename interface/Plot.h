@@ -161,12 +161,17 @@ namespace theDoctor
                     string processClassName = GetParameter("processClass");
                     theCanvas->SetName(processClassName.c_str());
                 }
+                else if (type == "custom")
+                {
+                    string theName = GetParameter("name");
+                    theCanvas->SetName(theName.c_str());
+                }
                 else
                 {
                     string varName = GetParameter("variable");
                     theCanvas->SetName(varName.c_str());
                 }
-
+                
                 // Write root output
                 theCanvas->Write();
 

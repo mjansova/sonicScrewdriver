@@ -179,6 +179,8 @@ namespace theDoctor
       void SetGlobalBoolOption(string category, string field, bool value)     { thePlotScrewdriver.SetGlobalBoolOption  (category,field,value); }
       void SetGlobalIntOption(string category, string field, int value)       { thePlotScrewdriver.SetGlobalIntOption   (category,field,value); }
 
+      OptionsScrewdriver GetGlobalOptions() { return thePlotScrewdriver.GetGlobalOptions(); }
+
       // ########################
       // #   Plots management   #
       // ########################
