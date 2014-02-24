@@ -158,7 +158,7 @@ int main (int argc, char *argv[])
      myScrewdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
      myScrewdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
      
-     myScrewdriver.SetGlobalBoolOption("Plot", "exportPdf", false);
+     myScrewdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
      myScrewdriver.SetGlobalBoolOption("Plot", "exportEps", false);
      myScrewdriver.SetGlobalBoolOption("Plot", "exportPng", false);
 

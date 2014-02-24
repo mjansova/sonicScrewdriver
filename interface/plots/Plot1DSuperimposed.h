@@ -188,7 +188,10 @@ namespace theDoctor
         }
         
         // Set max value for the plot
-        firstHisto->SetMaximum(globalMax * 1.3);
+        if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY"))
+            firstHisto->SetMaximum(globalMax * 6.0);
+        else
+            firstHisto->SetMaximum(globalMax * 13);
 
         return thePlot;
       }
@@ -210,7 +213,8 @@ namespace theDoctor
          theHisto->SetTitle("");
          theHisto->SetStats(0);
 
-         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY")) thePlot->SetLogY();
+         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY"))
+             thePlot->SetLogY();
       }
 
 

@@ -332,11 +332,16 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver generalOptions, string varOptions = "")
       { 
-          theStack->SetMaximum(theStack->GetMaximum() * 1.3);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
           theStack->SetTitle("");
-          if (OptionsScrewdriver::GetBoolOption(varOptions,"logY")) thePlot->SetLogY();
+          if (OptionsScrewdriver::GetBoolOption(varOptions,"logY"))
+          {
+              thePlot->SetLogY();
+              theStack->SetMaximum(theStack->GetMaximum() * 6.0);
+          }
+          else
+              theStack->SetMaximum(theStack->GetMaximum() * 1.3);
       }
 
       static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
