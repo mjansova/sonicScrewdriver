@@ -41,19 +41,24 @@ To-do list / ideas
 ------------------
 
 Important :
+- Actual documentation
+- Find a clever solution to link variables to ints (instead of just float), and also to vectors (of float, ints..). What about TLorentzVector ..?
+- More global options to change font, line width, ... maybe add a config file to read stuff from.
+- Converge on what to do for the lumi reweighting per channel...
+
+Little improvements :
 - Underflow/overflow management by default
-- Easy access to a given plot or histo
-- Global options configuration to set/change the default behavior (ex : font, line width, text colors ...)
+- Custom binning for variables (ex : for discrete values like # of jets, or log-scale in term of x)
+- Improve tables (auto-scale of column width ?)
+- Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
 
 Mid-long term :
-- Actual documentation
-- Possibility to add custom lines/infos on plots via external user-defined templates 
-- Custom binning for variables (ex : for discrete values like # of jets)
-- Improve tables (auto-scale of column width ?)
-- Add daughter class to table for Data/MC or bkg/sig comparison
+- Add table type (Data vs MC, bkg vs sig), etc
 - Add or fix latex/ascii export/import for tables
-- Lumi reweighting should be done per channel
 - Add surcharge operator +, -, x, and / for (int,Figure)
-- Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
+
+Big stuff :
+- Possibility to separate the reading from the actual plotting, ie export raw histograms and be able to import them.
+- Web-based interface to generate the code..
 
 
