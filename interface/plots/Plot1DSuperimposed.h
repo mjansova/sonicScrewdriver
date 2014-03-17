@@ -42,6 +42,7 @@ namespace theDoctor
           {
               vector<Histo1DEntries*> theBackgrounds;
               vector<Histo1DEntries*> theSignals;
+              vector<Histo1DEntries*> theDatas;
 
               Variable* theVar     = &((*theVariables)[v]);
               Region*   theRegion  = &((*theRegions)[r]);
@@ -53,12 +54,6 @@ namespace theDoctor
 
                   ProcessClass thisProcess = (*theProcessClasses)[i];
 
-                  // If this processClass is not a background nor signal, we skip it
-                  if ((thisProcess.getType() != "background")
-                   && (thisProcess.getType() != "signal"    )) continue;
-
-                  
-
                   // If it it, we add it to the relevant backgrounds
                   Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
                                                                                             thisProcess.getTag(),
@@ -67,10 +62,11 @@ namespace theDoctor
 
                   if (thisProcess.getType() == "background") theBackgrounds.push_back(thisHisto);
                   if (thisProcess.getType() == "signal")     theSignals.push_back(thisHisto);
+                  if (thisProcess.getType() == "data")       theDatas.push_back(thisHisto);
               }
 
               theOutput.push_back(
-                                    MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theGlobalOptions)
+                                    MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theDatas,theGlobalOptions)
                                  );
    
           }
@@ -83,6 +79,7 @@ namespace theDoctor
                            Channel* theChannel,
                            vector<Histo1DEntries*> theBackgrounds,
                            vector<Histo1DEntries*> theSignals,
+                           vector<Histo1DEntries*> theDatas,
                            OptionsScrewdriver theGlobalOptions)
       {
 
@@ -98,13 +95,14 @@ namespace theDoctor
          thePlot.AddToInPlotInfo(theRegion->getLabel());
 
          bool includeSignal = theGlobalOptions.GetGlobalBoolOption("1DSuperimposed","includeSignal");
+         bool includeData   = theGlobalOptions.GetGlobalBoolOption("1DSuperimposed","includeData");
          
          // Prepare the labels for x and y axis
          // xlabel = labelDeLaVariable (Unité)
          // ylabel = Normalized entries / largeurDeBin Unité
 
          string xlabel(theVar->getLabel());
-         string ylabel("Entries / ");
+         string ylabel("Normalized entries / ");
          ylabel += floatToString(theVar->getBinWidth());
 
          // Add the unit
@@ -184,9 +182,46 @@ namespace theDoctor
 				// Add to legend
                 thePlot.AddToLegend(histoClone,processClass->getLabelC() ,"l");
             }
-
         }
-        
+       
+		// Add data if specified in the options of the plot type
+        if (includeData)
+        {
+            for (unsigned int i = 0 ; i < theDatas.size() ; i++)
+            {
+                // Get associated processClass
+                ProcessClass* processClass = theDatas[i]->getProcessClass();
+                    
+                // Get the histo
+                TH1F* histoClone = theDatas[i]->getClone();
+                ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
+                histoClone->SetMarkerStyle(8);
+                histoClone->SetMarkerSize(1);
+                histoClone->SetLineWidth(1);
+                histoClone->SetLineColor(kBlack);
+                histoClone->SetFillStyle(0);
+
+                // Normalize histogram to unity
+                if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+
+                // Draw the histo
+                if (!firstHisto) 
+                {   
+                    histoClone->Draw("hist E0");      
+                    ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
+                    firstHisto = histoClone;
+                }
+                else            { histoClone->Draw("hist E0 same"); }
+
+                // Get the max value after normalization
+                if (globalMax < histoClone->GetMaximum())
+                    globalMax = histoClone->GetMaximum();
+
+				// Add to legend
+                thePlot.AddToLegend(histoClone,processClass->getLabelC() ,"l");
+            }
+        }
+
         // Set max value for the plot
         if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY"))
             firstHisto->SetMaximum(globalMax * 6.0);
