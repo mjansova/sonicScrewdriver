@@ -18,19 +18,19 @@ namespace theDoctor
 
       ~Histo1DFigureOfMerit() { };
       
-      Histo1DFigureOfMerit(Variable* theVar, 
-                           Region* theRegion, 
-                           Channel* theChannel,
+      Histo1DFigureOfMerit(Variable* theVar_, 
+                           Region* theRegion_, 
+                           Channel* theChannel_,
                            const Histo1DEntries* theSignal,
                            const Histo1D* theSumBackground,
                            OptionsScrewdriver theGlobalOptions,
                            short int cutType) :
-      Histo1D(Name("1DFigureOfMerit","Figure of merit"),theVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
+      Histo1D(Name("1DFigureOfMerit","Figure of merit"),theVar_,theRegion_,theChannel_,string("sig=")+theSignal->getProcessClassTag())
       {
 
-          string nameHisto =  string("v:")+theVar->getTag()
-                                   +"|r:" +theRegion->getTag()
-                                   +"|c:" +theChannel->getTag()
+          string nameHisto =  string("v:")+theVar_->getTag()
+                                   +"|r:" +theRegion_->getTag()
+                                   +"|c:" +theChannel_->getTag()
                                    +"|t:" +theHistoType.getTag()
                                    +"|s:" +theSignal->getProcessClassTag();
 

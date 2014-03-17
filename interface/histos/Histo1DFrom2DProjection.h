@@ -114,20 +114,20 @@ namespace theDoctor
       
       Histo1DFrom2DProjection(Variable* theXVar, 
                               Variable* theYVar, 
-                              Region*   theRegion, 
-                              Channel*  theChannel,
+                              Region*   theRegion_, 
+                              Channel*  theChannel_,
                               ProcessClass* theProcessClass,
                               Histo2D* theInputHisto,
                               OptionsScrewdriver theGlobalOptions,
                               string histoParameters) :
-      Histo1D(Name("1DFrom2DProjection",""),theXVar,theRegion,theChannel,string("vY=")+theYVar->getTag()
+      Histo1D(Name("1DFrom2DProjection",""),theXVar,theRegion_,theChannel_,string("vY=")+theYVar->getTag()
                                                                              +",proj="+OptionsScrewdriver::GetStringOption(histoParameters,"projectionType")
                                                                                 +",p="+theProcessClass->getTag())
       {
 
           string nameHisto =  string("v:")+theXVar->getTag()
-                                   +"|r:" +theRegion->getTag()
-                                   +"|c:" +theChannel->getTag()
+                                   +"|r:" +theRegion_->getTag()
+                                   +"|c:" +theChannel_->getTag()
                                    +"|t:" +theHistoType.getTag()
                                    +"|p:" +theProcessClass->getTag();
 

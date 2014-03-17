@@ -17,23 +17,23 @@ namespace theDoctor
 
       ~Histo3DFigureOfMeritForVarXYBeingSignalParameter() { };
       
-      Histo3DFigureOfMeritForVarXYBeingSignalParameter(Variable* theXVar,
-                                                       Variable* theYVar,
-                                                       Variable* theZVar,
-                                                       Region* theRegion, 
-                                                       Channel* theChannel,
+      Histo3DFigureOfMeritForVarXYBeingSignalParameter(Variable* theXVar_,
+                                                       Variable* theYVar_,
+                                                       Variable* theZVar_,
+                                                       Region* theRegion_, 
+                                                       Channel* theChannel_,
                                                        Histo3DEntries* theSignal,
                                                        Histo1D* theSumBackground,
                                                        OptionsScrewdriver theGlobalOptions,
                                                        short int cutType) :
-      Histo3D(Name("3DFigureOfMeritForVarXYBeingSignalParameter","Figure of merit"),theXVar,theYVar,theZVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
+      Histo3D(Name("3DFigureOfMeritForVarXYBeingSignalParameter","Figure of merit"),theXVar_,theYVar_,theZVar_,theRegion_,theChannel_,string("sig=")+theSignal->getProcessClassTag())
       {
 
-          string nameHisto =  string("vX:")+theXVar->getTag()
-                                   +"|vY:" +theYVar->getTag()
-                                   +"|vZ:" +theZVar->getTag()
-                                   +"|r:"  +theRegion->getTag()
-                                   +"|c:"  +theChannel->getTag()
+          string nameHisto =  string("vX:")+theXVar_->getTag()
+                                   +"|vY:" +theYVar_->getTag()
+                                   +"|vZ:" +theZVar_->getTag()
+                                   +"|r:"  +theRegion_->getTag()
+                                   +"|c:"  +theChannel_->getTag()
                                    +"|t:"  +theHistoType.getTag()
                                    +"|s:"  +theSignal->getProcessClassTag();
 
@@ -42,11 +42,11 @@ namespace theDoctor
           TH3F* sigHisto    = theSignal->getClone();
           TH1F* backgrHisto = theSumBackground->getClone();
 
-          int   nBinsX = theXVar->getNbins(); 
-          int   nBinsY = theYVar->getNbins(); 
-          int   nBinsZ = theZVar->getNbins(); 
-          float minZ   = theZVar->getMin();
-          float maxZ   = theZVar->getMax();
+          int   nBinsX = theXVar_->getNbins(); 
+          int   nBinsY = theYVar_->getNbins(); 
+          int   nBinsZ = theZVar_->getNbins(); 
+          float minZ   = theZVar_->getMin();
+          float maxZ   = theZVar_->getMax();
 
           for (int i = 1 ; i < nBinsX+1 ; i++)
           for (int j = 1 ; j < nBinsY+1 ; j++)

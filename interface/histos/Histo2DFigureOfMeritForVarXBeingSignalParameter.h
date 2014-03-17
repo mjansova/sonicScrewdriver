@@ -17,21 +17,21 @@ namespace theDoctor
 
       ~Histo2DFigureOfMeritForVarXBeingSignalParameter() { };
       
-      Histo2DFigureOfMeritForVarXBeingSignalParameter(Variable* theXVar,
-                           Variable* theYVar,
-                           Region* theRegion, 
-                           Channel* theChannel,
+      Histo2DFigureOfMeritForVarXBeingSignalParameter(Variable* theXVar_,
+                           Variable* theYVar_,
+                           Region* theRegion_, 
+                           Channel* theChannel_,
                            Histo2DEntries* theSignal,
                            Histo1D* theSumBackground,
                            OptionsScrewdriver theGlobalOptions,
                            short int cutType) :
-      Histo2D(Name("2DFigureOfMeritForVarXBeingSignalParameter","Figure of merit"),theXVar,theYVar,theRegion,theChannel,string("sig=")+theSignal->getProcessClassTag())
+      Histo2D(Name("2DFigureOfMeritForVarXBeingSignalParameter","Figure of merit"),theXVar_,theYVar_,theRegion_,theChannel_,string("sig=")+theSignal->getProcessClassTag())
       {
 
-          string nameHisto =  string("vX:")+theXVar->getTag()
-                                   +"|vY:" +theYVar->getTag()
-                                   +"|r:"  +theRegion->getTag()
-                                   +"|c:"  +theChannel->getTag()
+          string nameHisto =  string("vX:")+theXVar_->getTag()
+                                   +"|vY:" +theYVar_->getTag()
+                                   +"|r:"  +theRegion_->getTag()
+                                   +"|c:"  +theChannel_->getTag()
                                    +"|t:"  +theHistoType.getTag()
                                    +"|s:"  +theSignal->getProcessClassTag();
 
@@ -40,10 +40,10 @@ namespace theDoctor
           TH2F* sigHisto    = theSignal->getClone();
           TH1F* backgrHisto = theSumBackground->getClone();
 
-          int   nBinsX = theXVar->getNbins(); 
-          int   nBinsY = theYVar->getNbins(); 
-          float minY   = theYVar->getMin();
-          float maxY   = theYVar->getMax();
+          int   nBinsX = theXVar_->getNbins(); 
+          int   nBinsY = theYVar_->getNbins(); 
+          float minY   = theYVar_->getMin();
+          float maxY   = theYVar_->getMax();
 
           for (int i = 1 ; i < nBinsX+1 ; i++)
           {

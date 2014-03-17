@@ -116,24 +116,24 @@ namespace theDoctor
 
       ~Histo2DFrom3DProjection() { };
       
-      Histo2DFrom3DProjection(Variable* theXVar, 
-                              Variable* theYVar, 
-                              Variable* theZVar, 
-                              Region*   theRegion, 
-                              Channel*  theChannel,
+      Histo2DFrom3DProjection(Variable* theXVar_, 
+                              Variable* theYVar_, 
+                              Variable* theZVar_, 
+                              Region*   theRegion_, 
+                              Channel*  theChannel_,
                               ProcessClass* theProcessClass,
                               Histo3D* theInputHisto,
                               OptionsScrewdriver theGlobalOptions,
                               string histoParameters) :
-      Histo2D(Name("2DFrom3DProjection",""),theXVar,theYVar,theRegion,theChannel,string("vZ=")+theZVar->getTag()
+      Histo2D(Name("2DFrom3DProjection",""),theXVar_,theYVar_,theRegion_,theChannel_,string("vZ=")+theZVar_->getTag()
                                                                                      +",proj="+OptionsScrewdriver::GetStringOption(histoParameters,"projectionType")
                                                                                         +",p="+theProcessClass->getTag())
       {
 
-          string nameHisto =  string("vX:")+theXVar->getTag()
-                                   +"|vY:"+theYVar->getTag()
-                                   +"|r:" +theRegion->getTag()
-                                   +"|c:" +theChannel->getTag()
+          string nameHisto =  string("vX:")+theXVar_->getTag()
+                                   +"|vY:"+theYVar_->getTag()
+                                   +"|r:" +theRegion_->getTag()
+                                   +"|c:" +theChannel_->getTag()
                                    +"|t:" +theHistoType.getTag()
                                    +"|p:" +theProcessClass->getTag();
 
@@ -141,11 +141,11 @@ namespace theDoctor
 
           string projectionType = OptionsScrewdriver::GetStringOption(histoParameters,"projectionType");
 
-          int   nBinsX = theXVar->getNbins(); 
-          int   nBinsY = theYVar->getNbins(); 
-          int   nBinsZ = theZVar->getNbins(); 
-          float minZ   = theZVar->getMin();
-          float maxZ   = theZVar->getMax();
+          int   nBinsX = theXVar_->getNbins(); 
+          int   nBinsY = theYVar_->getNbins(); 
+          int   nBinsZ = theZVar_->getNbins(); 
+          float minZ   = theZVar_->getMin();
+          float maxZ   = theZVar_->getMax();
 
           TH3F* theInputHisto_ = theInputHisto->getClone();
 

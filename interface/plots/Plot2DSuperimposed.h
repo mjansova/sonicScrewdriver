@@ -72,8 +72,6 @@ namespace theDoctor
                   for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
                   for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
                   {
-                      Variable* theXVar    = &((*theVariables)[vX]);
-                      Variable* theYVar    = &((*theVariables)[vY]);
                       Region*   theRegion  = &((*theRegions)[r]);
                       Channel*  theChannel = &((*theChannels)[c]);
 
