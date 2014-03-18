@@ -55,7 +55,13 @@ namespace theDoctor
 
             void AddToInPlotInfo(string info)
             {
-                if (info != "") theInPlotInfo->AddText(info.c_str());
+                string line;
+                stringstream stream(info);
+                while( getline(stream,line,';') )
+                {
+                    if (line == "") continue;
+                    theInPlotInfo->AddText(line.c_str());
+                } 
             }
 
             // Logarithm scale management
