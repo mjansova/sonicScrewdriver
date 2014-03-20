@@ -18,36 +18,28 @@ namespace theDoctor
      public:
       
       Table();
-      Table(vector<string> colNames_, vector<string> rowNames_, vector<string> colLabels_, vector<string> rowLabels_);
-      Table(vector<string> colNames_, vector<string> rowNames_);
+      Table(vector<string> colTags_, vector<string> rowTags_, vector<string> colLabels_, vector<string> rowLabels_);
+      Table(vector<string> colTags_, vector<string> rowTags_);
+
+      void SetLabels(vector<string> colLabels_, vector<string> rowLabels_);
+      void Init(vector<string> colTags_, vector<string> rowTags_);
       
       ~Table();
 
-      bool SetColLabel(int colId, string label);
-      bool SetColLabel(string colName, string label);
-
-      bool SetRowLabel(int rowId, string label);
-      bool SetRowLabel(string rowName, string label);
-
-    //  bool Fill(int colId, int rowId, float value);  
-    //  bool Fill(string colName, string rowName, float value);  
-      
       bool Set(int colId, int rowId, Figure value);  
-      bool Set(string colName, string rowName, Figure value);  
+      bool Set(string colTag, string rowTag, Figure value);  
      
       Figure Get(int colId, int rowId);  
-      Figure Get(string colName, string rowName);  
+      Figure Get(string colTag, string rowTag);  
 
-    //  bool MultiplyRow(string rowLabel,float factor);
-     
       void PrintTable(string options = "");
       void PrintTableLatex(string options = "");
       
      private:
 
       // Data management
-      vector<string> colNames;
-      vector<string> rowNames;
+      vector<string> colTags;
+      vector<string> rowTags;
       vector<string> colLabels;
       vector<string> rowLabels;
 

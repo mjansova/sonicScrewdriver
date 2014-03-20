@@ -56,11 +56,18 @@ void SonicScrewdriver::SetTrueNumberOfEvents(string dataset, int n)
     }
 }
 
-void SonicScrewdriver::GetProcessClassList(vector<string> *output)
+void SonicScrewdriver::GetProcessClassTagList(vector<string> *output)
 {
 	output->clear();
 	for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
         output->push_back(theProcessClasses[i].getTag());
+}
+
+void SonicScrewdriver::GetProcessClassLabelList(vector<string> *output)
+{
+	output->clear();
+	for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
+        output->push_back(theProcessClasses[i].getLabel());
 }
 
 void SonicScrewdriver::GetDatasetList(vector<string> *output)
@@ -119,6 +126,20 @@ void SonicScrewdriver::SetLumi(float inputLumi)
 
 void  SonicScrewdriver::AddRegion(string tag, string plotLabel, bool (*selector)(), string options)
 {	theRegions.push_back(Region(tag,plotLabel,selector,options));	}
+
+void SonicScrewdriver::GetRegionTagList(vector<string> *output)
+{
+	output->clear();
+	for (unsigned int i = 0 ; i < theRegions.size() ; i++)
+        output->push_back(theRegions[i].getTag());
+}
+
+void SonicScrewdriver::GetRegionLabelList(vector<string> *output)
+{
+	output->clear();
+	for (unsigned int i = 0 ; i < theRegions.size() ; i++)
+        output->push_back(theRegions[i].getLabel());
+}
 
 void SonicScrewdriver::AddChannel(string tag, string plotLabel, bool (*selector)(), string options)
 {	theChannels.push_back(Channel(tag,plotLabel,selector,options));	}

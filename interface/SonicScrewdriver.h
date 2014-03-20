@@ -59,7 +59,8 @@ namespace theDoctor
       //	The list is returned in the "output" vector.
       //
      
-      void   GetProcessClassList(vector<string> *output);
+      void   GetProcessClassTagList(vector<string> *output);
+      void   GetProcessClassLabelList(vector<string> *output);
 
       //
       // *** Get the type of a specific process class
@@ -108,6 +109,15 @@ namespace theDoctor
       //
 
       void  AddRegion(string tag, string plotLabel, bool (*selector)(), string options = "");
+
+      //
+      // *** Get the list of names of regions
+      //     
+      //	The list is returned in the "output" vector.
+      //
+     
+      void   GetRegionTagList(vector<string> *output);
+      void   GetRegionLabelList(vector<string> *output);
 
       // ########################
       // #   Histo management   #
