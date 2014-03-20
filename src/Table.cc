@@ -205,38 +205,48 @@ void Table::PrintTable(string options)
 
 void Table::PrintTableLatex(string options)
 {
-	int width = 15;
-
 	cout << left;
 
+    // Begin tabular
+    cout << "\\begin{tabular}{|l|";
+	for (int i = 0 ; i < nCol ; i++) cout << "c";
+    cout << "|}" << endl;
+
+    // Line before header
+	cout << "\\hline" << endl;
 
 	// Header
-	cout << setw(width) << " ";
-	cout << " & ";
+	cout << "&" << endl;
 	for (int i = 0 ; i < nCol ; i++)
 	{
-		cout << setw(width) << "\\textbf{" << colLabels[i] << "} ";
-		if (i < nCol - 1) cout << "& ";
-        else cout << "\\\\";
+		cout << "\\textbf{" << colLabels[i] << "} ";
+		if (i < nCol - 1) cout << "\t&";
+        else cout << "\t\\\\";
+	    cout << endl;
 	}
-	cout << endl;
-
-	// Line after header
+	
+    // Line after header
 	cout << "\\hline" << endl;
 
 	// Rows
 	for (int i = 0 ; i < nRow ; i++)
 	{
-		cout << setw(width) << "\\textbf{" << rowLabels[i] << "} ";
-		cout << " & ";
+		cout << "\\textbf{" << rowLabels[i] << "} ";
+		cout << "\t & ";
 		for (int j = 0 ; j < nCol ; j++)
 		{
-			cout << setw(width) << Get(j,i).Print() << " ";
-			if (j < nCol - 1) cout << "& ";
-            else cout << "\\\\";
+			cout << Get(j,i).PrintLatex() << " ";
+			if (j < nCol - 1) cout << "\t & ";
+            else cout << "\t \\\\";
 		}
 		cout << endl;
 	}
+	
+    // Line after content
+    cout << "\\hline" << endl;
+    
+    // End tabular
+    cout << "\\end{tabular}";
 
 }
 

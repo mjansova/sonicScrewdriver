@@ -34,6 +34,17 @@ namespace theDoctor
           return s.str();
       }
 
+      string PrintLatex() const 
+      { 
+          std::ostringstream s;
+          
+          s.setf(std::ios::fixed);
+          s.precision(2);
+          
+          s << theValue << " $\\pm$ " << theError;
+          return s.str();
+      }
+
       Figure operator+(const Figure input) const
       {
             return applyOperation(*this,input,string("add"));
