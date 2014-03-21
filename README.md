@@ -47,9 +47,7 @@ Important :
 - Converge on what to do for the lumi reweighting per channel...
 
 Little improvements :
-- Underflow/overflow management by default
 - Custom binning for variables (ex : for discrete values like # of jets, or log-scale in term of x)
-- Improve tables (auto-scale of column width ?)
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
 
 Mid-long term :
