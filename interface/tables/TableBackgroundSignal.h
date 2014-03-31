@@ -91,8 +91,7 @@ namespace theDoctor
                     for (unsigned int p = 0 ; p < processesTags.size() ; p++)
                     {
                         if (processesTags[p] == "totalSM") continue;
-
-                        string type = screwdriver->GetProcessClassType(rawProcessesTags[p]);
+                        string type = screwdriver->GetProcessClassType(processesTags[p]);
                         Figure currentYield = screwdriver->GetYieldAndError(sourceVariable,
                                                                             processesTags[p],
                                                                             regionsTags[r],
