@@ -55,17 +55,18 @@ namespace theDoctor
 
         void Fill(float valueX = 1.0, float valueY = 1.0, float weight = 1.0)
         {
-          if (!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"underflow"))
-            if (valueX < theXVar->getMin()) valueX = theXVar->getMin();
           
-          if (!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"overflow"))
-            if (valueX > theXVar->getMax()) valueX = theXVar->getMax() - 0.000001; // FIXME Find a better way to do this 
+          if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"underflow"))
+            && (valueX < theXVar->getMin())) valueX = theXVar->getMin();
+          
+          if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"overflow"))
+            && (valueX > theXVar->getMax())) valueX = theXVar->getMax() - 0.001; // FIXME Find a better way to do this 
 
-          if (!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"underflow"))
-            if (valueY < theYVar->getMin()) valueY = theYVar->getMin();
+          if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"underflow"))
+            && (valueY < theYVar->getMin())) valueY = theYVar->getMin();
           
-          if (!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"overflow"))
-            if (valueY > theYVar->getMax()) valueY = theYVar->getMax() - 0.000001; // FIXME Find a better way to do this 
+          if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"overflow"))
+            && (valueY > theYVar->getMax())) valueY = theYVar->getMax() - 0.001; // FIXME Find a better way to do this 
 
             theHisto->Fill(valueX,valueY,weight);
             theHistoRawEntries->Fill(valueX,valueY);
