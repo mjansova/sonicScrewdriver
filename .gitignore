@@ -17,3 +17,4 @@ test/makeTreeForExample
 test/plotGenerationExample
 test/plots
 test/trees
+test/*.log
