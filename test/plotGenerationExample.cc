@@ -73,10 +73,10 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-      myScrewdriver.AddVariable("invariantMass",   "Invariant mass",         "GeV",    40,60,160     ,&(myEvent.invariantMass)              );
-      myScrewdriver.AddVariable("MET",             "Missing E_{T}",          "GeV",    40,0,400      ,&(myEvent.MET)            ,"logY=true");
-      myScrewdriver.AddVariable("leptonPt",        "p_{T}(lepton)",          "GeV",    30,0,150      ,&(myEvent.leptonPt)       ,"");
-      myScrewdriver.AddVariable("mMuf",            "True muf mass",          "GeV",    11,114,136    ,&(myEvent.mMuf)           ,"");
+      myScrewdriver.AddVariable("invariantMass", "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "underflow=true,overflow=true");
+      myScrewdriver.AddVariable("MET",           "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY=true"     );
+      myScrewdriver.AddVariable("leptonPt",      "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "underflow=true");
+      myScrewdriver.AddVariable("mMuf",          "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "underflow=true");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -104,8 +104,8 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     myScrewdriver.AddRegion("preSelection","Pre-selection, m(muf) = 125 GeV",&preSelection);
-     myScrewdriver.AddRegion("preSelection_allmMuf","Pre-selection",&preSelection_allmMuf);
+     myScrewdriver.AddRegion("preSelection","Pre-selection;m(muf) = 125 GeV",&preSelection);
+     myScrewdriver.AddRegion("preSelection_allmMuf","Pre-selection;All m(muf) merged",&preSelection_allmMuf);
 
   // ##########################
   // ##   Create Channels    ##

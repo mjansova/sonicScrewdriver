@@ -1,45 +1,66 @@
 ObjSuf        = o
 SrcSuf        = cc
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-# Linux with egcs
 DEFINES       = 
-CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
-LD            = g++ 
 
-CXXFLAGS      += $(ROOTCFLAGS) -I../
-LDFLAGS       =
-LDLIBS  	  = $(ROOTLIBS) -lEG -L../ -lSonicScrewdriver
+CXX           = g++
+CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
+CXXFLAGS      += $(ROOTCFLAGS) -I./
+CXXFLAGS      += -I../
+
+LD            = g++ 
+LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
+LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
+LDFLAGS       += -l:`pwd`/../libSonicScrewdriver.so
+
+SOFLAGS       = -shared
+LIBS          = 
+
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
 
 #------------------------------------------------------------------------------
-SOURCES     = $(wildcard *.cc)
-OBJECTS     = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-EXEC        = $(SOURCES:.$(SrcSuf)=)
+SOURCES       = $(wildcard *.$(SrcSuf))
+OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
+#------------------------------------------------------------------------------
 
-all: $(EXEC)
-
-%.o: %.c
-	$(CXX) $(CXXFLAGS) -c $<
-
-%: %.o
-	$(LD) $(LDFLAGS) -o $@ $< $(LDLIBS) 
-
-.PHONY : trees plots test
-
-trees: makeTreeForExample
-	@./makeTreeForExample
-
-plots: plotGenerationExample
-	@./plotGenerationExample
+all: $(EXECUTABLES)
 
 test: trees plots
 
+# Target to produce the example trees
+trees: makeTreeForExample
+	@./makeTreeForExample | tee makeTreeForExample.$(LogSuf)
+
+# Target to produce the example plots
+plots: plotGenerationExample
+	@./plotGenerationExample | tee plotGenerationExample.$(LogSuf)
+
+# Target to browse the plots
+browse:
+	export PLOTS_TO_BROWSE=`ls plots/*.root`; root -l .browse
+
 clean:
 	@echo "Cleaning..."
-	@rm -f $(EXEC) $(OBJECTS)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
-.SUFFIXES: .$(SrcSuf) .C .o .so
+%: %.$(SrcSuf)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
+
+.PHONY : trees plots test browse clean
+
+
+
+
+
+
+
+
 
