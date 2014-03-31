@@ -30,7 +30,11 @@ After setting up your environment, just do :
 
     make && make test
 
-And browse the plots in `test/plots/`.
+And manually browse the plots in `test/plots/` or just do
+
+    make browse
+
+from the `test` folder. It will open a TBrowser with the root files already loaded.
 
 Disclaimer
 ----------
