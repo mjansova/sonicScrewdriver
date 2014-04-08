@@ -55,6 +55,8 @@ namespace theDoctor
               {
 
                   ProcessClass thisProcess = (*theProcessClasses)[i];
+                
+                  if (OptionsScrewdriver::GetBoolOption(thisProcess.getOptions(),"no1DPlots")) continue;
 
                   // If this processClass is not a background nor signal, we skip it
                   if ((thisProcess.getType() != "background")

@@ -60,10 +60,10 @@ namespace theDoctor
           
       void Fill(float value = 1.0, float weight = 1.0) const
       {
-          if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"underflow")) 
+          if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noUnderflowInFirstBin")) 
            && (value < theVar->getMin())) value = theVar->getMin();
           
-          if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"overflow"))
+          if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noOverflowInLastBin"))
            && (value > theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this 
 
           theHisto->Fill(value,weight);

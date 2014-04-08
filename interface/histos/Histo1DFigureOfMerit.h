@@ -36,6 +36,8 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
 
+          // DEBUGGING
+          if (theSumBackground->getHisto() == 0) DEBUG_MSG << "var/region/channel = " << theVar_->getTag() << " , " << theRegion_->getTag() << " " << theChannel_->getTag() << endl;
           TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(theSignal->getHisto(),theSumBackground->getHisto(),cutType,theGlobalOptions);
 
           // Copy it to this histogram
@@ -62,7 +64,6 @@ namespace theDoctor
                           OptionsScrewdriver theGlobalOptions,
                           string histoParameters)      
       {
-
           string varName = OptionsScrewdriver::GetStringOption(histoParameters,"var");
           // Browse the (var x reg x chan) space
           for (unsigned int v = 0 ; v < theVariables->size() ; v++)

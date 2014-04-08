@@ -221,7 +221,7 @@ namespace theDoctor
                         system((string("mkdir -p ")+pngFolder).c_str());
                         string eraseBeforeCreationPng("rm -f "+pngFile);
                         system(eraseBeforeCreationPng.c_str());
-                        string convertCommand("ls "+pdfFile+" > /dev/null && convert -trim "+pdfFile+" "+pngFile);
+                        string convertCommand("ls "+pdfFile+" > /dev/null && convert -crop 775x665+350+35 -density 100 "+pdfFile+" "+pngFile);
                         system(convertCommand.c_str());
                         if (!exportPdf)
                         {

@@ -65,15 +65,14 @@ namespace theDoctor
 
             static bool GetBoolOption(string options, string field)
             {
-                string value = GetStringOption(options,field);
-
-                if (value == string("true") ) return true;
-                else if (value == string("false")) return false;
-                else 
+                string option;
+                stringstream stream(options);
+                while( getline(stream,option,',') )
                 {
-                    //    WARNING_MSG << "Tried to access boolean option'" << field << "', but value is neither 'true' or 'false'" << endl;
-                    return false;
+                    if (option == field) return true;
                 }
+                
+                return false;
             }
 
             void SetGlobalStringOption(string category, string field, string value)

@@ -53,6 +53,8 @@ namespace theDoctor
               {
 
                   ProcessClass thisProcess = (*theProcessClasses)[i];
+                  
+                  if (OptionsScrewdriver::GetBoolOption(thisProcess.getOptions(),"no1DPlots")) continue;
 
                   // If it it, we add it to the relevant backgrounds
                   Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
@@ -226,7 +228,7 @@ namespace theDoctor
         if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY"))
             firstHisto->SetMaximum(globalMax * 6.0);
         else
-            firstHisto->SetMaximum(globalMax * 13);
+            firstHisto->SetMaximum(globalMax * 1.3);
 
         return thePlot;
       }

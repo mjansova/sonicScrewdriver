@@ -59,6 +59,8 @@ namespace theDoctor
 
                   ProcessClass thisProcess = (*theProcessClasses)[i];
 
+                  if (OptionsScrewdriver::GetBoolOption(thisProcess.getOptions(),"no1DPlots")) continue;
+                  
                   // If it it, we add it to the relevant backgrounds
                   Histo1DEntries* thisHisto = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
                                                                                             thisProcess.getTag(),

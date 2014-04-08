@@ -56,16 +56,16 @@ namespace theDoctor
         void Fill(float valueX = 1.0, float valueY = 1.0, float weight = 1.0)
         {
           
-          if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"underflow"))
+          if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"noUnderflowInFirstBin"))
             && (valueX < theXVar->getMin())) valueX = theXVar->getMin();
           
-          if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"overflow"))
+          if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"noOverflowInLastBin"))
             && (valueX > theXVar->getMax())) valueX = theXVar->getMax() - 0.001; // FIXME Find a better way to do this 
 
-          if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"underflow"))
+          if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"noUnderflowInFirstBin"))
             && (valueY < theYVar->getMin())) valueY = theYVar->getMin();
           
-          if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"overflow"))
+          if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"noOverflowInLastBin"))
             && (valueY > theYVar->getMax())) valueY = theYVar->getMax() - 0.001; // FIXME Find a better way to do this 
 
             theHisto->Fill(valueX,valueY,weight);

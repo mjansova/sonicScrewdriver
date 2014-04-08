@@ -1,13 +1,4 @@
-
-
-#include <stdlib.h>
-#include <iostream>
-
-#include "TTree.h"
-#include "TFile.h"
-#include "TRandom.h"
-
-using namespace std;
+#include "common.h"
 
 typedef struct
 {

@@ -1,20 +1,4 @@
-
-// System includes
-
-#include <stdlib.h>
-#include <iomanip>
-#include <cmath>
-#include <iostream>
-#include <time.h>
-using namespace std;
-
-// Root includes
-
-#include <TFile.h>
-#include <TMarker.h>
-#include <TTree.h>
-#include <TBranch.h>
-#include <TLorentzVector.h>
+#include "common.h"
 
 // Sonic screwdriver
 
@@ -52,11 +36,7 @@ bool muChannel();
 int main (int argc, char *argv[])
 {
 
-  cout << endl;
-  cout << "   ┌──────────────────────────────┐  " << endl;
-  cout << "   │   Starting plot generation   │  " << endl;
-  cout << "   └──────────────────────────────┘  " << endl; 
-  cout << endl;
+  printBoxedMessage("Starting plot generation");
 
   // ####################
   // ##   Init tools   ##
@@ -73,10 +53,10 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-      myScrewdriver.AddVariable("invariantMass", "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "underflow=true,overflow=true");
-      myScrewdriver.AddVariable("MET",           "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY=true"     );
-      myScrewdriver.AddVariable("leptonPt",      "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "underflow=true");
-      myScrewdriver.AddVariable("mMuf",          "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "underflow=true");
+      myScrewdriver.AddVariable("invariantMass", "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "noUnderflowInFirstBin,noOverflowInLastBin");
+      myScrewdriver.AddVariable("MET",           "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
+      myScrewdriver.AddVariable("leptonPt",      "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
+      myScrewdriver.AddVariable("mMuf",          "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -92,8 +72,9 @@ int main (int argc, char *argv[])
 
 	  // Signal(s)
 
-      myScrewdriver.AddProcessClass("muf",     "Muf",     "signal",     COLORPLOT_GREEN);
+      myScrewdriver.AddProcessClass("muf",     "Muf",               "signal",  COLORPLOT_GREEN, "no1DPlots");
            myScrewdriver.AddDataset("muf","muf",50000 / 11,0.01);
+      myScrewdriver.AddProcessClass("muf_125", "Muf, m=125 GeV",    "signal",  COLORPLOT_GREEN);
 
 	  // Data
 
@@ -104,8 +85,7 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     myScrewdriver.AddRegion("preSelection","Pre-selection;m(muf) = 125 GeV",&preSelection);
-     myScrewdriver.AddRegion("preSelection_allmMuf","Pre-selection;All m(muf) merged",&preSelection_allmMuf);
+     myScrewdriver.AddRegion("preSelection","Pre-selection",&preSelection);
 
   // ##########################
   // ##   Create Channels    ##
@@ -146,7 +126,7 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
      myScrewdriver.SchedulePlots("2D");
      //myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
-      myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
+     myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
                                                     +",projectionType=mean"
                                                     +",tagY=meanMass,labelY=Mean invariant mass");
      myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
@@ -169,7 +149,7 @@ int main (int argc, char *argv[])
      vector<string> datasetsList;
      myScrewdriver.GetDatasetList(&datasetsList);
 
-     cout << "   > Running on dataset : " << endl;
+     cout << "   > Reading datasets " << endl;
 
      for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
      {
@@ -177,8 +157,6 @@ int main (int argc, char *argv[])
          string currentDataset = datasetsList[d];
          string currentProcessClass = myScrewdriver.GetProcessClass(currentDataset); 
     
-         cout << "                    " << currentDataset << endl; 
-
          // Open dataset tree
          TTree* theTree;
          TFile* f = new TFile((string("trees/")+currentDataset+".root").c_str());
@@ -186,8 +164,11 @@ int main (int argc, char *argv[])
          theTree->SetBranchAddress("theBranch",&myEvent);
       
          // Loop over the events
-         for (int i = 0 ; i < theTree->GetEntries() ; i++)
+         int nEntries = theTree->GetEntries();
+         for (int i = 0 ; i < nEntries ; i++)
          {
+          
+            if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
             // Get the i-th entry
             theTree->GetEntry(i);
@@ -198,7 +179,13 @@ int main (int argc, char *argv[])
             // Fill all the variables
             myScrewdriver.AutoFillProcessClass(currentProcessClass,weight);
 
+            // Also fill muf_125
+            if ((currentProcessClass == "muf") && (myEvent.mMuf == 125))
+                myScrewdriver.AutoFillProcessClass("muf_125",weight);
+
          }
+         printProgressBar(nEntries,nEntries,currentDataset);
+         cout << endl;
      }
 
      // ###################################
@@ -211,11 +198,7 @@ int main (int argc, char *argv[])
      myScrewdriver.MakePlots();
      myScrewdriver.WritePlots("./plots/");
 
-     cout << endl;
-     cout << "   ┌──────────────────────────────┐ " << endl;
-     cout << "   │   Plot generation completed  │ " << endl;
-     cout << "   └──────────────────────────────┘ " << endl; 
-     cout << endl;
+     printBoxedMessage("Plot generation completed");
 
      return (0);
 
@@ -226,13 +209,6 @@ int main (int argc, char *argv[])
 // ##########################################
 
 bool preSelection()
-{
-    if ((myEventPointer->mMuf == -1) 
-     || (myEventPointer->mMuf == 125)) return true;
-    else return false;
-}
-
-bool preSelection_allmMuf()
 {
     return true;
 }
