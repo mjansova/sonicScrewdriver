@@ -37,6 +37,7 @@ namespace theDoctor
       //
 
       void AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* autoFillPointer = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int*   autoFillPointer = 0, string options = "");
 
       int getIndexOfVariable(string tag);
           

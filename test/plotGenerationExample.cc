@@ -9,12 +9,11 @@ using namespace theDoctor;
 
 typedef struct
 {
-    Float_t mMuf;
-    Float_t invariantMass;
-    Float_t MET;
-    Float_t leptonPt;
-    Float_t leptonFlavor;
-
+    float invariantMass;
+    float MET;
+    float leptonPt;
+    float leptonFlavor;
+    int   mMuf;
 }
 microEvent;
 
@@ -172,7 +171,7 @@ int main (int argc, char *argv[])
 
             // Get the i-th entry
             theTree->GetEntry(i);
-         
+            
             // Reweight event to luminosity
             float weight = myScrewdriver.GetDatasetLumiWeight(currentDataset);
               

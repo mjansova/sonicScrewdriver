@@ -1,18 +1,22 @@
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
-ROOTGLIBS     = $(shell root-config --libs)
 
-# Linux with egcs
 DEFINES       = 
+
 CXX           = g++
 CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS      += $(ROOTCFLAGS) -I./
 
 LD            = g++ 
-LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined
-SOFLAGS       = -shared
+LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
+LDFLAGS       += $(ROOTLIBS)
 
-LIBS          = $(ROOTLIBS)  -lEG 
+SOFLAGS       = -shared
+LIBS          = 
+
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
 
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard src/*.cc)
@@ -32,9 +36,11 @@ clean:
 	@echo "Cleaning..."
 	@rm -f $(OBJECTS)
 
-.PHONY : test
 
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c -o $@ $< $(LIBS) $(GCCPARSER)
 
  
+.PHONY : test
 
 

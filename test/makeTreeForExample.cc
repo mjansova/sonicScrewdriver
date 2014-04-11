@@ -2,19 +2,15 @@
 
 typedef struct
 {
-
-    Float_t mMuf;
-
-    Float_t invariantMass;
-    Float_t MET;
-
-    Float_t leptonPt;
-    Float_t leptonFlavor;
-
+    float invariantMass;
+    float MET;
+    float leptonPt;
+    float leptonFlavor;
+    int   mMuf;
 }
 microEvent;
 
-#define ROOT_STRUCTURE_DESCRIPTION "mMuf:invariantMass:MET:leptonPt:leptonFlavor"
+#define ROOT_STRUCTURE_DESCRIPTION "invariantMass:MET:leptonPt:leptonFlavor:mMuf/I"
 
 /*
 #########################################
@@ -113,14 +109,14 @@ void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int proce
     }
     else if (processType == 2)
     {
-        if (isData) myEvent->mMuf = 125.0;
+        if (isData) myEvent->mMuf = 125;
         else        myEvent->mMuf = ((int) (gen->Uniform()*11)*2) + 115;
 
         myEvent->invariantMass = gen->Gaus(myEvent->mMuf,(myEvent->mMuf-110)/5);
         myEvent->MET           = gen->Exp(150);
         myEvent->leptonPt      = gen->Gaus((myEvent->mMuf + myEvent->MET) / 5.0, 15.0);
 
-        if (isData) myEvent->mMuf = -1.0;
+        if (isData) myEvent->mMuf = -1;
     }
 
     myEvent->leptonFlavor = (int) (gen->Uniform()*2);

@@ -25,6 +25,9 @@ SonicScrewdriver::~SonicScrewdriver()
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* autoFillPointer, string options)
 {	theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));	}
 
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int* autoFillPointer, string options)
+{	theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));	}
+
 int SonicScrewdriver::getIndexOfVariable(string tag)
 {
 	for (unsigned int i = 0 ; i < theVariables.size() ; i++)

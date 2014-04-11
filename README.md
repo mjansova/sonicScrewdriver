@@ -39,23 +39,23 @@ from the `test` folder. It will open a TBrowser with the root files already load
 Disclaimer
 ----------
 
-This tool doesn't work on WOOD.
+This tool doesnt work on WOOD.
 
 To-do list / ideas
 ------------------
 
 Important :
 - Actual documentation
-- Find a clever solution to link variables to ints (instead of just float), and also to vectors (of float, ints..). What about TLorentzVector ..?
 - More global options to change font, line width, ... maybe add a config file to read stuff from.
 - Converge on what to do for the lumi reweighting per channel...
 
 Little improvements :
-- Custom binning for variables (ex : for discrete values like # of jets, or log-scale in term of x)
+- Custom binning for variables
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
+- Maybe possibility to link variable to vectors (of float, ints..). ...And maybe to TLorentzVector ? Not a big fan of this though.
 
 Mid-long term :
-- Add table type (Data vs MC, bkg vs sig), etc
+- Add table for data/MC comparisons
 - Add or fix latex/ascii export/import for tables
 - Add surcharge operator +, -, x, and / for (int,Figure)
 
