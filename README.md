@@ -63,4 +63,7 @@ Big stuff :
 - Possibility to separate the reading from the actual plotting, ie export raw histograms and be able to import them.
 - Web-based interface to generate the code..
 
-
+Eric stuff :
+- Add Chi2 or Kolmogorov test for data/MC comparison + display value on the plot
+- Add 2D plot showing the evolution of correlation between two variables after lower/upper cuts
+- Add data and SM yield on data/MC plot
