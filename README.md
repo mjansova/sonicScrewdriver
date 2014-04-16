@@ -45,12 +45,12 @@ To-do list / ideas
 ------------------
 
 Important :
-- Actual documentation
+- Documentation
 - More global options to change font, line width, ... maybe add a config file to read stuff from.
 - Converge on what to do for the lumi reweighting per channel...
 
 Little improvements :
-- Custom binning for variables
+- For custom binning, option to redivide the content of the bins to simulate a fixed bin width (to keep having an interpretation in term of pdf).
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
 - Maybe possibility to link variable to vectors (of float, ints..). ...And maybe to TLorentzVector ? Not a big fan of this though.
 
