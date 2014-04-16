@@ -22,12 +22,16 @@ namespace theDoctor
               string    theHistoParameters_ = "") :
       theHistoType(theHistoType_)
       {
-          theVar          = theVar_;
-          theRegion       = theRegion_;
-          theChannel      = theChannel_;
+          theVar             = theVar_;
+          theRegion          = theRegion_;
+          theChannel         = theChannel_;
           theHistoParameters = theHistoParameters_;
           
-          theHisto        = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+          if (theVar_->usingCustomBinning())
+              theHisto        = new TH1F("","",theVar->getNbins(),theVar->getCustomBinning());
+          else
+              theHisto        = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+          
           theHisto->Sumw2();
       }; 
 

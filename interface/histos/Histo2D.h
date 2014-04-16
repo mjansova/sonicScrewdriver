@@ -26,12 +26,27 @@ namespace theDoctor
           theYVar = theYVar_;
           theRegion       = theRegion_;
           theChannel      = theChannel_;
-          
+
           theHistoParameters = theHistoParameters_;
 
-          theHisto          = new TH2F("","",
-                                       theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
-                                       theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
+          if (theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning())
+              theHisto = new TH2F("","",
+                                  theXVar->getNbins(),theXVar->getCustomBinning(),
+                                  theYVar->getNbins(),theYVar->getCustomBinning());
+
+          else if (theXVar_->usingCustomBinning())
+              theHisto = new TH2F("","",
+                                  theXVar->getNbins(),theXVar->getCustomBinning(),
+                                  theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
+          else if (theXVar_->usingCustomBinning())
+              theHisto = new TH2F("","",
+                                  theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
+                                  theYVar->getNbins(),theYVar->getCustomBinning());
+          else
+              theHisto = new TH2F("","",
+                                  theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
+                                  theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
+
 
           theHisto->Sumw2();
       }; 

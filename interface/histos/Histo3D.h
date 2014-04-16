@@ -23,19 +23,30 @@ namespace theDoctor
               string      theHistoParameters_ = "") :
       theHistoType(theHistoType_)
       {
-          theXVar = theXVar_;
-          theYVar = theYVar_;
-          theZVar = theZVar_;
-          theRegion       = theRegion_;
-          theChannel      = theChannel_;
-          
+          theXVar    = theXVar_;
+          theYVar    = theYVar_;
+          theZVar    = theZVar_;
+          theRegion  = theRegion_;
+          theChannel = theChannel_;
+
           theHistoParameters = theHistoParameters_;
 
-          theHisto          = new TH3F("","",
-                                       theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
-                                       theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
-                                       theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());;
-
+          if(theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning() && theZVar_->usingCustomBinning())
+              theHisto = new TH3F("","",
+                                  theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
+                                  theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
+                                  theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());
+          else if (!theXVar_->usingCustomBinning() && !theYVar_->usingCustomBinning() && !theZVar_->usingCustomBinning())
+              theHisto = new TH3F("","",
+                                  theXVar->getNbins(),theXVar->getCustomBinning(),
+                                  theYVar->getNbins(),theYVar->getCustomBinning(),
+                                  theZVar->getNbins(),theZVar->getCustomBinning());
+          else
+          {
+              WARNING_MSG << "Cannot create 3D histograms with variable using different kind of binning (normal/custom)."
+                          << "(varX, varY, varZ) = (" << theXVar->getTag() << "," << theYVar->getTag() << "," << theZVar->getTag() << ")."
+                          << "Root doesn't allow it." << endl;
+          }
           theHisto->Sumw2();
       }; 
 

@@ -25,13 +25,17 @@ namespace theDoctor
           theProcessClass = theProcessClass_;
 
           string nameHisto =  string("v:")+theVar->getTag()
-                                   +"|p:" +theProcessClass->getTag()
-                                   +"|r:" +theRegion->getTag()
-                                   +"|c:" +theChannel->getTag();
-                                   +"|t:" +theHistoType.getTag();
+              +"|p:" +theProcessClass->getTag()
+              +"|r:" +theRegion->getTag()
+              +"|c:" +theChannel->getTag()
+              +"|t:" +theHistoType.getTag();
 
           theHisto->SetName(nameHisto.c_str());
-          theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+          if (theVar_->usingCustomBinning())
+              theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+          else
+              theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getCustomBinning());
+          
           theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
           theHistoRawEntries->Sumw2();
       }; 
@@ -41,7 +45,7 @@ namespace theDoctor
       // Accessors
       ProcessClass*  getProcessClass()     const { return theProcessClass;       };  
       string         getProcessClassTag()  const { return theProcessClass->getTag(); };
-      TH1F* 		 getEntriesHisto()     const { return theHistoRawEntries;                   };
+      TH1F*          getEntriesHisto()     const { return theHistoRawEntries;                   };
       TH1F*          getEntriesClone()     const { return (TH1F*) theHistoRawEntries->Clone();  };
 
       Figure GetYieldAndError() const
@@ -60,6 +64,8 @@ namespace theDoctor
           
       void Fill(float value = 1.0, float weight = 1.0) const
       {
+          //DEBUG_MSG << "integral : " << GetYieldAndError().Print() << endl;
+
           if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noUnderflowInFirstBin")) 
            && (value < theVar->getMin())) value = theVar->getMin();
           

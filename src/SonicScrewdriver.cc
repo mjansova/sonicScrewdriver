@@ -12,7 +12,7 @@ string floatToString(float input)
 }
 
 SonicScrewdriver::SonicScrewdriver():
-theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels) { }
+    theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels) { }
 
 SonicScrewdriver::~SonicScrewdriver()
 { }
@@ -23,26 +23,30 @@ SonicScrewdriver::~SonicScrewdriver()
 // #################################
 
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* autoFillPointer, string options)
-{	theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));	}
-
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int* autoFillPointer, string options)
-{	theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));	}
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, float* autoFillPointer, string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, int*   autoFillPointer, string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
+
 
 int SonicScrewdriver::getIndexOfVariable(string tag)
 {
-	for (unsigned int i = 0 ; i < theVariables.size() ; i++)
-		if (theVariables[i].getTag() == tag) return i;
-	
-	return -1;
+    for (unsigned int i = 0 ; i < theVariables.size() ; i++)
+        if (theVariables[i].getTag() == tag) return i;
+
+    return -1;
 }
 
 
 void SonicScrewdriver::AddProcessClass(string tag, string plotLabel, string type, Color_t color, string options)
-{	theProcessClasses.push_back(ProcessClass(tag,plotLabel,type,color,options));	}
+{    theProcessClasses.push_back(ProcessClass(tag,plotLabel,type,color,options));    }
 
 void SonicScrewdriver::AddDataset(string tag, string processClass, int trueNumberOfEvents, float xsecOrLumi, string options)
-{	
-    theDatasets.push_back(Dataset(tag,processClass,trueNumberOfEvents,xsecOrLumi,options));	
+{    
+    theDatasets.push_back(Dataset(tag,processClass,trueNumberOfEvents,xsecOrLumi,options));    
     if (GetProcessClassType(processClass) == "data") theLumi += xsecOrLumi;
 }
 
@@ -61,22 +65,22 @@ void SonicScrewdriver::SetTrueNumberOfEvents(string dataset, int n)
 
 void SonicScrewdriver::GetProcessClassTagList(vector<string> *output)
 {
-	output->clear();
-	for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
+    output->clear();
+    for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
         output->push_back(theProcessClasses[i].getTag());
 }
 
 void SonicScrewdriver::GetProcessClassLabelList(vector<string> *output)
 {
-	output->clear();
-	for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
+    output->clear();
+    for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
         output->push_back(theProcessClasses[i].getLabel());
 }
 
 void SonicScrewdriver::GetDatasetList(vector<string> *output)
 {
-	output->clear();
-	for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
+    output->clear();
+    for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
         output->push_back(theDatasets[i].getTag());
 }
 
@@ -84,7 +88,7 @@ void SonicScrewdriver::GetDatasetList(vector<string> *output)
 
 string SonicScrewdriver::GetProcessClassType(string processClass)
 {
-	for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
+    for (unsigned int i = 0 ; i < theProcessClasses.size() ; i++)
     {
         if (theProcessClasses[i].getTag() != processClass) continue;
         return theProcessClasses[i].getType();
@@ -95,11 +99,11 @@ string SonicScrewdriver::GetProcessClassType(string processClass)
 
 float SonicScrewdriver::GetDatasetLumiWeight(string dataset)
 {
-	for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
+    for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
     {
         if (theDatasets[i].getTag() != dataset) continue;
         string type = GetProcessClassType(theDatasets[i].getProcessClass()); 
-             if ((type == "background") || (type == "signal"))
+        if ((type == "background") || (type == "signal"))
             return theDatasets[i].getXsecOrLumi() * theLumi / theDatasets[i].getTrueNumberOfEvents();
         else if (type == "data")
             return 1.0;
@@ -109,14 +113,14 @@ float SonicScrewdriver::GetDatasetLumiWeight(string dataset)
 
 string SonicScrewdriver::GetProcessClass(string dataset)
 {
-	for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
+    for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
     {
         if (theDatasets[i].getTag() != dataset) continue;
         return theDatasets[i].getProcessClass(); 
     }
     return "";
 }
-  
+
 float SonicScrewdriver::GetLumi()
 { return theLumi; }
 
@@ -128,56 +132,56 @@ void SonicScrewdriver::SetLumi(float inputLumi)
 // #####################################
 
 void  SonicScrewdriver::AddRegion(string tag, string plotLabel, bool (*selector)(), string options)
-{	theRegions.push_back(Region(tag,plotLabel,selector,options));	}
+{    theRegions.push_back(Region(tag,plotLabel,selector,options));    }
 
 void SonicScrewdriver::GetRegionTagList(vector<string> *output)
 {
-	output->clear();
-	for (unsigned int i = 0 ; i < theRegions.size() ; i++)
+    output->clear();
+    for (unsigned int i = 0 ; i < theRegions.size() ; i++)
         output->push_back(theRegions[i].getTag());
 }
 
 void SonicScrewdriver::GetRegionLabelList(vector<string> *output)
 {
-	output->clear();
-	for (unsigned int i = 0 ; i < theRegions.size() ; i++)
+    output->clear();
+    for (unsigned int i = 0 ; i < theRegions.size() ; i++)
         output->push_back(theRegions[i].getLabel());
 }
 
 void SonicScrewdriver::AddChannel(string tag, string plotLabel, bool (*selector)(), string options)
-{	theChannels.push_back(Channel(tag,plotLabel,selector,options));	}
+{    theChannels.push_back(Channel(tag,plotLabel,selector,options));    }
 
 // ###########################
 // #    Histo management     #
 // ###########################
 
 void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight)
-{	theHistoScrewdriver.AutoFillProcessClass(processClass,weight);	}
+{    theHistoScrewdriver.AutoFillProcessClass(processClass,weight);    }
 
-		// ###########################
-		// #   1D histo management   #
-		// ###########################
+// ###########################
+// #   1D histo management   #
+// ###########################
 
 void SonicScrewdriver::Create1DHistos()
-{	theHistoScrewdriver.Create1DHistosEntries();	}
+{    theHistoScrewdriver.Create1DHistosEntries();    }
 
 void SonicScrewdriver::ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor)
-{	theHistoScrewdriver.ApplyScaleFactor(var,processClass,region, channel, scaleFactor);	}
+{    theHistoScrewdriver.ApplyScaleFactor(var,processClass,region, channel, scaleFactor);    }
 
-		// ###########################
-		// #   2D histo management   #
-		// ###########################
- 
+// ###########################
+// #   2D histo management   #
+// ###########################
+
 void SonicScrewdriver::Add2DHisto(string varX, string varY)
 { theHistoScrewdriver.Add2DHistoEntries(varX,varY); }
-  
-		// ###########################
-		// #   3D histo management   #
-		// ###########################
- 
+
+// ###########################
+// #   3D histo management   #
+// ###########################
+
 void SonicScrewdriver::Add3DHisto(string varX, string varY, string varZ) 
 { theHistoScrewdriver.Add3DHistoEntries(varX,varY,varZ); }
-  
+
 // ###########################
 // #     Plots management    #
 // ###########################

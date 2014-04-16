@@ -37,7 +37,9 @@ namespace theDoctor
       //
 
       void AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* autoFillPointer = 0, string options = "");
-      void AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int*   autoFillPointer = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins, int   min, int   max, int*   autoFillPointer = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    float* autoFillPointer = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    int*   autoFillPointer = 0, string options = "");
 
       int getIndexOfVariable(string tag);
           
@@ -57,7 +59,7 @@ namespace theDoctor
       //
       // *** Get the list of names of process classes
       //     
-      //	The list is returned in the "output" vector.
+      //    The list is returned in the "output" vector.
       //
      
       void   GetProcessClassTagList(vector<string> *output);
@@ -90,9 +92,9 @@ namespace theDoctor
       //
       // *** Add a channel to the knownledge of this Screwdriver.
       //     
-      //	 The selector is a function returning true or false
+      //     The selector is a function returning true or false
       //     if the event currently being filled is or isnt
-      //	 in this channel
+      //     in this channel
       //
 
       void  AddChannel(string tag, string plotLabel, bool (*selector)(), string options = "");
@@ -104,9 +106,9 @@ namespace theDoctor
       //
       // *** Add a region to the knownledge of this Screwdriver.
       //     
-      //	 The selector is a function returning true or false
+      //     The selector is a function returning true or false
       //     if the event currently being filled is or isnt
-      //	 in this region
+      //     in this region
       //
 
       void  AddRegion(string tag, string plotLabel, bool (*selector)(), string options = "");
@@ -114,7 +116,7 @@ namespace theDoctor
       //
       // *** Get the list of names of regions
       //     
-      //	The list is returned in the "output" vector.
+      //    The list is returned in the "output" vector.
       //
      
       void   GetRegionTagList(vector<string> *output);
@@ -151,9 +153,9 @@ namespace theDoctor
 
       // *** Apply scale factor on an histogram
       
-      void ApplyScaleFactor(string var,	string processClass, string region, string channel, Figure scaleFactor);
+      void ApplyScaleFactor(string var,    string processClass, string region, string channel, Figure scaleFactor);
 
-      void ApplyScaleFactor(string var,	string processClass, Figure scaleFactor);
+      void ApplyScaleFactor(string var,    string processClass, Figure scaleFactor);
 
             // ########################
             // #  Histo2DEntries management  #
@@ -175,8 +177,8 @@ namespace theDoctor
       // *** Add a 3-dimension histogram to the HistoScrewdriver
       //     for the specified set of variables/processClass.
       //
-      //	 If autoFill is set to true, the histogram will be
-      //	 filled during the "automatic" fill.
+      //     If autoFill is set to true, the histogram will be
+      //     filled during the "automatic" fill.
       // 
       
       void Add3DHisto(string varX, string varY, string varZ);

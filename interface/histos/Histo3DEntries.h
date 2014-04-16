@@ -22,6 +22,7 @@ namespace theDoctor
         {
             theXVar = theXVar_;
             theYVar = theYVar_;
+            theZVar = theZVar_;
             theProcessClass = theProcessClass_;
             theRegion       = theRegion_;
             theChannel      = theChannel_;
@@ -35,11 +36,19 @@ namespace theDoctor
                                     +"|t:"+theHistoType.getTag();
 
             theHisto->SetName(nameHisto.c_str());
-            theHistoRawEntries = new TH3F("","",
-                    theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
-                    theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
-                    theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());
-
+            if(theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning() && theZVar_->usingCustomBinning())
+            {
+                theHistoRawEntries = new TH3F("","",
+                                              theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
+                                              theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
+                                              theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());
+            }
+            else{
+                theHistoRawEntries = new TH3F("","",
+                                              theXVar->getNbins(),theXVar->getCustomBinning(),
+                                              theYVar->getNbins(),theYVar->getCustomBinning(),
+                                              theZVar->getNbins(),theZVar->getCustomBinning());
+            }
             theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
             theHistoRawEntries->Sumw2();
 
