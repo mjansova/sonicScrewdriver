@@ -11,8 +11,13 @@ string floatToString(float input)
     return ss.str();
 }
 
+int sonicScrewdriver_DummyUnity = 1;
+
 SonicScrewdriver::SonicScrewdriver():
-    theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels) { }
+    theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels)
+{
+    AddVariable("yield","Yield","",1,0,0,&sonicScrewdriver_DummyUnity,"");
+}
 
 SonicScrewdriver::~SonicScrewdriver()
 { }
@@ -194,8 +199,8 @@ void SonicScrewdriver::MakePlots(string options)
 void SonicScrewdriver::WritePlots(string outputFolder)
 { thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder); }
 
-Figure SonicScrewdriver::GetYieldAndError(string var, string processClass,string region,string channel)
-{ return theHistoScrewdriver.GetYieldAndError(var,processClass,region,channel); }
+Figure SonicScrewdriver::GetYieldAndError(string processClass,string region,string channel)
+{ return theHistoScrewdriver.GetYieldAndError(processClass,region,channel); }
 
 vector<Histo1DEntries>* SonicScrewdriver::Get1DHistosEntries()
 { return theHistoScrewdriver.Get1DHistosEntries(); }

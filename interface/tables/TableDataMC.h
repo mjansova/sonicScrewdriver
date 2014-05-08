@@ -1,5 +1,5 @@
-#ifndef TableBackgroundSignal_h
-#define TableBackgroundSignal_h
+#ifndef TableDataMC_h
+#define TableDataMC_h
 
 #include <iostream>
 #include <vector>
@@ -14,14 +14,14 @@ using namespace std;
 namespace theDoctor 
 {
 
-    class TableBackgroundSignal : public Table
+    class TableDataMC : public Table
     {
       
      public:
 
-            TableBackgroundSignal();
+            TableDataMC();
 
-            TableBackgroundSignal(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel)
+            TableDataMC(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel)
             {
                 vector<string> rawProcessesTags;
                 vector<string> rawProcessesLabels;
@@ -36,7 +36,7 @@ namespace theDoctor
                 screwdriver->GetRegionTagList  (&regionsTags  );
                 screwdriver->GetRegionLabelList(&regionsLabels);
 
-                // Sort backgrounds, signal, and add "total background" line
+                // Sort backgrounds, data, and add "total background" line
                 for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
                 {
                     string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
@@ -53,7 +53,7 @@ namespace theDoctor
                 for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
                 {
                     string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
-                    if (type == "signal")
+                    if (type == "data")
                     {
                         processesTags.push_back(rawProcessesTags[i]);
                         processesLabels.push_back(rawProcessesTags[i]);
@@ -105,7 +105,7 @@ namespace theDoctor
             };
 
 
-            ~TableBackgroundSignal()
+            ~TableDataMC()
             {
             };
 

@@ -213,7 +213,7 @@ namespace theDoctor
       //
       void WritePlots(string outputFolder);
 
-      Figure GetYieldAndError(string var, string processClass,string region,string channel);
+      Figure GetYieldAndError(string processClass,string region,string channel);
 
       vector<Histo1DEntries>* Get1DHistosEntries();
       vector<Histo2DEntries>* Get2DHistosEntries();

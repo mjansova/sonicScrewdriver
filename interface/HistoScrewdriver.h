@@ -22,7 +22,7 @@ namespace theDoctor
 
       void Create1DHistosEntries();
       void AutoFillProcessClass(string processClass, float weight);
-      Figure GetYieldAndError(string var, string processClass, string region, string channel);
+      Figure GetYieldAndError(string processClass, string region, string channel);
       
       vector<Histo1DEntries>* Get1DHistosEntries();
       vector<Histo2DEntries>* Get2DHistosEntries();

@@ -475,9 +475,9 @@ vector<Histo3DEntries>* HistoScrewdriver::Get3DHistosEntries()
 }
 
 
-Figure HistoScrewdriver::GetYieldAndError(string var, string processClass, string region, string channel)
+Figure HistoScrewdriver::GetYieldAndError(string processClass, string region, string channel)
 {
-    int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
+    int indexHisto = getIndexOfHisto1DEntries("yield",processClass,region,channel);
     if (indexHisto < 0) return Figure(0.0,0.0);
     else         return the1DHistosEntries[indexHisto].GetYieldAndError();
 }
