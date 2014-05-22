@@ -23,18 +23,24 @@ namespace theDoctor
 
       double value() const { return theValue; };
       double error() const { return theError; };
-      string Print() const 
+
+      double valueWithVariation(int n) const { return theValue + n * theError; } 
+
+      void keepVariation(int n) { theValue = theValue + n*theError; theError = 0.0; }
+
+      string Print(unsigned int p = 2) const 
       { 
           std::ostringstream s;
           
           s.setf(std::ios::fixed);
-          s.precision(2);
+          s.precision(p);
           
           s << theValue << " +/- " << theError;
+
           return s.str();
       }
 
-      string PrintLatex() const 
+      string PrintLatex(unsigned int p = 2) const 
       { 
           std::ostringstream s;
           
@@ -121,7 +127,9 @@ namespace theDoctor
 
           return Figure(newValue,newError);
       }
-        
+
+      
+
 
      private:
 
