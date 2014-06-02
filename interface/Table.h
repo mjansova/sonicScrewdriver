@@ -33,9 +33,12 @@ namespace theDoctor
       Figure Get(int colId, int rowId);  
       Figure Get(string colTag, string rowTag);  
 
-      void PrintTable(string options = "");
-      void PrintTableLatex(string options = "");
-      
+      void Print(int prec = 2, std::ostream& output = cout);
+      void PrintLatex(int prec = 2, std::ostream& output = cout);
+
+      void Print(string fileName, int prec = 2);
+      void PrintLatex(string fileName, int prec = 2);
+     
      private:
 
       // Data management

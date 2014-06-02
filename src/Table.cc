@@ -142,103 +142,111 @@ Figure Table::Get(string colTag, string rowTag)
 	return Get(indexCol,indexRow);
 }
 
-void Table::PrintTable(string options)
+void Table::Print(int prec, std::ostream& output)
 {
-	int width = 20;
+	int width = 16 + 2*prec;
 
-	cout << left;
+	output << left;
 
 	// Line before header
-	cout << " +";
-	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) cout << "-";
-	cout << "+" << endl;
+	output << " +";
+	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) output << "-";
+	output << "+" << endl;
 
 	// Header
-	cout << " | ";
-	cout << setw(width) << " ";
-	cout << " | ";
+	output << " | ";
+	output << setw(width) << " ";
+	output << " | ";
 	for (int i = 0 ; i < nCol ; i++)
 	{
-		cout << setw(width) << colTags[i] << " |";
-		if (i < nCol - 1) cout << " ";
+		output << setw(width) << colTags[i] << " |";
+		if (i < nCol - 1) output << " ";
 	}
-	cout << endl;
+	output << endl;
 
 	// Line after header
-	cout << " +";
-	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) cout << "-";
-	cout << "+" << endl;
+	output << " +";
+	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) output << "-";
+	output << "+" << endl;
 
 	// Rows
 	for (int i = 0 ; i < nRow ; i++)
 	{
-		cout << " | ";
-		cout << setw(width) << rowTags[i];
-		cout << " | ";
+		output << " | ";
+		output << setw(width) << rowTags[i];
+		output << " | ";
 		for (int j = 0 ; j < nCol ; j++)
 		{
-			cout << setw(width) << Get(j,i).Print();
+			output << setw(width) << Get(j,i).Print(prec);
             
-            //if (options == "withError")
-			//    cout << " +/- " << setw(width) << Get(j,i).error();
-                
-            cout << " |";
-			if (j < nCol - 1) cout << " ";
+            output << " |";
+			if (j < nCol - 1) output << " ";
 		}
-		cout << endl;
+		output << endl;
 	}
 
 	// Line after rows
-	cout << " +";
-	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) cout << "-";
-	cout << "+" << endl;
-
+	output << " +";
+	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) output << "-";
+	output << "+" << endl;
 }
 
-void Table::PrintTableLatex(string options)
+void Table::PrintLatex(int prec, std::ostream& output)
 {
-	cout << left;
+	output << left;
 
     // Begin tabular
-    cout << "\\begin{tabular}{|l|";
-	for (int i = 0 ; i < nCol ; i++) cout << "c";
-    cout << "|}" << endl;
+    output << "\\begin{tabular}{|l|";
+	for (int i = 0 ; i < nCol ; i++) output << "c";
+    output << "|}" << endl;
 
     // Line before header
-	cout << "\\hline" << endl;
+	output << "\\hline" << endl;
 
 	// Header
-	cout << "&" << endl;
+	output << "&" << endl;
 	for (int i = 0 ; i < nCol ; i++)
 	{
-		cout << "\\textbf{" << colLabels[i] << "} ";
-		if (i < nCol - 1) cout << "\t&";
-        else cout << "\t\\\\";
-	    cout << endl;
+		output << "\\textbf{" << colLabels[i] << "} ";
+		if (i < nCol - 1) output << "\t&";
+        else output << "\t\\\\";
+	    output << endl;
 	}
 	
     // Line after header
-	cout << "\\hline" << endl;
+	output << "\\hline" << endl;
 
 	// Rows
 	for (int i = 0 ; i < nRow ; i++)
 	{
-		cout << "\\textbf{" << rowLabels[i] << "} ";
-		cout << "\t & ";
+		output << "\\textbf{" << rowLabels[i] << "} ";
+		output << "\t & ";
 		for (int j = 0 ; j < nCol ; j++)
 		{
-			cout << Get(j,i).PrintLatex() << " ";
-			if (j < nCol - 1) cout << "\t & ";
-            else cout << "\t \\\\";
+			output << Get(j,i).PrintLatex(2) << " ";
+			if (j < nCol - 1) output << "\t & ";
+            else output << "\t \\\\";
 		}
-		cout << endl;
+		output << endl;
 	}
 	
     // Line after content
-    cout << "\\hline" << endl;
+    output << "\\hline" << endl;
     
     // End tabular
-    cout << "\\end{tabular}";
+    output << "\\end{tabular}";
 
 }
 
+void Table::Print(string fileName, int prec)
+{
+    ofstream output(fileName.c_str(), ofstream::out);
+    Print(prec,output);
+    output.close();
+}
+void Table::PrintLatex(string fileName, int prec)
+{
+    ofstream output(fileName.c_str(), ofstream::out);
+    PrintLatex(prec,output);
+    output.close();
+}
