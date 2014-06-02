@@ -18,7 +18,60 @@ Table::Table(vector<string> colTags_, vector<string> rowTags_)
     Init(colTags_,rowTags_);
     SetLabels(colTags_,rowTags_);
 }
- 
+
+Table::Table(string inputFile)
+{
+    ifstream input(inputFile.c_str(),std::ifstream::in);
+
+    string s;
+    vector<string> colTags_;
+    vector<string> rowTags_;
+    vector<Figure> figures;
+
+    input >> s;
+    if (s[0] != '+') { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+    input >> s; 
+    if (s    != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+
+    while (true)
+    {
+        input >> s; 
+        if (s != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+        input >> s;
+        if (s[0] == '+') break;
+        else colTags_.push_back(s);
+    }
+
+    while (true)
+    {
+        input >> s; 
+        if (s[0] == '+') break;
+
+        input >> s; 
+        rowTags_.push_back(s);
+
+        for (unsigned int c = 0 ; c < colTags_.size() ; c++)
+        {
+            input >> s; 
+            if (s != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+           
+            float value, error;
+            input >> value >> s >> error;
+            figures.push_back(Figure(value,error));
+        }
+
+        input >> s; 
+        if (s != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+    }
+
+    Init(colTags_,rowTags_);
+    for (unsigned int c = 0 ; c < colTags_.size() ; c++)
+    for (unsigned int r = 0 ; r < rowTags_.size() ; r++)
+    {
+        Set(c,r,figures[c + r*colTags_.size()]);
+    }
+}
+
 void Table::SetLabels(vector<string> colLabels_, vector<string> rowLabels_)
 {
 	if (colTags.size() != colLabels_.size()) return;

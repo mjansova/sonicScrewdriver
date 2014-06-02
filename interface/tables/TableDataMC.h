@@ -19,7 +19,9 @@ namespace theDoctor
       
      public:
 
-            TableDataMC();
+            TableDataMC()
+            {
+            }
 
             TableDataMC(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel)
             {

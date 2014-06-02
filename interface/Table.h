@@ -20,6 +20,7 @@ namespace theDoctor
       Table();
       Table(vector<string> colTags_, vector<string> rowTags_, vector<string> colLabels_, vector<string> rowLabels_);
       Table(vector<string> colTags_, vector<string> rowTags_);
+      Table(string inputFile);
 
       void SetLabels(vector<string> colLabels_, vector<string> rowLabels_);
       void Init(vector<string> colTags_, vector<string> rowTags_);

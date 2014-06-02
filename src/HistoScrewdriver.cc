@@ -150,11 +150,12 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
 {
   for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
   {
-    if (the1DHistosEntries[i].getProcessClassTag() != processClass) continue;
-
     // Check region and channel selection
     if (!the1DHistosEntries[i].getRegion()->getSelectionFlag()) continue;
     if (!the1DHistosEntries[i].getChannel()->getSelectionFlag()) continue;
+    
+    // Check processClass
+    if (the1DHistosEntries[i].getProcessClassTag() != processClass) continue;
 
     the1DHistosEntries[i].AutoFill(weight);
   }
