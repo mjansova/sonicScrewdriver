@@ -148,17 +148,19 @@ void HistoScrewdriver::Create1DHistosEntries()
 
 void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
 {
-  for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
-  {
-    // Check region and channel selection
-    if (!the1DHistosEntries[i].getRegion()->getSelectionFlag()) continue;
-    if (!the1DHistosEntries[i].getChannel()->getSelectionFlag()) continue;
-    
-    // Check processClass
-    if (the1DHistosEntries[i].getProcessClassTag() != processClass) continue;
+    for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
+    {
+        // Get histo
+        Histo1DEntries* currentHisto = &(the1DHistosEntries[i]);
 
-    the1DHistosEntries[i].AutoFill(weight);
-  }
+        // Check region and channel selection
+        if (!(currentHisto->getRegion()->getSelectionFlag())) continue;
+        if (!(currentHisto->getChannel()->getSelectionFlag())) continue;
+
+        if (currentHisto->getProcessClassTag() != processClass) continue;
+
+        currentHisto->AutoFill(weight);
+    }
 }
 
 Histo1DEntries* HistoScrewdriver::get1DHistoEntriesPointer(string var, string processClass, string region, string channel)

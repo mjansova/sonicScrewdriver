@@ -59,9 +59,13 @@ namespace theDoctor
       // Editors
       void AutoFill(float weight = 1.0) const
       {
+          // Ignore data event for blinded regions
+          if ((theProcessClass->getType() == "data")
+           && (OptionsScrewdriver::GetBoolOption(theRegion->getOptions(),"blinded"))) return;
+
           Fill(theVar->getAutoFillValue(),weight);
       }
-          
+
       void Fill(float value = 1.0, float weight = 1.0) const
       {
           //DEBUG_MSG << "integral : " << GetYieldAndError().Print() << endl;

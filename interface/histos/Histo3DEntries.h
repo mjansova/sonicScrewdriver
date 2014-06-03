@@ -65,6 +65,10 @@ namespace theDoctor
         // Editors
         void AutoFill(float weight = 1.0)
         {
+          // Ignore data event for blinded regions
+          if ((theProcessClass->getType() == "data")
+           && (OptionsScrewdriver::GetBoolOption(theRegion->getOptions(),"blinded"))) return;
+
             Fill(theXVar->getAutoFillValue(),theYVar->getAutoFillValue(),theZVar->getAutoFillValue(),weight);
         }
 

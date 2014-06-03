@@ -56,7 +56,6 @@ Little improvements :
 
 Mid-long term :
 - Add table for data/MC comparisons
-- Add or fix latex/ascii export/import for tables
 - Add surcharge operator +, -, x, and / for (int,Figure)
 
 Big stuff :
