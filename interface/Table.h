@@ -33,11 +33,11 @@ namespace theDoctor
       Figure Get(int colId, int rowId);  
       Figure Get(string colTag, string rowTag);  
 
-      void Print(int prec = 2, std::ostream& output = cout);
-      void PrintLatex(int prec = 2, std::ostream& output = cout);
+      void Print(int prec = 2, string options = "", std::ostream& output = cout);
+      void PrintLatex(int prec = 2, string options = "", std::ostream& output = cout);
 
-      void Print(string fileName, int prec = 2);
-      void PrintLatex(string fileName, int prec = 2);
+      void Print(string fileName, int prec = 2, string options = "");
+      void PrintLatex(string fileName, int prec = 2, string options = "");
      
      private:
 
@@ -47,8 +47,8 @@ namespace theDoctor
       vector<string> colLabels;
       vector<string> rowLabels;
 
-      int nCol;
-      int nRow;
+      unsigned int nCol;
+      unsigned int nRow;
       vector< vector<Figure> > data;
       
     };

@@ -28,26 +28,33 @@ namespace theDoctor
 
       void keepVariation(int n) { theValue = theValue + n*theError; theError = 0.0; }
 
-      string Print(unsigned int p = 2) const 
+      string Print(unsigned int p = 2, string options = "") const 
       { 
           std::ostringstream s;
           
           s.setf(std::ios::fixed);
           s.precision(p);
           
-          s << theValue << " +/- " << theError;
+          if (options == "noError")
+              s << theValue;
+          else
+              s << theValue << " +/- " << theError;
 
           return s.str();
       }
 
-      string PrintLatex(unsigned int p = 2) const 
+      string PrintLatex(unsigned int p = 2, string options = "") const 
       { 
           std::ostringstream s;
           
           s.setf(std::ios::fixed);
           s.precision(2);
-          
-          s << theValue << " $\\pm$ " << theError;
+ 
+          if (options == "noError")
+              s << theValue;
+          else
+              s << theValue << " $\\pm$ " << theError;
+
           return s.str();
       }
 

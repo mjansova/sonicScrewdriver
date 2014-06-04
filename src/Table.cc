@@ -86,13 +86,13 @@ void Table::Init(vector<string> colTags_, vector<string> rowTags_)
 	colTags  = colTags_;
 	rowTags  = rowTags_;
 
-	nCol = (int) colTags.size();
-	nRow = (int) rowTags.size();
-	for (int i = 0 ; i < nCol ; i++)
+	nCol = (unsigned int) colTags.size();
+	nRow = (unsigned int) rowTags.size();
+	for (unsigned int i = 0 ; i < nCol ; i++)
     {
         vector<Figure> newVec;
         data.push_back(newVec);
-	    for (int j = 0 ; j < nRow ; j++)
+	    for (unsigned int j = 0 ; j < nRow ; j++)
 		    data[i].push_back(Figure(0.0,0.0));
     }
 }
@@ -103,7 +103,7 @@ Table:: ~Table()
 
 bool Table::Set(int colId, int rowId, Figure value)
 {
-	if ((colId >= nCol) || (rowId >= nRow))	return false;
+	if ((((unsigned int) colId) >= nCol) || (((unsigned int) rowId) >= nRow))	return false;
 	if ((colId < 0)     || (rowId < 0))	    return false;
 
 	data[colId][rowId] = value;
@@ -116,15 +116,15 @@ bool Table::Set(string colTag, string rowTag, Figure value)
 	int indexRow = -1;
 	int indexCol = -1;
 
-	for (int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
-	for (int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
+	for (unsigned int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
+	for (unsigned int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
 
 	return Set(indexCol,indexRow,value);
 }
 
 Figure Table::Get(int colId, int rowId)
 {
-	if ((colId >= nCol) || (rowId >= nRow))	return -1;
+	if ((((unsigned int) colId) >= nCol) || (((unsigned int) rowId) >= nRow))	return -1;
 	if ((colId < 0)     || (rowId < 0))	    return -1;
 
 	return data[colId][rowId];
@@ -136,28 +136,36 @@ Figure Table::Get(string colTag, string rowTag)
 	int indexRow = -1;
 	int indexCol = -1;
 
-	for (int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
-	for (int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
+	for (unsigned int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
+	for (unsigned int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
 
 	return Get(indexCol,indexRow);
 }
 
-void Table::Print(int prec, std::ostream& output)
+void Table::Print(int prec, string options, std::ostream& output)
 {
 	int width = 16 + 2*prec;
+
+    // Find max width for row tags
+    unsigned int widthRowTags = 10;
+    for (unsigned int i = 0 ; i < nRow ; i++)
+    {
+        if (widthRowTags < rowTags[i].size())
+            widthRowTags = rowTags[i].size();
+    }
 
 	output << left;
 
 	// Line before header
 	output << " +";
-	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) output << "-";
+	for (unsigned int i = 0 ; i < (width+3)*(nCol)+2+widthRowTags ; i++) output << "-";
 	output << "+" << endl;
 
 	// Header
 	output << " | ";
-	output << setw(width) << " ";
+	output << setw(widthRowTags) << " ";
 	output << " | ";
-	for (int i = 0 ; i < nCol ; i++)
+	for (unsigned int i = 0 ; i < nCol ; i++)
 	{
 		output << setw(width) << colTags[i] << " |";
 		if (i < nCol - 1) output << " ";
@@ -166,18 +174,19 @@ void Table::Print(int prec, std::ostream& output)
 
 	// Line after header
 	output << " +";
-	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) output << "-";
+	for (unsigned int i = 0 ; i < (width+3)*(nCol)+2+widthRowTags ; i++) output << "-";
 	output << "+" << endl;
 
+
 	// Rows
-	for (int i = 0 ; i < nRow ; i++)
+	for (unsigned int i = 0 ; i < nRow ; i++)
 	{
 		output << " | ";
-		output << setw(width) << rowTags[i];
+		output << setw(widthRowTags) << rowTags[i];
 		output << " | ";
-		for (int j = 0 ; j < nCol ; j++)
+		for (unsigned int j = 0 ; j < nCol ; j++)
 		{
-			output << setw(width) << Get(j,i).Print(prec);
+			output << setw(width) << Get(j,i).Print(prec, options);
             
             output << " |";
 			if (j < nCol - 1) output << " ";
@@ -187,17 +196,17 @@ void Table::Print(int prec, std::ostream& output)
 
 	// Line after rows
 	output << " +";
-	for (int i = 0 ; i < (width+3)*(nCol+1)-1 ; i++) output << "-";
+	for (unsigned int i = 0 ; i < (width+3)*(nCol)+2+widthRowTags ; i++) output << "-";
 	output << "+" << endl;
 }
 
-void Table::PrintLatex(int prec, std::ostream& output)
+void Table::PrintLatex(int prec, string options, std::ostream& output)
 {
 	output << left;
 
     // Begin tabular
     output << "\\begin{tabular}{|l|";
-	for (int i = 0 ; i < nCol ; i++) output << "c";
+	for (unsigned int i = 0 ; i < nCol ; i++) output << "c";
     output << "|}" << endl;
 
     // Line before header
@@ -205,7 +214,7 @@ void Table::PrintLatex(int prec, std::ostream& output)
 
 	// Header
 	output << "&" << endl;
-	for (int i = 0 ; i < nCol ; i++)
+	for (unsigned int i = 0 ; i < nCol ; i++)
 	{
 		output << "\\textbf{" << colLabels[i] << "} ";
 		if (i < nCol - 1) output << "\t&";
@@ -217,13 +226,14 @@ void Table::PrintLatex(int prec, std::ostream& output)
 	output << "\\hline" << endl;
 
 	// Rows
-	for (int i = 0 ; i < nRow ; i++)
+	for (unsigned int i = 0 ; i < nRow ; i++)
 	{
 		output << "\\textbf{" << rowLabels[i] << "} ";
 		output << "\t & ";
-		for (int j = 0 ; j < nCol ; j++)
+		for (unsigned int j = 0 ; j < nCol ; j++)
 		{
-			output << Get(j,i).PrintLatex(2) << " ";
+		    output << Get(j,i).PrintLatex(prec,options) << " ";
+
 			if (j < nCol - 1) output << "\t & ";
             else output << "\t \\\\";
 		}
@@ -238,15 +248,15 @@ void Table::PrintLatex(int prec, std::ostream& output)
 
 }
 
-void Table::Print(string fileName, int prec)
+void Table::Print(string fileName, int prec, string options)
 {
     ofstream output(fileName.c_str(), ofstream::out);
-    Print(prec,output);
+    Print(prec,options,output);
     output.close();
 }
-void Table::PrintLatex(string fileName, int prec)
+void Table::PrintLatex(string fileName, int prec, string options)
 {
     ofstream output(fileName.c_str(), ofstream::out);
-    PrintLatex(prec,output);
+    PrintLatex(prec,options,output);
     output.close();
 }
