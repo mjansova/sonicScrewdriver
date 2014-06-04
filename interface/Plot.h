@@ -139,9 +139,9 @@ namespace theDoctor
                 theLegend->Draw();
 
                 theInPlotInfo->SetX1(    plotTo->GetLeftMargin()+0.03);
-                theInPlotInfo->SetY1(1.0-plotTo->GetTopMargin()-0.15);
+                theInPlotInfo->SetY1(1.0-plotTo->GetTopMargin()-0.15-0.025*theInPlotInfo->GetSize());
                 theInPlotInfo->SetX2(theInPlotInfo->GetX1() + 0.4);
-                theInPlotInfo->SetY2(theInPlotInfo->GetY1() + 0.1);
+                theInPlotInfo->SetY2(theInPlotInfo->GetY1() + 0.1 + 0.025*theInPlotInfo->GetSize());
 
                 theInPlotInfo->Draw();
 
