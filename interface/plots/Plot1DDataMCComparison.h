@@ -125,13 +125,28 @@ namespace theDoctor
           float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "DataMCComparison","factorSignal");
           string factorSignalStr = floatToString(factorSignal);
 
+          int regionRebin = 0;
+          if (OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin") != -1.0)
+          {
+              regionRebin = (int) OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin"); 
+              if (theVar->getNbins() % regionRebin != 0)
+              {
+                  WARNING_MSG << "Cannot rebin " << theVar->getTag() << " in region " << theRegion->getTag() << endl;
+                  regionRebin = 0;
+              }
+          }
+
           // Prepare the labels for x and y axis
           // xlabel = labelDeLaVariable (Unité)
           // ylabel = Normalized entries / largeurDeBin Unité
 
           string xlabel(theVar->getLabel());
           string ylabel("Entries / ");
-          ylabel += floatToString(theVar->getBinWidth());
+          
+          if (regionRebin)
+              ylabel += floatToString(theVar->getBinWidth() * regionRebin);
+          else
+              ylabel += floatToString(theVar->getBinWidth());
 
           // Add the unit
           if (theVar->getUnit() != "")
@@ -164,6 +179,7 @@ namespace theDoctor
 
               // Get the histo
               TH1F* histoClone = theBackgrounds[i]->getClone();
+              if (regionRebin) histoClone->Rebin(regionRebin);
 
               // Change style of histo and add it to legend
               ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
@@ -198,6 +214,8 @@ namespace theDoctor
                 ProcessClass* processClass = theSignals[i]->getProcessClass();
                     
                 TH1F* histoClone = theSignals[i]->getClone();
+                if (regionRebin) histoClone->Rebin(regionRebin);
+
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->Scale(factorSignal);
                 
@@ -225,7 +243,8 @@ namespace theDoctor
 
           // Get the histo for data
           TH1F* dataHisto = theSumData->getClone();
-          
+          if (regionRebin) dataHisto->Rebin(regionRebin);
+         
           // Add it to the legend
           pointersForLegend.push_back(dataHisto);
           labelsForLegend.push_back("data");
@@ -261,7 +280,9 @@ namespace theDoctor
           theRatioPad->SetBottomMargin(0.07);
           theRatioPad->SetTopMargin(0.3);
 
+          // Ratio
           TH1F* ratio = theDataMCRatio->getClone();
+          // (already rebinned if needed)
 
           TF1* unity = new TF1("unity","1",-10000,10000);
           unity->SetLineColor(kBlack);
@@ -277,12 +298,17 @@ namespace theDoctor
           if ((includeSignal == "stack") || (includeSignal == "superimpose"))
           {
               TH1F* histoSumBackground = theSumBackground->getClone();
+
+              if (regionRebin) histoSumBackground->Rebin(regionRebin);
+
               for (unsigned int i = 0 ; i < theSignals.size() ; i++)
               {
                   // Get associated processClass
                   ProcessClass* processClass = theSignals[i]->getProcessClass();
                     
                   TH1F* histoClone = theSignals[i]->getClone();
+                  if (regionRebin) histoClone->Rebin(regionRebin);
+
                   ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                   histoClone->Scale(factorSignal);
                   histoClone->Add(histoSumBackground);		

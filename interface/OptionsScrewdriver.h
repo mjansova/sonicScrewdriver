@@ -61,6 +61,8 @@ namespace theDoctor
                     getline(stream2,value,'=');
                     return atof(value.c_str());
                 }
+                
+                return -1.0;
             }
 
             static bool GetBoolOption(string options, string field)

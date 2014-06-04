@@ -27,8 +27,29 @@ namespace theDoctor
 
             theHisto->SetName(nameHisto.c_str());
 
-            theHisto->Add(theSumData->getClone());
-            theHisto->Divide(theSumBackground->getClone());
+            int regionRebin = 0;
+            if (OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin") != -1.0)
+            {
+                regionRebin = (int) OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin"); 
+                if (theVar->getNbins() % regionRebin != 0)
+                {
+                    WARNING_MSG << "Cannot rebin " << theVar->getTag() << " in region " << theRegion->getTag() << endl;
+                    regionRebin = 0;
+                }
+            }
+
+            TH1F* histoSumData = theSumData->getClone();
+            TH1F* histoSumBackground = theSumBackground->getClone();
+
+            if (regionRebin) 
+            {
+                theHisto->Rebin(regionRebin);
+                histoSumData->Rebin(regionRebin);
+                histoSumBackground->Rebin(regionRebin);
+            }
+
+            theHisto->Add(histoSumData);
+            theHisto->Divide(histoSumBackground);
         
         } 
 
