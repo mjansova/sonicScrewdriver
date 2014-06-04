@@ -173,6 +173,12 @@ void SonicScrewdriver::Create1DHistos()
 void SonicScrewdriver::ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor)
 {    theHistoScrewdriver.ApplyScaleFactor(var,processClass,region, channel, scaleFactor);    }
 
+void SonicScrewdriver::ApplyScaleFactor(string processClass, string region, string channel, Figure scaleFactor)
+{   
+    for (unsigned int i = 0 ; i < theVariables.size() ; i++)
+        theHistoScrewdriver.ApplyScaleFactor(theVariables[i].getTag(),processClass,region, channel, scaleFactor);    
+}
+
 // ###########################
 // #   2D histo management   #
 // ###########################

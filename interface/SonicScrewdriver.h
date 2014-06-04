@@ -155,8 +155,8 @@ namespace theDoctor
       
       void ApplyScaleFactor(string var,    string processClass, string region, string channel, Figure scaleFactor);
 
-      void ApplyScaleFactor(string var,    string processClass, Figure scaleFactor);
-
+      void ApplyScaleFactor(string processClass, string region, string channel, Figure scaleFactor);
+      
             // ########################
             // #  Histo2DEntries management  #
             // ########################
