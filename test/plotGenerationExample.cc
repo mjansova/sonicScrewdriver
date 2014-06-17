@@ -66,17 +66,17 @@ int main (int argc, char *argv[])
 
 	  // Backgrounds
 
-      myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_ORANGE);
+      myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_RED);
            myScrewdriver.AddDataset("foo","foo",50000,0.495);
   
-      myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_AZURE);
+      myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_ORANGE);
            myScrewdriver.AddDataset("bar","bar",50000,0.495);
 
 	  // Signal(s)
 
-      myScrewdriver.AddProcessClass("muf",     "Muf",               "signal",  COLORPLOT_GREEN, "no1DPlots");
+      myScrewdriver.AddProcessClass("muf",     "Muf",               "signal",  COLORPLOT_BLUE, "no1DPlots");
            myScrewdriver.AddDataset("muf","muf",50000 / 11,0.01);
-      myScrewdriver.AddProcessClass("muf_125", "Muf, m=125 GeV",    "signal",  COLORPLOT_GREEN);
+      myScrewdriver.AddProcessClass("muf_125", "Muf (m=125 GeV)",    "signal",  COLORPLOT_BLUE);
 
 	  // Data
 

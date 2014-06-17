@@ -156,7 +156,7 @@ namespace theDoctor
         
          ApplyHistoStyle(&thePlot,histoSignal,    theGlobalOptions);
          ApplyHistoStyle(&thePlot,histoBackground,theGlobalOptions);
-         histoBackground->SetLineColor(COLORPLOT_AZURE);
+         histoBackground->SetLineColor(COLORPLOT_BLUE);
          histoSignal    ->SetLineColor(COLORPLOT_ORANGE);
 
          /*

@@ -29,14 +29,17 @@ Table::Table(string inputFile)
     vector<Figure> figures;
 
     input >> s;
-    if (s[0] != '+') { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+    if (s[0] != '+') 
+    { WARNING_MSG << "Problem reading file " << inputFile << ": expected to find '+', found '" << s[0] << "'" << endl; exit(-1); } 
     input >> s; 
-    if (s    != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+    if (s    != "|") 
+    { WARNING_MSG << "Problem reading file " << inputFile << ": expected to find '|', found '" << s << "'" << endl; exit(-1); } 
 
     while (true)
     {
         input >> s; 
-        if (s != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+        if (s != "|") 
+        { WARNING_MSG << "Problem reading file " << inputFile << ": expected to find '|', found '" << s << "'" << endl; exit(-1); } 
         input >> s;
         if (s[0] == '+') break;
         else colTags_.push_back(s);
@@ -53,7 +56,8 @@ Table::Table(string inputFile)
         for (unsigned int c = 0 ; c < colTags_.size() ; c++)
         {
             input >> s; 
-            if (s != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+            if (s != "|") 
+            { WARNING_MSG << "Problem reading file " << inputFile << ": expected to find '|', found '" << s << "'" << endl; exit(-1); } 
            
             float value, error;
             input >> value >> s >> error;
@@ -61,7 +65,8 @@ Table::Table(string inputFile)
         }
 
         input >> s; 
-        if (s != "|") { WARNING_MSG << "Problem reading file " << inputFile << endl; exit(-1); } 
+        if (s != "|") 
+        { WARNING_MSG << "Problem reading file " << inputFile << ": expected to find '|', found '" << s << "'" << endl; exit(-1); } 
     }
 
     Init(colTags_,rowTags_);
@@ -138,6 +143,9 @@ Figure Table::Get(string colTag, string rowTag)
 
 	for (unsigned int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
 	for (unsigned int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
+
+    if (indexRow == -1) { WARNING_MSG << "Could not find row named " << rowTag << endl; return Figure(0,0); }
+    if (indexCol == -1) { WARNING_MSG << "Could not find column named " << colTag << endl; return Figure(0,0); }
 
 	return Get(indexCol,indexRow);
 }
@@ -244,7 +252,7 @@ void Table::PrintLatex(int prec, string options, std::ostream& output)
     output << "\\hline" << endl;
     
     // End tabular
-    output << "\\end{tabular}";
+    output << "\\end{tabular}" << endl;
 
 }
 

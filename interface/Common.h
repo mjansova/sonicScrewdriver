@@ -37,21 +37,13 @@ using namespace std;
 #define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
 #define WARNING_MSG cout << "WARNING (" << __FILE__ << ", l." << __LINE__ << ") "
 
+#define COLORPLOT_RED 		kRed-7
+#define COLORPLOT_CYAN		kCyan-3
+#define COLORPLOT_ORANGE 	kOrange-2
+#define COLORPLOT_MAGENTA   kMagenta-5
+#define COLORPLOT_BLUE 		kAzure-2
 #define COLORPLOT_GREEN		kSpring-1
 #define COLORPLOT_GREEN2	kGreen+1
-#define COLORPLOT_TEAL		kTeal
-#define COLORPLOT_CYAN		kCyan
-
-#define COLORPLOT_ORANGE 	kOrange-2
-#define COLORPLOT_ORANGE2 	kORange+7
-#define COLORPLOT_RED 		kRed 
-#define COLORPLOT_PINK		kPink+10
-#define COLORPLOT_MAGENTA   kMagenta
-
-#define COLORPLOT_AZURE 	kAzure-2
-#define COLORPLOT_BLUE 		kBlue
-#define COLORPLOT_VIOLET 	kViolet+1
-
 #define COLORPLOT_BLACK		kBlack
 #define COLORPLOT_GRAY		kGray
 
