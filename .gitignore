@@ -13,8 +13,7 @@
 *.a
 
 # Folder and executables
-test/makeTreeForExample
-test/plotGenerationExample
+*.run
+*.log
 test/plots
 test/trees
-test/*.log

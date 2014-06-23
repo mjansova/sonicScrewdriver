@@ -39,11 +39,12 @@ microEvent;
 #########################################
 */
 
+TTree dummy;
+
 void fillEventWithProcessType(microEvent* myEvent, TRandom* gen, short int processType, bool isData = false);
 
 int main()
 {
-
     microEvent myEvent;
     TRandom* gen = new TRandom();
 

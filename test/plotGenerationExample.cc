@@ -26,6 +26,12 @@ microEvent* myEventPointer;
 // Regions
 bool preSelection_allmMuf();
 bool preSelection();
+vector<Cut> signalRegion
+{
+    Cut("MET",     '>', 50),
+    Cut("leptonPt",'>', 50)
+};
+
 
 // Channels
 bool combinedChannel();
@@ -88,6 +94,7 @@ int main (int argc, char *argv[])
   // ##########################
 
      myScrewdriver.AddRegion("preSelection","Pre-selection",&preSelection);
+     myScrewdriver.AddRegion("signalRegion","Signal region","preSelection",signalRegion);
 
   // ##########################
   // ##   Create Channels    ##
@@ -127,13 +134,15 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DDataMCComparison");
      myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
      myScrewdriver.SchedulePlots("2D");
-     //myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
+     /*
+     myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
      myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
                                                     +",projectionType=mean"
                                                     +",tagY=meanMass,labelY=Mean invariant mass");
      myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
                                                     +",projectionType=cutOptimalFigureOfMeritForVarXBeingSignalParameter,cutType=keepHighValues"
                                                     +",tagY=bestCut,labelY=Best cut");
+     */
 
      // Config plots
 
@@ -212,8 +221,10 @@ int main (int argc, char *argv[])
 
 bool preSelection()
 {
+    if (myEventPointer->invariantMass < 90) return false;
     return true;
 }
+
 
 bool combinedChannel()
 {

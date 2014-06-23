@@ -139,6 +139,51 @@ void SonicScrewdriver::SetLumi(float inputLumi)
 void  SonicScrewdriver::AddRegion(string tag, string plotLabel, bool (*selector)(), string options)
 {    theRegions.push_back(Region(tag,plotLabel,selector,options));    }
 
+void  SonicScrewdriver::AddRegion(string tag, string plotLabel, string parentRegionTag, bool (*selector)(), string options)
+{    
+    int parentRegionIndex = -1;
+    for (unsigned int r = 0 ; r < theRegions.size() ; r++)
+    {
+        if (theRegions[r].getTag() == parentRegionTag) { parentRegionIndex = r; break; }
+    }
+    if (parentRegionIndex == -1)
+    {
+        WARNING_MSG << "Cannot find parent region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
+        return;
+    }
+    else
+    {
+        WARNING_MSG << "Found region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
+    }
+
+
+    theRegions.push_back(Region(tag,plotLabel,selector,options,pair<vector<Region>*,int>(&theRegions,parentRegionIndex)));    
+}
+
+void  SonicScrewdriver::AddRegion(string tag, string plotLabel, vector<Cut> setOfCuts, string options)
+{    theRegions.push_back(Region(tag,plotLabel,setOfCuts,&theVariables,options));    }
+
+void  SonicScrewdriver::AddRegion(string tag, string plotLabel, string parentRegionTag, vector<Cut> setOfCuts, string options)
+{ 
+    int parentRegionIndex = -1;
+    for (unsigned int r = 0 ; r < theRegions.size() ; r++)
+    {
+        if (theRegions[r].getTag() == parentRegionTag) { parentRegionIndex = r; break; }
+    }
+    if (parentRegionIndex == -1)
+    {
+        WARNING_MSG << "Cannot find parent region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
+        return;
+    }
+    else
+    {
+        WARNING_MSG << "Found region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
+    }
+
+
+    theRegions.push_back(Region(tag,plotLabel,setOfCuts,&theVariables,options,pair<vector<Region>*,int>(&theRegions,parentRegionIndex)));    
+}
+
 void SonicScrewdriver::GetRegionTagList(vector<string> *output)
 {
     output->clear();

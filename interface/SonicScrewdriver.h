@@ -111,7 +111,10 @@ namespace theDoctor
       //     in this region
       //
 
-      void  AddRegion(string tag, string plotLabel, bool (*selector)(), string options = "");
+      void  AddRegion(string tag, string plotLabel,                         bool (*selector)(),     string options = "");
+      void  AddRegion(string tag, string plotLabel, string parentRegionTag, bool (*selector)(),     string options = "");
+      void  AddRegion(string tag, string plotLabel,                         vector<Cut> setOfCuts,  string options = "");
+      void  AddRegion(string tag, string plotLabel, string parentRegionTag, vector<Cut> setOfCuts,  string options = "");
 
       //
       // *** Get the list of names of regions

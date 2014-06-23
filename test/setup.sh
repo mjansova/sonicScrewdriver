@@ -1,3 +1,3 @@
 #!/bin/bash
 
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/../
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`root-config --libdir`

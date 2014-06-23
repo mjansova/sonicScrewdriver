@@ -1,6 +1,7 @@
 ObjSuf        = o
 SrcSuf        = cc
 LogSuf        = log
+ExeSuf        = run
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
@@ -8,7 +9,8 @@ ROOTLIBS      = $(shell root-config --libs)
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
+CXXFLAGS      = -std=c++0x
+CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS      += $(ROOTCFLAGS) -I./
 CXXFLAGS      += -I../
 
@@ -27,7 +29,7 @@ LIBS          =
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 
@@ -36,23 +38,23 @@ all: $(EXECUTABLES)
 test: trees plots
 
 # Target to produce the example trees
-trees: makeTreeForExample
-	@./makeTreeForExample | tee makeTreeForExample.$(LogSuf)
+trees: makeTreeForExample.$(ExeSuf)
+	@./makeTreeForExample.$(ExeSuf) | tee makeTreeForExample.$(LogSuf)
 
 # Target to produce the example plots
-plots: plotGenerationExample
-	@./plotGenerationExample | tee plotGenerationExample.$(LogSuf)
+plots: plotGenerationExample.$(ExeSuf)
+	@./plotGenerationExample.$(ExeSuf) | tee plotGenerationExample.$(LogSuf)
 
 # Target to browse the plots
 browse:
-	export PLOTS_TO_BROWSE=`ls plots/*.root`; root -l .browse
+	PLOTS_TO_BROWSE=`ls plots/*.root` root -l .browse
 
 clean:
 	@echo "Cleaning..."
 	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
-%: %.$(SrcSuf)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
+%.$(ExeSuf): %.$(SrcSuf)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS) $(LIBS) $(GCCPARSER)
 
 .PHONY : trees plots test browse clean
 
