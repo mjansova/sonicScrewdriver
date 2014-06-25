@@ -230,6 +230,47 @@ namespace theDoctor
         else
             firstHisto->SetMaximum(globalMax * 1.3);
 
+        // #################################
+        // #####                       #####
+        // ###        Cut arrow          ###
+        // #####                       #####
+        // #################################   
+
+        TArrow* cutArrow;
+        TLine*  cutLine;
+        if (theRegion->getShowCutsMode())
+        {
+            pair<bool,float> cutOnVariable = theRegion->getCutForVariable(theVar->getTag());
+
+            // Draw line/arrow only for variable the region actually cuts on
+            if (cutOnVariable.first == true)
+            {
+                double canvas_xMin = theVar->getMin(); 
+                double canvas_xMax = theVar->getMax();
+                double canvas_yMin = 0;
+                double canvas_yMax = firstHisto->GetBinContent(firstHisto->GetMaximumBin());
+                
+                float arrowPosition;
+                if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY")) arrowPosition = canvas_yMax / 6.0;
+                else                                                                arrowPosition = canvas_yMax / 1.3;
+
+                float cutValue = cutOnVariable.second;
+                float arrowWidth = (canvas_xMax - canvas_xMin) * 0.07;
+
+                cutArrow = new TArrow(cutValue,arrowPosition,cutValue+arrowWidth,arrowPosition,0.02,"|>");
+                cutLine  = new TLine(cutValue,canvas_yMin,cutValue,canvas_yMax);
+
+                cutLine->SetLineWidth(3);
+                cutLine->SetLineStyle(7);
+                cutArrow->SetLineWidth(3);
+
+                cutLine->Draw();
+                cutArrow->Draw();
+            }
+        }
+
+
+
         return thePlot;
       }
 

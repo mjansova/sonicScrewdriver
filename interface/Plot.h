@@ -51,7 +51,17 @@ namespace theDoctor
             // Accessors
             string getType()     { return type;      };
             TCanvas* getCanvas() { return theCanvas; };
-            TLegend* getLegend() { return theLegend; }; 
+            TLegend* getLegend() { return theLegend; };
+
+            void getRangeAxis(double* x_min, double* y_min, double* x_max, double* y_max)  
+            {
+                double x_min_, y_min_, x_max_, y_max_;
+                theCanvas->GetRange(x_min_,y_min_,x_max_,y_max_);
+                *x_min = x_min_;
+                *y_min = y_min_;
+                *x_min = x_max_;
+                *y_min = y_max_;
+            }
 
             void AddToInPlotInfo(string info)
             {

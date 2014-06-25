@@ -25,6 +25,8 @@
 #include <TGraph.h>
 #include <TLegend.h>
 #include <TAxis.h>
+#include <TLine.h>
+#include <TArrow.h>
 #include <TVirtualPad.h>
 #include <TPaveText.h>
 #include <TStyle.h>

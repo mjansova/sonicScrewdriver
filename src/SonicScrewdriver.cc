@@ -151,11 +151,6 @@ void  SonicScrewdriver::AddRegion(string tag, string plotLabel, string parentReg
         WARNING_MSG << "Cannot find parent region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
         return;
     }
-    else
-    {
-        WARNING_MSG << "Found region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
-    }
-
 
     theRegions.push_back(Region(tag,plotLabel,selector,options,pair<vector<Region>*,int>(&theRegions,parentRegionIndex)));    
 }
@@ -175,11 +170,6 @@ void  SonicScrewdriver::AddRegion(string tag, string plotLabel, string parentReg
         WARNING_MSG << "Cannot find parent region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
         return;
     }
-    else
-    {
-        WARNING_MSG << "Found region '" << parentRegionTag << "' for region '" << tag << "'." << endl;
-    }
-
 
     theRegions.push_back(Region(tag,plotLabel,setOfCuts,&theVariables,options,pair<vector<Region>*,int>(&theRegions,parentRegionIndex)));    
 }

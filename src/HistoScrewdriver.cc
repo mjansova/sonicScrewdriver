@@ -153,12 +153,26 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
         // Get histo
         Histo1DEntries* currentHisto = &(the1DHistosEntries[i]);
 
-        // Check region and channel selection
-        if (!(currentHisto->getRegion()->getSelectionFlag())) continue;
+        // Check this is an histogram for the relevant process class
+        if (currentHisto->getProcessClassTag() != processClass) continue;
+        
+        // Check channel selection
         if (!(currentHisto->getChannel()->getSelectionFlag())) continue;
 
-        if (currentHisto->getProcessClassTag() != processClass) continue;
-
+        // Check region selection
+            // If show cuts mode is not activated, check the standard selection flag
+            if (!currentHisto->getRegion()->getShowCutsMode())
+            {
+                if (!(currentHisto->getRegion()->getSelectionFlag())) continue;
+            }
+            // If show cut mode is activated, the region need to perform a special check
+            else 
+            {
+                string variableToIgnore = currentHisto->getVariable()->getTag();
+                if (!(currentHisto->getRegion()->getSelectionFlag(variableToIgnore))) continue;
+            }
+       
+        // Fill the histo
         currentHisto->AutoFill(weight);
     }
 }

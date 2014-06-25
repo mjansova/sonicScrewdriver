@@ -94,7 +94,7 @@ int main (int argc, char *argv[])
   // ##########################
 
      myScrewdriver.AddRegion("preSelection","Pre-selection",&preSelection);
-     myScrewdriver.AddRegion("signalRegion","Signal region","preSelection",signalRegion);
+     myScrewdriver.AddRegion("signalRegion","Signal region","preSelection",signalRegion,"showCuts");
 
   // ##########################
   // ##   Create Channels    ##
