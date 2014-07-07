@@ -27,13 +27,17 @@ SonicScrewdriver::~SonicScrewdriver()
 // #          management           #
 // #################################
 
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* autoFillPointer, string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float*  autoFillPointer, string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int* autoFillPointer, string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, double* autoFillPointer, string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, float* autoFillPointer, string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int*  autoFillPointer, string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, float*  autoFillPointer, string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, int*   autoFillPointer, string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, double* autoFillPointer, string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, int*    autoFillPointer, string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
 
 
