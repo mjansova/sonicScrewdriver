@@ -48,21 +48,18 @@ Important :
 - Documentation
 - More global options to change font, line width, ... maybe add a config file to read stuff from.
 - Converge on what to do for the lumi reweighting per channel...
+- Use C++ maps to better handle the vectors of variables/processes/regions/histos/plots
 
 Little improvements :
 - For custom binning, option to redivide the content of the bins to simulate a fixed bin width (to keep having an interpretation in term of pdf).
 - Modify the way operations between figures are made (should use actual stat formulas instead of root histos)
 - Maybe possibility to link variable to vectors (of float, ints..). ...And maybe to TLorentzVector ? Not a big fan of this though.
 
-Mid-long term :
-- Add table for data/MC comparisons
-- Add surcharge operator +, -, x, and / for (int,Figure)
-
 Big stuff :
 - Possibility to separate the reading from the actual plotting, ie export raw histograms and be able to import them.
 - Web-based interface to generate the code..
 
-Eric stuff :
+Eric suggestions :
 - Add Chi2 or Kolmogorov test for data/MC comparison + display value on the plot
 - Add 2D plot showing the evolution of correlation between two variables after lower/upper cuts
 - Add data and SM yield on data/MC plot
