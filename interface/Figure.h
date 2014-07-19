@@ -24,9 +24,19 @@ namespace theDoctor
       double value() const { return theValue; };
       double error() const { return theError; };
 
-      double valueWithVariation(int n) const { return theValue + n * theError; } 
+      double valueWithVariation(int n) const 
+      { 
 
-      void keepVariation(int n) { theValue = theValue + n*theError; theError = 0.0; }
+          return theValue + n * theError; 
+      }
+
+
+      void keepVariation(int n, string options = "") 
+      { 
+          theValue = theValue + n*theError; 
+          theError = 0.0; 
+          if ((options == "noNegativeValue") && (theValue < 0)) theValue = 0.0;
+      }
 
       string Print(unsigned int p = 2, string options = "") const 
       { 

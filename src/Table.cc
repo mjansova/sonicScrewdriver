@@ -124,6 +124,9 @@ bool Table::Set(string colTag, string rowTag, Figure value)
 	for (unsigned int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
 	for (unsigned int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
 
+    if (indexRow == -1) { WARNING_MSG << "Could not find row named "    << rowTag << " to set " << endl; return false; }
+    if (indexCol == -1) { WARNING_MSG << "Could not find column named " << colTag << " to set " << endl; return false; }
+
 	return Set(indexCol,indexRow,value);
 }
 
@@ -144,8 +147,8 @@ Figure Table::Get(string colTag, string rowTag)
 	for (unsigned int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
 	for (unsigned int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
 
-    if (indexRow == -1) { WARNING_MSG << "Could not find row named " << rowTag << endl; return Figure(0,0); }
-    if (indexCol == -1) { WARNING_MSG << "Could not find column named " << colTag << endl; return Figure(0,0); }
+    if (indexRow == -1) { WARNING_MSG << "Could not find row named "    << rowTag << " to get " << endl; return Figure(0,0); }
+    if (indexCol == -1) { WARNING_MSG << "Could not find column named " << colTag << " to get " << endl; return Figure(0,0); }
 
 	return Get(indexCol,indexRow);
 }
