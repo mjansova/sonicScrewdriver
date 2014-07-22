@@ -98,16 +98,16 @@ namespace theDoctor
           }
       };
 
-      pair<bool,float> getCutForVariable(string variableTag)
+      pair<bool,Cut> getCutForVariable(string variableTag)
       {
-          if (selector != 0) return pair<bool,float>(false,-1);
+          if (selector != 0) return pair<bool,Cut>(false,Cut("",' ',-1.0));
 
           for (unsigned int c = 0 ; c < setOfCuts.size() ; c++)
           {
-              if (setOfCuts[c].getTargetTag() == variableTag) return pair<bool,float>(true,setOfCuts[c].getValue());
+              if (setOfCuts[c].getTargetTag() == variableTag) return pair<bool,Cut>(true,setOfCuts[c]);
           }
 
-          return pair<bool,float>(false,-1);
+          return pair<bool,Cut>(false,Cut("",' ',-1.0));
       }
 
      private:

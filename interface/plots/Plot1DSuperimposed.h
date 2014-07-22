@@ -240,7 +240,7 @@ namespace theDoctor
         TLine*  cutLine;
         if (theRegion->getShowCutsMode())
         {
-            pair<bool,float> cutOnVariable = theRegion->getCutForVariable(theVar->getTag());
+            pair<bool,Cut> cutOnVariable = theRegion->getCutForVariable(theVar->getTag());
 
             // Draw line/arrow only for variable the region actually cuts on
             if (cutOnVariable.first == true)
@@ -254,10 +254,14 @@ namespace theDoctor
                 if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY")) arrowPosition = canvas_yMax / 6.0;
                 else                                                                arrowPosition = canvas_yMax / 1.3;
 
-                float cutValue = cutOnVariable.second;
-                float arrowWidth = (canvas_xMax - canvas_xMin) * 0.07;
+                float cutValue = cutOnVariable.second.getValue();
+                float arrowLength = (canvas_xMax - canvas_xMin) * 0.07;
+                int cutDirection = 1;
+                // FIXME manage case where type is 'equal'
+                     if (cutOnVariable.second.getType() == '>') cutDirection = 1;
+                else if (cutOnVariable.second.getType() == '<') cutDirection = -1;
 
-                cutArrow = new TArrow(cutValue,arrowPosition,cutValue+arrowWidth,arrowPosition,0.02,"|>");
+                cutArrow = new TArrow(cutValue,arrowPosition,cutValue+cutDirection*arrowLength,arrowPosition,0.02,"|>");
                 cutLine  = new TLine(cutValue,canvas_yMin,cutValue,canvas_yMax);
 
                 cutLine->SetLineWidth(3);
