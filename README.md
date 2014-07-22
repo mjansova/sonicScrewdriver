@@ -49,6 +49,7 @@ Important :
 - More global options to change font, line width, ... maybe add a config file to read stuff from.
 - Converge on what to do for the lumi reweighting per channel...
 - Use C++ maps to better handle the vectors of variables/processes/regions/histos/plots
+- Have an extra optional argument for datasets to be splitted across different regions
 
 Little improvements :
 - For custom binning, option to redivide the content of the bins to simulate a fixed bin width (to keep having an interpretation in term of pdf).

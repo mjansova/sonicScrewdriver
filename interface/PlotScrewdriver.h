@@ -29,6 +29,8 @@
 #include "interface/plots/Plot2DSuperimposed.h"
 #include "interface/plots/Plot1DFrom2DProjection.h"
 #include "interface/plots/Plot2DFrom3DProjection.h"
+#include "interface/plots/Plot1DStackFigurePerProcess.h"
+//#include "interface/plots/Plot1DStackFigure.h"
 
 namespace theDoctor
 {
@@ -68,6 +70,9 @@ namespace theDoctor
             else if (plotType == "2DSuperimposed")     Plot2DSuperimposed    ::GetHistoDependencies(dependencies);
             else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies,options);
             else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies,options);
+            else if (plotType == "1DStackFigurePerProcess")    Plot1DStackFigurePerProcess::GetHistoDependencies(dependencies,options);
+//            else if (plotType == "1DFigure")                   Plot1DFigure               ::GetHistoDependencies(dependencies,options);
+
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
             // Schedule histo needed for plot
@@ -110,7 +115,6 @@ namespace theDoctor
                     Histo2DFrom3DProjection::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "3DFigureOfMeritForVarXYBeingSignalParameter")
                     Histo3DFigureOfMeritForVarXYBeingSignalParameter::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
-                
             }
         }
 
@@ -118,6 +122,8 @@ namespace theDoctor
                 vector<ProcessClass>* theProcessClasses,
                 vector<Region>* theRegions,
                 vector<Channel>* theChannels,
+                vector<pair<Name,Map3DFigure> >* theFiguresPerProcessMap,
+                vector<pair<Name,Map2DFigure> >* theFiguresMap,
                 HistoScrewdriver* theHistoScrewdriver,
                 string options = "")
         {
@@ -159,6 +165,13 @@ namespace theDoctor
                 else if (plotType == "2DFrom3DProjection")
                     inputFromProducer = 
                         Plot2DFrom3DProjection::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                else if (plotType == "1DStackFigurePerProcess")
+                    inputFromProducer = 
+                        Plot1DStackFigurePerProcess::Produce(theFiguresPerProcessMap, theProcessClasses, theRegions, theChannels, theGlobalOptions, plotOptions);
+/*                else if (plotType == "1DFigure")
+                    inputFromProducer = 
+                        Plot1DFigure               ::Produce(theFiguresMap,                              theRegions, theChannels, theGlobalOptions, plotOptions);
+                        */
 
                 for (unsigned int j = 0 ; j < inputFromProducer.size() ; j++)
                 {
@@ -184,7 +197,9 @@ namespace theDoctor
             ret = system(("rm -f "+outputFolder+"/2DSuperimposed.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFrom2DProjection.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2DFrom3DPRojection.root").c_str());
-            // Fix "ret not used" warning
+            ret = system(("rm -f "+outputFolder+"/1DStackFigurePerProcess.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/1DFigure.root").c_str());
+            // FIXME stupid fix for ret not being used
             ret = ret + 1;
 
             for (unsigned int i = 0 ; i < scheduledPlots.size() ; i++)

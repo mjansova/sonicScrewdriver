@@ -259,12 +259,10 @@ namespace theDoctor
       // FIXME We need a special class to handle these guys.
 
           // *** Container for the figures process-dependent
-                    // Name      Process      Region        Channel   Value
-          vector< pair<Name, map<string, map<string,   map<string  , Figure> > > > > theFiguresPerProcess;
+          vector< pair<Name, Map3DFigure> > theFiguresPerProcessMap;
           
           // *** Container for the figures
-                    // Name                   Region        Channel   Value
-          vector< pair<Name,             map<string,   map<string  , Figure> > > >   theFigures;
+          vector< pair<Name, Map2DFigure> > theFiguresMap;
 
       // *** Manager for the histograms
       HistoScrewdriver theHistoScrewdriver;

@@ -239,7 +239,7 @@ void SonicScrewdriver::SchedulePlots(string plotType, string options)
 { thePlotScrewdriver.SchedulePlots(plotType,options); }
 
 void SonicScrewdriver::MakePlots(string options)
-{ thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theHistoScrewdriver,options); }
+{ thePlotScrewdriver.MakePlots(&theVariables,&theProcessClasses,&theRegions,&theChannels,&theFiguresPerProcessMap,&theFiguresMap,&theHistoScrewdriver,options); }
 
 void SonicScrewdriver::WritePlots(string outputFolder)
 { thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder); }
@@ -278,27 +278,21 @@ TH2F* SonicScrewdriver::get2DCompositeHistoClone(string varX, string varY, strin
       
 void SonicScrewdriver::AddFigurePerProcess(string tag, string label, string options)
 {
-    theFiguresPerProcess.push_back(pair<Name,                     map<string,map<string, map<string, Figure> > > >
-                                  (
-                                       Name(tag, label, options), map<string,map<string, map<string, Figure> > >()
-                                  ));
+    theFiguresPerProcessMap.push_back(pair<Name,Map3DFigure>(Name(tag, label, options), Map3DFigure()));
 }
 
 void SonicScrewdriver::AddFigure          (string tag, string label, string options)
 {
-    theFigures.push_back(pair<Name,                      map<string, map<string, Figure> > >
-                         (
-                              Name(tag, label, options), map<string, map<string, Figure> >()
-                         ));
+    theFiguresMap.push_back(pair<Name,Map2DFigure>(Name(tag, label, options), Map2DFigure()));
 }
 
 void SonicScrewdriver::SetFigure(string tag, string process, string region, string channel, Figure figureValue)
 {
-   for (unsigned int f = 0 ; f < theFiguresPerProcess.size() ; f++)
+   for (unsigned int f = 0 ; f < theFiguresPerProcessMap.size() ; f++)
    {
-      if (theFiguresPerProcess[f].first.getTag() != tag) continue;
+      if (theFiguresPerProcessMap[f].first.getTag() != tag) continue;
       
-      map<string, map<string,   map<string  , Figure> > > theMap = theFiguresPerProcess[f].second;
+      Map3DFigure theMap = theFiguresPerProcessMap[f].second;
       theMap[process][region][channel] = figureValue;
 
       break;
@@ -307,11 +301,11 @@ void SonicScrewdriver::SetFigure(string tag, string process, string region, stri
 
 void SonicScrewdriver::SetFigure(string tag, string region, string channel, Figure figureValue)
 {
-   for (unsigned int f = 0 ; f < theFigures.size() ; f++)
+   for (unsigned int f = 0 ; f < theFiguresMap.size() ; f++)
    {
-      if (theFigures[f].first.getTag() != tag) continue;
+      if (theFiguresMap[f].first.getTag() != tag) continue;
 
-      map<string,   map<string  , Figure> > theMap = theFigures[f].second;
+      Map2DFigure theMap = theFiguresMap[f].second;
       theMap[region][channel] = figureValue;
 
       break;

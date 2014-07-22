@@ -155,6 +155,8 @@ namespace theDoctor
 
     };
 
+typedef map<string, map<string, map<string, Figure> > > Map3DFigure;
+typedef map<string, map<string, Figure> >               Map2DFigure;
 }
 
 #endif
