@@ -127,6 +127,16 @@ namespace theDoctor
       void   GetRegionTagList(vector<string> *output);
       void   GetRegionLabelList(vector<string> *output);
 
+      // #########################
+      // #   Figure management   #
+      // #########################
+     
+      void AddFigurePerProcess(string tag, string label, string options = "");
+      void AddFigure          (string tag, string label, string options = "");
+
+      void SetFigure(string tag, string process, string region, string channel, Figure figureValue);
+      void SetFigure(string tag, string region, string channel, Figure figureValue);
+
       // ########################
       // #   Histo management   #
       // ########################
@@ -245,7 +255,17 @@ namespace theDoctor
       
       // *** Container for the regions
       vector<Region> theRegions;
-      
+
+      // FIXME We need a special class to handle these guys.
+
+          // *** Container for the figures process-dependent
+                    // Name      Process      Region        Channel   Value
+          vector< pair<Name, map<string, map<string,   map<string  , Figure> > > > > theFiguresPerProcess;
+          
+          // *** Container for the figures
+                    // Name                   Region        Channel   Value
+          vector< pair<Name,             map<string,   map<string  , Figure> > > >   theFigures;
+
       // *** Manager for the histograms
       HistoScrewdriver theHistoScrewdriver;
       

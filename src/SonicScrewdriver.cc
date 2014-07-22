@@ -267,3 +267,54 @@ TH2F* SonicScrewdriver::get2DHistoClone(string varX, string varY, string process
 
 TH2F* SonicScrewdriver::get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
 { return theHistoScrewdriver.get2DCompositeHistoClone(varX,varY,type,region,channel,otherParameters); }
+
+
+
+
+
+      // #########################
+      // #   Figure management   #
+      // #########################
+      
+void SonicScrewdriver::AddFigurePerProcess(string tag, string label, string options)
+{
+    theFiguresPerProcess.push_back(pair<Name,                     map<string,map<string, map<string, Figure> > > >
+                                  (
+                                       Name(tag, label, options), map<string,map<string, map<string, Figure> > >()
+                                  ));
+}
+
+void SonicScrewdriver::AddFigure          (string tag, string label, string options)
+{
+    theFigures.push_back(pair<Name,                      map<string, map<string, Figure> > >
+                         (
+                              Name(tag, label, options), map<string, map<string, Figure> >()
+                         ));
+}
+
+void SonicScrewdriver::SetFigure(string tag, string process, string region, string channel, Figure figureValue)
+{
+   for (unsigned int f = 0 ; f < theFiguresPerProcess.size() ; f++)
+   {
+      if (theFiguresPerProcess[f].first.getTag() != tag) continue;
+      
+      map<string, map<string,   map<string  , Figure> > > theMap = theFiguresPerProcess[f].second;
+      theMap[process][region][channel] = figureValue;
+
+      break;
+   }
+}
+
+void SonicScrewdriver::SetFigure(string tag, string region, string channel, Figure figureValue)
+{
+   for (unsigned int f = 0 ; f < theFigures.size() ; f++)
+   {
+      if (theFigures[f].first.getTag() != tag) continue;
+
+      map<string,   map<string  , Figure> > theMap = theFigures[f].second;
+      theMap[region][channel] = figureValue;
+
+      break;
+   }
+}
+
