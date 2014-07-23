@@ -217,13 +217,34 @@ namespace theDoctor
             histoSumData->Add(histoClone);
         }
 
+        // Fill histogram with data
+        for (unsigned int r = 0 ; r < theRegions->size() ; r++)
+        {
+            Region* region = &((*theRegions)[r]);
+            histoSumData->GetXaxis()->SetBinLabel(r+1, region->getLabel().c_str());
+        }
+
         // Add it to the legend
         pointersForLegend.push_back(histoSumData);
-        labelsForLegend.push_back("data");
+        if (OptionsScrewdriver::GetBoolOption(theFigureName.getOptions(),"onlyData"))
+            labelsForLegend.push_back("value");
+        else
+            labelsForLegend.push_back("data");
         optionsForLegend.push_back("pl");
 
         // Apply style to data and draw it
         ApplyDataStyle(&thePlot,histoSumData,theGlobalOptions);
+         // FIXME stupid temporary option
+        if (OptionsScrewdriver::GetBoolOption(theFigureName.getOptions(),"onlyData"))
+        {
+             PlotDefaultStyles::ApplyDefaultAxisStyle(histoSumData->GetXaxis(),xlabel);
+             PlotDefaultStyles::ApplyDefaultAxisStyle(histoSumData->GetYaxis(),ylabel);
+            histoSumData->SetStats(0);
+            histoSumData->SetTitle("");
+            histoSumData->SetMinimum(0);
+            histoSumData->SetMaximum(4);
+            histoSumData->Draw("E");
+        }
         histoSumData->Draw("SAME E");
 
         // ##############
@@ -269,16 +290,21 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string options = "")
       { 
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
-         theStack->SetTitle("");
-         if (OptionsScrewdriver::GetBoolOption(options,"logY"))
+         // FIXME stupid temporary option
+         if (!OptionsScrewdriver::GetBoolOption(options,"onlyData"))
          {
-             thePlot->SetLogY();
-             theStack->SetMaximum(theStack->GetMaximum() * 6.0);
+             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
+             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
+             theStack->SetTitle("");
+
+             if (OptionsScrewdriver::GetBoolOption(options,"logY"))
+             {
+                 thePlot->SetLogY();
+                 theStack->SetMaximum(theStack->GetMaximum() * 6.0);
+             }
+             else
+                theStack->SetMaximum(theStack->GetMaximum() * 1.6);
          }
-         else
-            theStack->SetMaximum(theStack->GetMaximum() * 1.6);
       }
 
     };
