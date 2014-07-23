@@ -177,6 +177,11 @@ namespace theDoctor
                     string processClassName = GetParameter("processClass");
                     theCanvas->SetName(processClassName.c_str());
                 }
+                else if (type == "1DStackFigurePerProcess")
+                {
+                    string theName = GetParameter("figure");
+                    theCanvas->SetName(theName.c_str());
+                }
                 else if (type == "custom")
                 {
                     string theName = GetParameter("name");

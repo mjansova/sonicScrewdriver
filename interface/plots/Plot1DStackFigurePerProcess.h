@@ -67,9 +67,12 @@ namespace theDoctor
                                                           +"|c:" +theChannel.getTag();
 
          Plot thePlot(plotName,"1DStackFigurePerProcess",theGlobalOptions,"");
+
          thePlot.SetParameter("figure",theFigureName.getTag());
          thePlot.SetParameter("channel",theChannel.getTag());
          thePlot.AddToInPlotInfo(theChannel.getLabel());
+         //thePlot.getCanvas()->SetBottomMargin(0.15);
+         //thePlot.getCanvas()->SetRightMargin(0.15);
          
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStackFigurePerProcess","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStackFigurePerProcess","factorSignal");
@@ -82,20 +85,43 @@ namespace theDoctor
         vector<string> labelsForLegend;
         vector<string> optionsForLegend;
 
-        // Create invididual per-process histo
+        // ##########################################
+        // ## Create invididual per-process histos ##
+        // ##########################################
+        
         vector<TH1F*> perProcessHistos;
         for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
         {
+            ProcessClass* processClass = &((*theProcessClasses)[p]);
             TH1F* newHisto   = new TH1F("","",theRegions->size(), 0, theRegions->size());
             string nameHisto =  string("f:")+theFigureName.getTag()
-                                     +"|p:"+(*theProcessClasses)[p].getTag()
+                                     +"|p:"+processClass->getTag()
                                      +"|c:"+theChannel.getTag()
                                      +"|t:1DFigurePerProcess";
             newHisto->SetName(nameHisto.c_str());
+            newHisto->Sumw2();
+
+            // Fill histogram with data
+            for (unsigned int r = 0 ; r < theRegions->size() ; r++)
+            {
+                Region* region = &((*theRegions)[r]);
+
+                Figure theFigure = theFigureMap[processClass->getTag()]
+                                               [region->getTag()]
+                                               [theChannel.getTag()];
+
+                newHisto->SetBinContent(r+1, theFigure.value());
+                newHisto->SetBinError  (r+1, theFigure.error());
+                newHisto->GetXaxis()->SetBinLabel(r+1, region->getLabel().c_str());
+            }
+
             perProcessHistos.push_back(newHisto);
         }
 
-        // Create stack histo
+        // ########################
+        // ## Create stack histo ##
+        // ########################
+        
         THStack* theStack   = new THStack("","");
 
         TH1F* histoSumBackground = new TH1F("","",theRegions->size(), 0, theRegions->size());
@@ -104,9 +130,10 @@ namespace theDoctor
                                  +"|c:"+theChannel.getTag()
                                  +"|t:1DFigurePerProcess";
         histoSumBackground->SetName(nameHisto.c_str());
+    
 
         // Now loop on the histos
-        for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+        for (int p = theProcessClasses->size()-1 ; p >= 0 ; p--)
         {
             // Get associated processClass
             ProcessClass* processClass = &((*theProcessClasses)[p]);
@@ -130,7 +157,11 @@ namespace theDoctor
 
         // Apply axis style and plot the stack
         theStack->Draw("HIST");
-        ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions);
+        ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theFigureName.getOptions());
+        
+        // ####################
+        // ## Signal display ##
+        // ####################
 
 		// Add signal if specified in the options of the plot type
         if ((includeSignal != "") && (includeSignal != "no") && (includeSignal != "false"))
@@ -159,7 +190,46 @@ namespace theDoctor
         		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel()+"(#times"+factorSignalStr+")");
             }
         }
-        
+       
+        // ############
+        // ##  Data  ##
+        // ############
+
+        TH1F* histoSumData = new TH1F("","",theRegions->size(), 0, theRegions->size());
+        nameHisto  = string("f:")+theFigureName.getTag()
+                          +"|p:SumData"
+                          +"|c:"+theChannel.getTag()
+                          +"|t:1DFigurePerProcess";
+        histoSumData->SetName(nameHisto.c_str());
+
+        // Now loop on the histos
+        for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
+        {
+            // Get associated processClass
+            ProcessClass* processClass = &((*theProcessClasses)[p]);
+
+            if (processClass->getType() != "data") continue;
+
+            // Get the histo
+            TH1F* histoClone = perProcessHistos[p];
+
+            // Add histo to sum
+            histoSumData->Add(histoClone);
+        }
+
+        // Add it to the legend
+        pointersForLegend.push_back(histoSumData);
+        labelsForLegend.push_back("data");
+        optionsForLegend.push_back("pl");
+
+        // Apply style to data and draw it
+        ApplyDataStyle(&thePlot,histoSumData,theGlobalOptions);
+        histoSumData->Draw("SAME E");
+
+        // ##############
+        // ##  Legend  ##
+        // ##############
+
         // Add stuff to legend in reverse order
         for (unsigned int leg_i = 0 ; leg_i < pointersForLegend.size() ; leg_i++)
         {
@@ -188,18 +258,27 @@ namespace theDoctor
 		 theHisto->SetLineStyle(9);
 	  }
 
-      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
+      static void ApplyDataStyle(Plot* thePlot, TH1F* theData, OptionsScrewdriver generalOptions)
+      {
+          theData->SetMarkerStyle(8);
+          theData->SetMarkerSize(1);
+          theData->SetLineWidth(1);
+          theData->SetLineColor(kBlack);
+          theData->SetFillStyle(0);
+      }
+
+      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string options = "")
       { 
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
          theStack->SetTitle("");
-         if (OptionsScrewdriver::GetBoolOption(varOptions,"logY"))
+         if (OptionsScrewdriver::GetBoolOption(options,"logY"))
          {
              thePlot->SetLogY();
              theStack->SetMaximum(theStack->GetMaximum() * 6.0);
          }
          else
-            theStack->SetMaximum(theStack->GetMaximum() * 1.3);
+            theStack->SetMaximum(theStack->GetMaximum() * 1.6);
       }
 
     };

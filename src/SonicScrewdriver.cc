@@ -292,8 +292,8 @@ void SonicScrewdriver::SetFigure(string tag, string process, string region, stri
    {
       if (theFiguresPerProcessMap[f].first.getTag() != tag) continue;
       
-      Map3DFigure theMap = theFiguresPerProcessMap[f].second;
-      theMap[process][region][channel] = figureValue;
+      Map3DFigure* theMap = &(theFiguresPerProcessMap[f].second);
+      (*theMap)[process][region][channel] = figureValue;
 
       break;
    }
@@ -305,8 +305,8 @@ void SonicScrewdriver::SetFigure(string tag, string region, string channel, Figu
    {
       if (theFiguresMap[f].first.getTag() != tag) continue;
 
-      Map2DFigure theMap = theFiguresMap[f].second;
-      theMap[region][channel] = figureValue;
+      Map2DFigure* theMap = &(theFiguresMap[f].second);
+      (*theMap)[region][channel] = figureValue;
 
       break;
    }

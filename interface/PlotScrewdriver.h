@@ -218,7 +218,8 @@ namespace theDoctor
                     {  channelDir = outputFile.GetDirectory((*theChannels)[c].getTagC()); }
 
                     channelDir->cd();
-
+   
+                    if ((plotType != "1DStackFigurePerProcess") && (plotType != "1DFigure"))
                     for (unsigned int r = 0 ; r < theRegions->size() ; r++)
                     {
                         if (!channelDir->GetDirectory((*theRegions)[r].getTagC()))
@@ -254,11 +255,23 @@ namespace theDoctor
                                 if (!regionDir->GetDirectory((varX+"|"+varY+"[vs]"+tagZ).c_str()))
                                 { varDir = regionDir->mkdir((varX+"|"+varY+"[vs]"+tagZ).c_str()); varDir->cd(); }
                             }
+                           
 
                             thePlots[j].Write(outputFolder,
                                     plotType+"/"+(*theChannels)[c].getTag()+"/"+(*theRegions)[r].getTag()+addPath,
                                     theGlobalOptions);
                         }
+                    }
+
+                    if ((plotType == "1DStackFigurePerProcess") || (plotType == "1DFigure"))
+                    for (unsigned int j = 0 ; j < thePlots.size() ; j++)
+                    {
+                        if (thePlots[j].getType() != plotType) continue;
+                        if (thePlots[j].GetParameter("channel") != (*theChannels)[c].getTag()) continue;
+
+                        thePlots[j].Write(outputFolder,
+                                plotType+"/"+(*theChannels)[c].getTag(),
+                                theGlobalOptions);
                     }
                 }
                 outputFile.Close();
