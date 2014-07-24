@@ -166,6 +166,7 @@ namespace theDoctor
                 DrawLegend();
                 SetActive();
 
+                // FIXME : this has nothing to do here, move this to each classes
                 if (type == "1DFrom2DProjection")
                 {
                     string varX = GetParameter("variableX");
@@ -177,9 +178,14 @@ namespace theDoctor
                     string processClassName = GetParameter("processClass");
                     theCanvas->SetName(processClassName.c_str());
                 }
-                else if (type == "1DStackFigurePerProcess")
+                else if (type == "1DDataMCComparisonFigure")
                 {
                     string theName = GetParameter("figure");
+                    theCanvas->SetName(theName.c_str());
+                }
+                else if (type == "1DFigure")
+                {
+                    string theName = GetParameter("name");
                     theCanvas->SetName(theName.c_str());
                 }
                 else if (type == "custom")

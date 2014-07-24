@@ -44,6 +44,22 @@ namespace theDoctor
 
             }
 
+            static vector<string> GetStringListOption(string options, string field)
+            {
+                vector<string> parsedList;
+                if (!OptionsScrewdriver::IsInOptions(options,field)) return parsedList;
+
+                string rawList = GetStringOption(options, field);
+                string parsedListElement;
+                stringstream stream(rawList);
+                while( getline(stream,parsedListElement,':') )
+                {
+                    parsedList.push_back(parsedListElement);
+                }
+
+                return parsedList;
+            }
+
             static float GetFloatOption(string options, string field)
             {
                 if (!OptionsScrewdriver::IsInOptions(options,field)) return -1.0;

@@ -387,13 +387,6 @@ namespace theDoctor
           theHisto->SetLineStyle(9);
       }
 
-      static void ApplyErrorStyle(Plot* thePlot, TH1F* theError, OptionsScrewdriver generalOptions)
-      {
-          theError->SetMarkerSize(0);
-          theError->SetLineWidth(2);
-          theError->SetFillStyle(0);
-      }
-
       static void ApplyDataStyle(Plot* thePlot, TH1F* theData, OptionsScrewdriver generalOptions)
       {
           theData->SetMarkerStyle(8);

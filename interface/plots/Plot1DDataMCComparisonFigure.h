@@ -1,5 +1,5 @@
-#ifndef Plot1DStackFigurePerProcess_h
-#define Plot1DStackFigurePerProcess_h
+#ifndef Plot1DDataMCComparisonFigure_h
+#define Plot1DDataMCComparisonFigure_h
 
 #include "interface/Common.h"
 
@@ -14,13 +14,13 @@
 namespace theDoctor
 {
 
-    class Plot1DStackFigurePerProcess 
+    class Plot1DDataMCComparisonFigure 
     {
       
      public:
      
-      Plot1DStackFigurePerProcess();
-      ~Plot1DStackFigurePerProcess();
+      Plot1DDataMCComparisonFigure();
+      ~Plot1DDataMCComparisonFigure();
 
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
@@ -55,18 +55,18 @@ namespace theDoctor
           return theOutput;
       }
 
-      static Plot MakePlot(Name        theFigureName,
-                           Map3DFigure theFigureMap, 
+      static Plot MakePlot(Name                  theFigureName,
+                           Map3DFigure           theFigureMap, 
                            vector<ProcessClass>* theProcessClasses,
-                           vector<Region>* theRegions, 
-                           Channel theChannel,
-                           OptionsScrewdriver theGlobalOptions)
+                           vector<Region>*       theRegions, 
+                           Channel               theChannel,
+                           OptionsScrewdriver    theGlobalOptions)
       {
 
-         string plotName = string("t:1DStackFigurePerProcess|f:")+theFigureName.getTag()
+         string plotName = string("t:1DDataMCComparisonFigure|f:")+theFigureName.getTag()
                                                           +"|c:" +theChannel.getTag();
 
-         Plot thePlot(plotName,"1DStackFigurePerProcess",theGlobalOptions,"");
+         Plot thePlot(plotName,"1DDataMCComparisonFigure",theGlobalOptions,"");
 
          thePlot.SetParameter("figure",theFigureName.getTag());
          thePlot.SetParameter("channel",theChannel.getTag());
@@ -74,8 +74,8 @@ namespace theDoctor
          //thePlot.getCanvas()->SetBottomMargin(0.15);
          //thePlot.getCanvas()->SetRightMargin(0.15);
          
-         string includeSignal = theGlobalOptions.GetGlobalStringOption("1DStackFigurePerProcess","includeSignal");
-         float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DStackFigurePerProcess","factorSignal");
+         string includeSignal = theGlobalOptions.GetGlobalStringOption("1DDataMCComparisonFigure","includeSignal");
+         float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DDataMCComparisonFigure","factorSignal");
          string factorSignalStr = floatToString(factorSignal);
          
          string xlabel("");
@@ -155,6 +155,10 @@ namespace theDoctor
             histoSumBackground->Add(histoClone);
         }
 
+        // Create stack histo + another histo for the error plotting for the background sum
+        TPad* theStackPad = thePlot.AddPad(0,0,1,0.8);
+        theStackPad->SetTopMargin(0.0);
+
         // Apply axis style and plot the stack
         theStack->Draw("HIST");
         ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theFigureName.getOptions());
@@ -226,25 +230,11 @@ namespace theDoctor
 
         // Add it to the legend
         pointersForLegend.push_back(histoSumData);
-        if (OptionsScrewdriver::GetBoolOption(theFigureName.getOptions(),"onlyData"))
-            labelsForLegend.push_back("value");
-        else
-            labelsForLegend.push_back("data");
+        labelsForLegend.push_back("data");
         optionsForLegend.push_back("pl");
 
         // Apply style to data and draw it
         ApplyDataStyle(&thePlot,histoSumData,theGlobalOptions);
-         // FIXME stupid temporary option
-        if (OptionsScrewdriver::GetBoolOption(theFigureName.getOptions(),"onlyData"))
-        {
-             PlotDefaultStyles::ApplyDefaultAxisStyle(histoSumData->GetXaxis(),xlabel);
-             PlotDefaultStyles::ApplyDefaultAxisStyle(histoSumData->GetYaxis(),ylabel);
-            histoSumData->SetStats(0);
-            histoSumData->SetTitle("");
-            histoSumData->SetMinimum(0);
-            histoSumData->SetMaximum(4);
-            histoSumData->Draw("E");
-        }
         histoSumData->Draw("SAME E");
 
         // ##############
@@ -258,6 +248,41 @@ namespace theDoctor
                                 labelsForLegend[pointersForLegend.size()-1-leg_i].c_str(),
                                 optionsForLegend[pointersForLegend.size()-1-leg_i].c_str());
         }
+
+        // #############
+        // ##  Ratio  ##
+        // #############
+
+        // Compute and draw the ratio
+        TPad* theRatioPad = thePlot.AddPad(0,0.8,1,1);
+        theRatioPad->SetBottomMargin(0.07);
+        theRatioPad->SetTopMargin(0.3);
+
+        // Make the histogram
+        TH1F* histoRatio = new TH1F("","",theRegions->size(), 0, theRegions->size());
+        nameHisto  = string("f:")+theFigureName.getTag()
+                          +"|p:DataMCRatio"
+                          +"|c:"+theChannel.getTag()
+                          +"|t:1DFigurePerProcess";
+        histoRatio->SetName(nameHisto.c_str());
+        histoRatio->Add(histoSumData);
+        histoRatio->Divide(histoSumBackground);
+
+        TF1* unity = new TF1("unity","1",-10000,10000);
+        unity->SetLineColor(kBlack);
+        unity->SetLineStyle(1);
+        unity->SetLineWidth(1);
+
+        ApplyRatioStyle(&thePlot,histoRatio,theGlobalOptions);
+        ApplyRatioAxisStyle(&thePlot,histoRatio,theGlobalOptions);
+
+        histoRatio->Draw("E");
+
+        // Draw unity
+        unity->Draw("SAME");
+
+        thePlot.SetActive();
+
 
         return thePlot;
       }
@@ -290,22 +315,50 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string options = "")
       { 
-         // FIXME stupid temporary option
-         if (!OptionsScrewdriver::GetBoolOption(options,"onlyData"))
-         {
-             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
-             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
-             theStack->SetTitle("");
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
+          theStack->SetTitle("");
 
-             if (OptionsScrewdriver::GetBoolOption(options,"logY"))
-             {
-                 thePlot->SetLogY();
-                 theStack->SetMaximum(theStack->GetMaximum() * 6.0);
-             }
-             else
-                theStack->SetMaximum(theStack->GetMaximum() * 1.6);
-         }
+          if (OptionsScrewdriver::GetBoolOption(options,"logY"))
+          {
+              thePlot->SetLogY();
+              theStack->SetMaximum(theStack->GetMaximum() * 6.0);
+          }
+          else
+              theStack->SetMaximum(theStack->GetMaximum() * 1.6);
       }
+
+      static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
+      {
+          theRatio->SetMarkerStyle(8);
+          theRatio->SetMarkerSize(1);
+          theRatio->SetLineWidth(1);
+          theRatio->SetLineColor(kBlack);
+          theRatio->SetFillStyle(0);
+      }
+
+      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
+      { 
+          // Y axis
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));
+          theRatio->GetYaxis()->CenterTitle();
+          theRatio->GetYaxis()->SetTickLength(0.015);
+          theRatio->GetYaxis()->SetTitleSize(0.17);
+          theRatio->GetYaxis()->SetTitleOffset(0.25);
+          theRatio->SetMaximum(1.5);
+          theRatio->SetMinimum(0.5);
+          theRatio->GetYaxis()->SetNdivisions(4);
+
+          // X axis
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(),string(""));
+          theRatio->GetXaxis()->SetLabelSize(0.0);
+          theRatio->GetXaxis()->SetTickLength(0.1);
+
+          // Misc stuff
+          theRatio->SetTitle("");
+          theRatio->SetStats(0);
+      }
+
 
     };
 

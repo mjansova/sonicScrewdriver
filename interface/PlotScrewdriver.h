@@ -29,8 +29,8 @@
 #include "interface/plots/Plot2DSuperimposed.h"
 #include "interface/plots/Plot1DFrom2DProjection.h"
 #include "interface/plots/Plot2DFrom3DProjection.h"
-#include "interface/plots/Plot1DStackFigurePerProcess.h"
-//#include "interface/plots/Plot1DStackFigure.h"
+#include "interface/plots/Plot1DDataMCComparisonFigure.h"
+#include "interface/plots/Plot1DFigure.h"
 
 namespace theDoctor
 {
@@ -70,8 +70,8 @@ namespace theDoctor
             else if (plotType == "2DSuperimposed")     Plot2DSuperimposed    ::GetHistoDependencies(dependencies);
             else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies,options);
             else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies,options);
-            else if (plotType == "1DStackFigurePerProcess")    Plot1DStackFigurePerProcess::GetHistoDependencies(dependencies,options);
-//            else if (plotType == "1DFigure")                   Plot1DFigure               ::GetHistoDependencies(dependencies,options);
+            else if (plotType == "1DDataMCComparisonFigure")   Plot1DDataMCComparisonFigure::GetHistoDependencies(dependencies,options);
+            else if (plotType == "1DFigure")                   Plot1DFigure                ::GetHistoDependencies(dependencies,options);
 
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
@@ -165,14 +165,13 @@ namespace theDoctor
                 else if (plotType == "2DFrom3DProjection")
                     inputFromProducer = 
                         Plot2DFrom3DProjection::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
-                else if (plotType == "1DStackFigurePerProcess")
+                else if (plotType == "1DDataMCComparisonFigure")
                     inputFromProducer = 
-                        Plot1DStackFigurePerProcess::Produce(theFiguresPerProcessMap, theProcessClasses, theRegions, theChannels, theGlobalOptions, plotOptions);
-/*                else if (plotType == "1DFigure")
+                        Plot1DDataMCComparisonFigure::Produce(theFiguresPerProcessMap, theProcessClasses, theRegions, theChannels, theGlobalOptions, plotOptions);
+                else if (plotType == "1DFigure")
                     inputFromProducer = 
-                        Plot1DFigure               ::Produce(theFiguresMap,                              theRegions, theChannels, theGlobalOptions, plotOptions);
-                        */
-
+                        Plot1DFigure               ::Produce(theFiguresMap,                               theRegions, theChannels, theGlobalOptions, plotOptions);
+                        
                 for (unsigned int j = 0 ; j < inputFromProducer.size() ; j++)
                 {
                     thePlots.push_back(inputFromProducer[j]);
@@ -183,6 +182,7 @@ namespace theDoctor
 
         void WritePlots(vector<Channel>* theChannels, vector<Region>* theRegions, string outputFolder)
         {
+            system(string("mkdir -p "+outputFolder).c_str());
 
             TDirectory* channelDir = 0;
             TDirectory* regionDir  = 0;
@@ -197,7 +197,7 @@ namespace theDoctor
             ret = system(("rm -f "+outputFolder+"/2DSuperimposed.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFrom2DProjection.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2DFrom3DPRojection.root").c_str());
-            ret = system(("rm -f "+outputFolder+"/1DStackFigurePerProcess.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/1DDataMCComparisonFigure.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFigure.root").c_str());
             // FIXME stupid fix for ret not being used
             ret = ret + 1;
@@ -219,7 +219,7 @@ namespace theDoctor
 
                     channelDir->cd();
    
-                    if ((plotType != "1DStackFigurePerProcess") && (plotType != "1DFigure"))
+                    if ((plotType != "1DDataMCComparisonFigure") && (plotType != "1DFigure"))
                     for (unsigned int r = 0 ; r < theRegions->size() ; r++)
                     {
                         if (!channelDir->GetDirectory((*theRegions)[r].getTagC()))
@@ -263,7 +263,7 @@ namespace theDoctor
                         }
                     }
 
-                    if ((plotType == "1DStackFigurePerProcess") || (plotType == "1DFigure"))
+                    if ((plotType == "1DDataMCComparisonFigure") || (plotType == "1DFigure"))
                     for (unsigned int j = 0 ; j < thePlots.size() ; j++)
                     {
                         if (thePlots[j].getType() != plotType) continue;
