@@ -36,8 +36,8 @@
 
 using namespace std;
 
-#define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
-#define WARNING_MSG cout << "WARNING (" << __FILE__ << ", l." << __LINE__ << ") "
+#define DEBUG_MSG cerr << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
+#define WARNING_MSG cerr << "WARNING (" << __FILE__ << ", l." << __LINE__ << ") "
 
 #define COLORPLOT_RED 		kRed-7
 #define COLORPLOT_CYAN		kCyan-3

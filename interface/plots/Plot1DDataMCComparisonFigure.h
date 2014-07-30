@@ -125,13 +125,13 @@ namespace theDoctor
         THStack* theStack   = new THStack("","");
 
         TH1F* histoSumBackground = new TH1F("","",theRegions->size(), 0, theRegions->size());
+        histoSumBackground->Sumw2();
         string nameHisto    = string("f:")+theFigureName.getTag()
                                  +"|p:SumBackground"
                                  +"|c:"+theChannel.getTag()
                                  +"|t:1DFigurePerProcess";
         histoSumBackground->SetName(nameHisto.c_str());
-    
-
+   
         // Now loop on the histos
         for (int p = theProcessClasses->size()-1 ; p >= 0 ; p--)
         {
@@ -162,7 +162,12 @@ namespace theDoctor
         // Apply axis style and plot the stack
         theStack->Draw("HIST");
         ApplyAxisStyle(&thePlot,theStack,xlabel,ylabel,theGlobalOptions,theFigureName.getOptions());
-        
+
+        // Display uncertainty
+        histoSumBackground->SetFillColor(kBlack);
+        histoSumBackground->SetFillStyle(3004);
+        histoSumBackground->Draw("SAME E2");
+
         // ####################
         // ## Signal display ##
         // ####################
