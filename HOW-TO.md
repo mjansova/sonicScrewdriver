@@ -1,8 +1,8 @@
 How to
 ======
 
-Key principles
---------------
+0. Key principles
+-----------------
 
 The tool is designed to be interfaced easily with a collection of TTrees, 
 referred later as "datasets" in the corresponding method names. However,
@@ -10,17 +10,16 @@ no assumption is made about the exact way data are stored. It should therefore
 be easy to use it as long as you are able to provide event-by-event (or
 jet-by-jet, depending on what is your basic object) values of your variables.
 
-The user must first create an instance of the front-end :
+Using the tool is done in four major steps :
+  
+1.  Define physics objects (variables, processes, datasets, cuts, regions, channels and figures) ;
+2.  List the kind of plots you will want to be produced ;
+3.  Loop on whichever your information comes from, automatically feeding it to the tool ;
+4.  Ask for the plots to be made.
 
-```C++    
-SonicScrewdriver s;
-```
 
-Then, applying methods on the front-end, the user can define physics objects such 
-as variables, process classes, datasets, cuts, regions, channels and figures.
-
-Defining physics objects
-------------------------
+1. Defining physics objects
+----------------------------
 
 ### Variables
 
@@ -37,7 +36,6 @@ where :
   a float pointer to an array of numbersOfBins+1 floats corresponding to use-defined individual bins boundaries ;
 - `pointerToValue` can be a double, a float or an int pointer, pointing to the value that will be used
   when filling histograms.
-
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this variable. Currently supported options include :
     - `logY` : plot related to this variable will be plotted in log-Y scale ;
     - `noUnderflowInFirstBin` : do not automatically include the underflow in first bin of the thistogram ;
@@ -54,7 +52,6 @@ where :
 - `label` is the fancy name of the process class (to be used on plots) ;
 - `type` is string being either `background`, `signal` or `data` ;
 - `color` is the ROOT color code to be used on plots for thie process class ;
-
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this process class. Currently supported options include :
     - `no1DPlots` : process class will not appear on 1D-type plots
 
@@ -69,7 +66,6 @@ where :
 - `processClass` is the tag of the process class associate to this process class ;
 - `initialNumberOfEvents` is an optional parameter that can be used later for weighting, corresponding the initial number of events to consider ;
 - `xSecOrLumi` is also and optional parameter that can be used later for weighting, corresponding to either the cross section of the sample or the luminosity of the dataset ;
-
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this dataset.
 
 ### Cuts
@@ -96,9 +92,7 @@ where :
 - `tag` is the shortcut name of the region (to be used by the system) ;
 - `label` is the fancy name of the region (to be used on plots) ;
 - `parentRegionTag` is an optional argument such that this region will inherit of the cut of the parent ;
-- `listOfCuts` is the vector of cuts that defines the region. Alternatively, one can use `selector` being a pointer to a bool-returning function
-telling if the currently treated event should go or not into the region.
-
+- `listOfCuts` is the vector of cuts that defines the region. Alternatively, one can use `selector` being a pointer to a bool-returning function telling if the currently treated event should go or not into the region.
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this region. Currently supported options include :
     - `showCuts` will, for a given 1D plot showing a variable, remove the cut associated to that variable such as one can see the effect of that cut
     - `blinded` will make sure that histograms corresponding to data will not be filled for this region.
@@ -113,7 +107,6 @@ where :
 - `tag` is the shortcut name of the channel (to be used by the system) ;
 - `label` is the fancy name of the channel (to be used on plots) ;
 - `selector` is a pointer to a bool-returning function telling if the currently treated event should go or not into the channel.
-
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this channel.
 
 ### Figures
@@ -128,6 +121,5 @@ s.AddFigure          ("tag", "label", "options"); // Depends of region x channel
 where :
 - `tag` is the shortcut name of the figure (to be used by the system) ;
 - `label` is the fancy name of the figure (to be used on plots).
-
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this figure.
 
