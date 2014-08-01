@@ -6,9 +6,9 @@ A plotting tool for high-energy physics using Root
 Goal
 ----
 
-The Sonic Screwdriver is designed to generate high-energy physics plots easily by providing the user with a clean, flexible front-end aimed to manipulate physics concepts instead of ROOT-related technical mess.
+This tool is designed to make it easy to generate high-energy physics plots by providing the user with a clean, flexible front-end aimed to manipulate physics concepts instead of ROOT-related technical mess.
 
-[Name inspiration](https://en.wikipedia.org/wiki/Sonic_screwdriver)
+[Name inspiration](https://en.wikipedia.org/wiki/Sonic_screwdriver) (disclaimer : it doesn't work on wood)
 
 Features
 --------
@@ -17,29 +17,32 @@ Features
 - Create the histograms that will be needed for your plots (one line of code)
 - List the type of plots you want to be produced
 - Eventually add options where you want to change the standard behavior
-- Run over your events and fill all the histograms (one line of code)
-- Ask for the plots to be produced (two lines of code)
+- Run over your events and fill all the histograms (with one line of code)
+- Ask for the plots to be produced (with two lines of code)
 - Run your macro
 - Browse your plots, do actual physics
 
-Usage
+Install
 -----
 
-An example is provided in `test/`. 
 After setting up your environment, just do :
 
-    make && make test
+    make 
+    
+To get a quick idea of how the tool is working, you can use the example provided in the `test` folder.
 
-And manually browse the plots in `test/plots/` or just do
+    cd test && make test
+
+Then manually browse the plots in `test/plots/` or just do
 
     make browse
 
-from the `test` folder. It will open a TBrowser with the root files already loaded.
+It will open a `TBrowser` with the root files already loaded.
 
-Disclaimer
-----------
+Usage / how-to
+--------------
 
-This tool doesnt work on WOOD.
+Pieces of documentation are provided in HOW-TO.md
 
 To-do list / ideas
 ------------------
@@ -49,7 +52,8 @@ Important :
 - More global options to change font, line width, ... maybe add a config file to read stuff from.
 - Converge on what to do for the lumi reweighting per channel...
 - Use C++ maps to better handle the vectors of variables/processes/regions/histos/plots
-- Have an extra optional argument for datasets to be splitted across different regions
+- Have an extra optional argument for datasets to be splitted in different process classes
+- Define weighting via a function pointer
 
 Little improvements :
 - For custom binning, option to redivide the content of the bins to simulate a fixed bin width (to keep having an interpretation in term of pdf).

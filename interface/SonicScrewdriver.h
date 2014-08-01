@@ -77,7 +77,7 @@ namespace theDoctor
       // #  Dataset management  #
       // ########################
       
-      void AddDataset(string tag, string processClass, int trueNumberOfEvents, float xsecOrLumi = 1.0, string options = "");
+      void AddDataset(string tag, string processClass, int trueNumberOfEvents = -1, float xsecOrLumi = -1, string options = "");
       
       void   GetDatasetList(vector<string> *output);
       string GetProcessClass(string dataset);
