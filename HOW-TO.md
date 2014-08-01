@@ -11,17 +11,23 @@ be easy to use it as long as you are able to provide event-by-event (or
 jet-by-jet, depending on what is your basic object) values of your variables.
 
 The user must first create an instance of the front-end :
-    
-    SonicScrewdriver s;
+
+```C++    
+SonicScrewdriver s;
+```
 
 Then, applying methods on the front-end, the user can define physics objects such 
 as variables, process classes, datasets, cuts, regions, channels and figures.
 
-Variables
----------
+Defining physics objects
+------------------------
 
-    s.AddVariable(tag, label, unit, numberOfBins, min, max,      pointerToValue, options);
-    s.AddVariable(tag, label, unit, numberOfBins, customBinning, pointerToValue, options);
+### Variables
+
+```C++
+s.AddVariable("tag", "label", "unit", numberOfBins, min, max,      pointerToValue, "options");
+s.AddVariable("tag", "label", "unit", numberOfBins, customBinning, pointerToValue, "options");
+```
 
 where :
 - `tag` is the shortcut name of the variable (to be used by the system) ;
@@ -37,10 +43,11 @@ where :
     - `noUnderflowInFirstBin` : do not automatically include the underflow in first bin of the thistogram ;
     - `noOverflowInLastBin` : do not automatically include the overflow in last bin of the histogram.
  
-Process classes
----------------
+### Process classes
 
-    s.AddProcessClass(tag, label, type, color, options)
+```C++
+s.AddProcessClass("tag", "label", "type", color, "options");
+```
 
 where :
 - `tag` is the shortcut name of the process class (to be used by the system) ;
@@ -51,10 +58,11 @@ where :
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this process class. Currently supported options include :
     - `no1DPlots` : process class will not appear on 1D-type plots
 
-Datasets
---------
+### Datasets
 
-    s.AddDataset(tag, processClass, initialNumberOfEvents, xSecOrLumi, options) ;
+```C++
+s.AddDataset("tag", "processClass", initialNumberOfEvents, xSecOrLumi, "options");
+```
 
 where :
 - `tag` is the shortcut name of the dataset (to be used by the system) ;
@@ -64,23 +72,25 @@ where :
 
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this dataset.
 
-Cuts
-----
+### Cuts
 
 One can define cuts on previously defined variable using the following syntax :
 
-    Cut(variable, cutType, cutValue);
+```C++
+Cut("variable", 'cutType', cutValue);
+```
 
 where
 - `variable` is the tag of the variable targeted by the cut
 - `cutType` is a single character, either '>', '<' or '=' related to the direction of the cut
 - `cutValue` is the value of the cut
 
-Regions
--------
+### Regions
 
-    s.AddRegion(tag, label, parentRegionTag, listOfCuts, options)
-    s.AddRegion(tag, label, parentRegionTag, selector,   options)
+```C++
+s.AddRegion("tag", "label", "parentRegionTag", listOfCuts, "options");
+s.AddRegion("tag", "label", "parentRegionTag", selector,   "options");
+```
 
 where :
 - `tag` is the shortcut name of the region (to be used by the system) ;
@@ -93,10 +103,11 @@ telling if the currently treated event should go or not into the region.
     - `showCuts` will, for a given 1D plot showing a variable, remove the cut associated to that variable such as one can see the effect of that cut
     - `blinded` will make sure that histograms corresponding to data will not be filled for this region.
 
-Channels
---------
+### Channels
 
-    s.AddChannel(tag, label, selector, options)
+```C++
+s.AddChannel("tag", "label", selector, "options");
+```
 
 where :
 - `tag` is the shortcut name of the channel (to be used by the system) ;
@@ -105,10 +116,14 @@ where :
 
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this channel.
 
-2.g) Figures
+### Figures
 
-    s.AddFigurePerProcess(tag, label, options)
-    s.AddFigure          (tag, label, options)
+Figures are a special kind of variable as they are not event-by-event variables, but rather global numbers such as scale factors or yields, but that might depend on the process, region and channel.
+
+```C++
+s.AddFigurePerProcess("tag", "label", "options"); // Depends of process x region x channel
+s.AddFigure          ("tag", "label", "options"); // Depends of region x channel only
+```
 
 where :
 - `tag` is the shortcut name of the figure (to be used by the system) ;
