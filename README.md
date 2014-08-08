@@ -10,26 +10,41 @@ This tool is designed to make it easy to generate high-energy physics plots by p
 
 [Name inspiration](https://en.wikipedia.org/wiki/Sonic_screwdriver) (disclaimer : it doesn't work on wood)
 
+```
+                                              +--------------+                 
+                                              |              |                 
+                             describe         |  Physics     |                 
+                        ----------------->    |    concepts  |                 
+    +---------------+                         |              | --+             
+    |               |                         +--------------+   |             
+    |   Particle    |                                            |     Sonic   
+    |   Physicist   |                                            |  screwdriver
+    |               |                         +--------------+   |             
+    +---------------+                         |              | <-+             
+                        <-----------------    |  Plots and   |                 
+                                get           |    tables    |                 
+                                              |              | <-->  ROOT      
+                                              +--------------+                 
+```
+
 Features
 --------
 
-- Add variables, process classes, regions and channels
-- Create the histograms that will be needed for your plots (one line of code)
-- List the type of plots you want to be produced
-- Eventually add options where you want to change the standard behavior
-- Run over your events and fill all the histograms (with one line of code)
-- Ask for the plots to be produced (with two lines of code)
-- Run your macro
+- Describe the physics (variables, datasets & process classes, regions & channels, figures)
+- List the type of plots you want to be produced (superimposed, stacked, data/MC comparisons, 2D, ...)
+- Use options where you want to change the standard behavior
+- Run over your data, automatically filling the histograms all at once
+- Ask for the plots to be produced
 - Browse your plots, do actual physics
 
-Install
------
+Installation
+------------
 
-After setting up your environment, just do :
+After setting up ROOT, just do :
 
     make 
     
-To get a quick idea of how the tool is working, you can use the example provided in the `test` folder.
+To get a quick idea of how the tool is working, you can check `plotGenerationExample.C` in provided in the `test` folder. To run it, type :
 
     cd test && make test
 
@@ -42,7 +57,7 @@ It will open a `TBrowser` with the root files already loaded.
 Usage / how-to
 --------------
 
-Pieces of documentation are provided in HOW-TO.md
+Pieces of documentation are provided in the [HOW-TO](HOW-TO.md) file.
 
 To-do list / ideas
 ------------------
@@ -54,6 +69,7 @@ Important :
 - Use C++ maps to better handle the vectors of variables/processes/regions/histos/plots
 - Have an extra optional argument for datasets to be splitted in different process classes
 - Define weighting via a function pointer
+- Add option to choose wether the data/MC ratio is on top or bottom
 
 Little improvements :
 - For custom binning, option to redivide the content of the bins to simulate a fixed bin width (to keep having an interpretation in term of pdf).
