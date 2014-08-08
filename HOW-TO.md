@@ -12,12 +12,12 @@ jet-by-jet, depending on what is your basic object) values of your variables.
 
 Using the tool is done in four major steps :
   
-1.  Define physics objects (variables, processes, datasets, cuts, regions, channels and figures) ;
-2.  List the kind of plots you will want to be produced ;
-3.  Loop on whichever your information comes from, automatically feeding it to the tool ;
-4.  Ask for the plots to be made.
+1.  [Define physics objects](#DefiningPhysicsObjects) (variables, processes, datasets, cuts, regions, channels and figures) ;
+2.  [List the plots you](#PlotConfiguration) want to be produced ;
+3.  [Loop on whatever your data comes from](#LoopOnYourData), automatically feeding it to the tool ;
+4.  [Produce and browse the outputs](#ProduceOutput).
 
-
+<a name="DefiningPhysicsObjects"></a>
 1. Defining physics objects
 ----------------------------
 
@@ -123,3 +123,14 @@ where :
 - `label` is the fancy name of the figure (to be used on plots).
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this figure.
 
+<a name="PlotConfiguration"></a>
+2. Configure the plots
+----------------------
+
+<a name="LoopOnYourData"></a>
+3. Loop on your data
+--------------------
+
+<a name="ProduceOutput"></a>
+4. Produce and browse the outputs
+-----------------------------------
