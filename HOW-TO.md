@@ -17,6 +17,11 @@ Using the tool is done in four major steps :
 3.  [Loop on whatever your data comes from](#LoopOnYourData), automatically feeding it to the tool ;
 4.  [Produce and browse the outputs](#ProduceOutput).
 
+In appendix A, I show how the user can access histograms and produce plots his own way when the current feature are not enough for the user-case.
+
+App. A. [About user-custom plots and manipulation](#CustomPlots)
+
+
 <a name="DefiningPhysicsObjects"></a>
 1. Defining physics objects
 ----------------------------
@@ -51,7 +56,7 @@ where :
 - `tag` is the shortcut name of the process class (to be used by the system) ;
 - `label` is the fancy name of the process class (to be used on plots) ;
 - `type` is string being either `background`, `signal` or `data` ;
-- `color` is the ROOT color code to be used on plots for thie process class ;
+- `color` is the ROOT color code to be used on plots for thie process class (see predefined colors in [`interface/Common.h`](interface/Common.h) ;
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this process class. Currently supported options include :
     - `no1DPlots` : process class will not appear on 1D-type plots
 
@@ -127,10 +132,88 @@ where :
 2. Configure the plots
 ----------------------
 
+### Preparing the histograms
+
+First, the user must tell the sonic screwdriver to create all the 1-dimensionnal histograms that will be needed, using :
+
+```C++
+s.Create1DHistos();
+```
+
+If you will want to have a look at 2-dimensionnal plots (i.e. one variable vs an other one), you need to manually ask for each one of them to be create, this way :
+
+```C++
+s.Add2DHisto("var_1","var_2");
+s.Add2DHisto("var_2","var_3");
+```
+
+### Scheduling plots
+
+Then, the user can list the plots that shall be produced, using the following syntax :
+
+```C++
+myScrewdriver.SchedulePlots("plotType","options");
+```
+
+where :
+- `plotType` is the type of plot to be produced ;
+- `options`  is an optional field that contain information about how this particular kind of plot should be produced. Note that for some type of plots, some information are actually mandatory. Options are written with the form `field=value` and separated by comas (`,`) ;
+
+The current supported kind of plots are :
+
+|   Name               |  Description                                                                        | Options |
+| -------------------- | ----------------------------------------------------------------------------------- | ------ |
+| `1DStack`            | Weighted backgrounds are stacked on top of each other                               | |
+| `1DSuperimosed`      | Backgrounds are renormalized to unity and superimosed, aiming to compare the shapes | |
+| `1DDataMCComparison` | Weighted backgrounds are stacked then data are superimposed and a data/MC ratio is drawn | |
+| `2D`                 | All created 2D histograms will lead to a 2D plot, one for each process class        | |
+| `2DSuperimposed`      | Not supported yet because of ROOT issues                                            | |
+| `1DFigureOfMerit`    | Create a plot showing the evolution of a figure of merit after cutting on a given variable | `var` to indicate the variable tag to cut on, and `cutType` should be set to `keepHighValues` or `keepLowValues` |
+| `1DFrom2DProjection` | (Badly supported at this point) Aiming to create 1D plots from 2D ones, in particular to compute efficiency curves. | See with the developers or in the code.. |
+| `1DFigure`                 | For a given list of figures and a given channel, produce a plot of the figures as function of the regions | `name` to indicate the tag of the plot, `figures` to list the figures separated by `:`,`channel` to specify the channel, `min` and `max` to fix the y-range. |
+| `1DDataMCComparisonFigure` | For each FigurePerProcess declared, produce a data/MC comparison as function of the regions | |
+
+### Further configuration of the plots
+
+#### Include signal in plots
+
+| Method                  | Range              | Option               | Values                               |
+| ----------------------- | ------------------ | -------------------- | ------------------------------------ |
+| s.SetGlobalBoolOption   | "1DSuperimposed"   | "includeSignal"      | `true` or `false`                    |
+| s.SetGlobalStringOption | "1DStack"          | "includeSignal"      | `"no"`, `"superimosed"` or `"stack"` |
+| s.SetGlobalFloatOption  | "1DStack"          | "factorSignal"       | A float                              |
+| s.SetGlobalStringOption | "DataMCComparison" | "includeSignal"      | `"no"`, `"superimosed"` or `"stack"` |
+| s.SetGlobalFloatOption  | "DataMCComparison" | "factorSignal"       | A float                              |
+
+#### Figure of Merit
+
+| Method                  | Range              | Option               | Values                               |
+| ----------------------- | ------------------ | -------------------- | ------------------------------------ |
+| s.SetGlobalFloatOption  | "FigureOfMerit"    | "backgroundSystematicUncertainty" | A float                 |
+
+#### Plot information
+
+| Method                  | Range              | Option               | Values                               |
+| ----------------------- | ------------------ | -------------------- | ------------------------------------ |
+| s.SetGlobalStringOption | "Plot"             | "infoTopRight"       | A string (ex : `"CMS internal"`)
+| s.SetGlobalStringOption | "Plot"             | "infoTopLeft"        | A string (ex : `"#sqrt{s} = 8 TeV"`)
+
+#### Plot export
+
+| Method                  | Range              | Option               | Values                               |
+| ----------------------- | ------------------ | -------------------- | ------------------------------------ |
+| s.SetGlobalBoolOption   | "Plot"             | "exportPdf"          | true of false                        |
+| s.SetGlobalBoolOption   | "Plot"             | "exportEps"          | true or false                        |
+| s.SetGlobalBoolOption   | "Plot"             | "exportPng"          | true of false (warning : png export takes time) |
+
 <a name="LoopOnYourData"></a>
 3. Loop on your data
 --------------------
 
 <a name="ProduceOutput"></a>
 4. Produce and browse the outputs
------------------------------------
+---------------------------------
+
+<a name="CustomPlots"></a>
+Appendix A. About user-custom plots and manipulation
+----------------------------------------------------
