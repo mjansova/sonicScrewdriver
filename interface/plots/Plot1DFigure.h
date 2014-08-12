@@ -12,11 +12,11 @@
 namespace theDoctor
 {
 
-    class Plot1DFigure 
+    class Plot1DFigure
     {
-      
+
      public:
-     
+
       Plot1DFigure();
       ~Plot1DFigure();
 
@@ -32,11 +32,11 @@ namespace theDoctor
                                   string                            thePlotOptions)
       {
           vector<Plot> theOutput;
-          
+
           string canvasName = OptionsScrewdriver::GetStringOption(thePlotOptions,"name");
-         
+
           vector<string>  figureTagsToPlot = OptionsScrewdriver::GetStringListOption(thePlotOptions,"figures");
-            
+
           // Fill name and map vectors to be given to MakePlot
           vector<Name>          figureNamesToPlot;
           vector<Map2DFigure>   figureMapsToPlot;
@@ -70,11 +70,11 @@ namespace theDoctor
           }
 
           vector<string> channelRestriction = OptionsScrewdriver::GetStringListOption(thePlotOptions,"channel");
-          
+
           for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
           {
               Channel  theChannel = (*theChannels)[c];
-          
+
               bool producePlotForThisChannel = false;
               if (channelRestriction.size() == 0) producePlotForThisChannel = true;
               for (unsigned int i = 0 ; i < channelRestriction.size() ; i++)
@@ -87,12 +87,12 @@ namespace theDoctor
                                     MakePlot(canvasName,
                                              figureNamesToPlot,
                                              figureMapsToPlot,
-                                             theRegions, 
+                                             theRegions,
                                              theChannel,
                                              theGlobalOptions,
                                              thePlotOptions)
                                  );
-   
+
           }
 
           return theOutput;
@@ -100,8 +100,8 @@ namespace theDoctor
 
       static Plot MakePlot(string              canvasName,
                            vector<Name>        theFigureNames,
-                           vector<Map2DFigure> theFigureMaps, 
-                           vector<Region>*     theRegions, 
+                           vector<Map2DFigure> theFigureMaps,
+                           vector<Region>*     theRegions,
                            Channel             theChannel,
                            OptionsScrewdriver  theGlobalOptions,
                            string              thePlotOptions)
@@ -116,11 +116,11 @@ namespace theDoctor
          thePlot.AddToInPlotInfo(theChannel.getLabel());
          //thePlot.getCanvas()->SetBottomMargin(0.15);
          //thePlot.getCanvas()->SetRightMargin(0.15);
-         
+
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DFigure","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DFigure","factorSignal");
          string factorSignalStr = floatToString(factorSignal);
-         
+
          string xlabel("");
          string ylabel("");
 
@@ -136,7 +136,7 @@ namespace theDoctor
         for (unsigned int f = 0 ; f < theFigureNames.size() ; f++)
         {
             Name theFigureName       = theFigureNames[f];
-            Map2DFigure theFigureMap = theFigureMaps[f]; 
+            Map2DFigure theFigureMap = theFigureMaps[f];
 
             TH1F* newHisto     = new TH1F("","",theRegions->size(), 0, theRegions->size());
             string nameHisto =  string("f:")+theFigureName.getTag()
@@ -151,12 +151,12 @@ namespace theDoctor
 
                 Figure theFigure = theFigureMap[region->getTag()]
                                                [theChannel.getTag()];
-    
+
                 newHisto->SetBinContent(r+1, theFigure.value());
                 newHisto->SetBinError  (r+1, theFigure.error());
                 newHisto->GetXaxis()->SetBinLabel(r+1, region->getLabel().c_str());
             }
-            
+
             perFigureHistos.push_back(newHisto);
         }
 
@@ -171,9 +171,9 @@ namespace theDoctor
         {
             Name theFigureName  = theFigureNames[f];
             TH1F* theHisto      = perFigureHistos[f];
-            
+
             ApplyHistoFigureStyle(&thePlot, theHisto, colors[f], theGlobalOptions, thePlotOptions);
-      
+
             if (f == 0)
             {
                 float rangeMinOption = OptionsScrewdriver::GetFloatOption(thePlotOptions,"min");
@@ -189,12 +189,50 @@ namespace theDoctor
             {
                 theHisto->Draw("SAME E");
             }
-           
+
 			// Add to legend
 		    pointersForLegend.insert(pointersForLegend.begin(),theHisto   );
 		    optionsForLegend. insert(optionsForLegend .begin(),string("pl"));
             labelsForLegend.  insert(labelsForLegend  .begin(),theFigureName.getLabel());
 
+        }
+
+        // #######################
+        // ##  Additional line  ##
+        // #######################
+
+        float lineValue       = OptionsScrewdriver::GetFloatOption(thePlotOptions,"lineValue");
+        float lineUncertainty = OptionsScrewdriver::GetFloatOption(thePlotOptions,"lineUncert");
+
+        if (lineValue != -1.0)
+        {
+
+            TH1F* histLineValue       = new TH1F("","",theRegions->size(), 0, theRegions->size());
+            TH1F* histLinePlus1Sigma  = new TH1F("","",theRegions->size(), 0, theRegions->size());
+            TH1F* histLineMinus1Sigma = new TH1F("","",theRegions->size(), 0, theRegions->size());
+
+            for (unsigned int i = 0 ; i < theRegions->size() ; i++)
+            {
+                histLineValue      ->SetBinContent(i+1,lineValue);
+                histLinePlus1Sigma ->SetBinContent(i+1,lineValue+lineUncertainty);
+                histLineMinus1Sigma->SetBinContent(i+1,lineValue-lineUncertainty);
+            }
+
+            histLineValue->SetLineColor(COLORPLOT_RED);
+            histLineValue->SetLineStyle(1);
+            histLineValue->SetLineWidth(2);
+
+            histLinePlus1Sigma->SetLineColor(COLORPLOT_BLUE);
+            histLinePlus1Sigma->SetLineStyle(2);
+            histLinePlus1Sigma->SetLineWidth(2);
+
+            histLineMinus1Sigma->SetLineColor(COLORPLOT_BLUE);
+            histLineMinus1Sigma->SetLineStyle(2);
+            histLineMinus1Sigma->SetLineWidth(2);
+
+            histLineValue      ->Draw("SAME");
+            histLinePlus1Sigma ->Draw("SAME");
+            histLineMinus1Sigma->Draw("SAME");
         }
 
         // ##############
@@ -225,7 +263,7 @@ namespace theDoctor
 	  }
 
       static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, OptionsScrewdriver theGlobalOptions, string options = "")
-      { 
+      {
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),"");
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),"");
           theHisto->SetStats(0);
