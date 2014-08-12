@@ -1,7 +1,7 @@
 #ifndef Plot_h
 #define Plot_h
 
-#include "interface/Common.h" 
+#include "interface/Common.h"
 #include "interface/PlotDefaultStyles.h"
 #include "interface/OptionsScrewdriver.h"
 
@@ -10,7 +10,7 @@ using namespace std;
 namespace theDoctor
 {
 
-    class Plot 
+    class Plot
     {
 
         public:
@@ -53,7 +53,7 @@ namespace theDoctor
             TCanvas* getCanvas() { return theCanvas; };
             TLegend* getLegend() { return theLegend; };
 
-            void getRangeAxis(double* x_min, double* y_min, double* x_max, double* y_max)  
+            void getRangeAxis(double* x_min, double* y_min, double* x_max, double* y_max)
             {
                 double x_min_, y_min_, x_max_, y_max_;
                 theCanvas->GetRange(x_min_,y_min_,x_max_,y_max_);
@@ -71,30 +71,30 @@ namespace theDoctor
                 {
                     if (line == "") continue;
                     theInPlotInfo->AddText(line.c_str());
-                } 
+                }
             }
 
             // Logarithm scale management
-            void SetLogX() 
-            { 
-                if (thePads.size() != 0) thePads[0]->SetLogx(); 
-                else theCanvas->SetLogx(); 
+            void SetLogX()
+            {
+                if (thePads.size() != 0) thePads[0]->SetLogx();
+                else theCanvas->SetLogx();
             }
-            void SetLogY() 
-            { 
-                if (thePads.size() != 0) thePads[0]->SetLogy(); 
-                else theCanvas->SetLogy(); 
+            void SetLogY()
+            {
+                if (thePads.size() != 0) thePads[0]->SetLogy();
+                else theCanvas->SetLogy();
             }
-            void SetLogZ() 
-            { 
-                if (thePads.size() != 0) thePads[0]->SetLogz(); 
-                else theCanvas->SetLogz(); 
-            } 
+            void SetLogZ()
+            {
+                if (thePads.size() != 0) thePads[0]->SetLogz();
+                else theCanvas->SetLogz();
+            }
 
             void SetActive()   { theCanvas->cd();                            };
             void Update()      { theCanvas->Modified(); theCanvas->Update(); };
 
-            TPad* AddPad(float x_start, float y_start, float x_end, float y_end) 
+            TPad* AddPad(float x_start, float y_start, float x_end, float y_end, string options = "")
             {
                 SetActive();
 
@@ -105,27 +105,30 @@ namespace theDoctor
                 newPad->cd();
 
                 thePads.push_back(newPad);
+
+                if (OptionsScrewdriver::GetBoolOption(options,"legend") )  legendTarget = newPad;
+                if (OptionsScrewdriver::GetBoolOption(options,"topInfo"))  topPad       = newPad;
+
                 return newPad;
             }
 
-            void DrawInfoText()
+            void DrawTopInfoText()
             {
                 TPad* plotTo;
 
                 if (thePads.size() != 0)
                 {
-                    // TODO : translate / generalize this in term of top margin and paveText height
-                    theTopLeftInfo ->SetY1(0.75);
-                    theTopLeftInfo ->SetY2(0.9);
-                    theTopRightInfo->SetY1(0.75);
-                    theTopRightInfo->SetY2(0.9);
-                    plotTo = thePads[thePads.size()-1];
+                    plotTo = topPad;
+                    theTopLeftInfo ->SetY1(1.0-plotTo->GetTopMargin());
+                    theTopLeftInfo ->SetY2(1.0);
+                    theTopRightInfo->SetY1(1.0-plotTo->GetTopMargin());
+                    theTopRightInfo->SetY2(1.0);
                 }
                 else
                     plotTo = theCanvas;
 
                 plotTo->cd();
-                
+
                 theTopLeftInfo ->SetX1(    plotTo->GetLeftMargin() -0.04);
                 theTopLeftInfo ->SetX2(1.0-plotTo->GetRightMargin()+0.04);
                 theTopRightInfo->SetX1(    plotTo->GetLeftMargin() -0.04);
@@ -138,13 +141,13 @@ namespace theDoctor
             void DrawLegend()
             {
                 TPad* plotTo;
-                if (thePads.size() != 0) 
-                    plotTo = thePads[0];
+                if (thePads.size() != 0)
+                    plotTo = legendTarget;
                 else
                     plotTo = theCanvas;
 
                 plotTo->cd();
-                                       
+
                 PlaceLegend(plotTo,"topright",0.2,0.3);
                 theLegend->Draw();
 
@@ -156,13 +159,13 @@ namespace theDoctor
                 theInPlotInfo->Draw();
 
             }
-                
+
             void Write(string outputFolder, string category, OptionsScrewdriver theGlobalOptions)
             {
 
                 if (hasBeenWritten) return;
-                
-                DrawInfoText();
+
+                DrawTopInfoText();
                 DrawLegend();
                 SetActive();
 
@@ -198,7 +201,7 @@ namespace theDoctor
                     string varName = GetParameter("variable");
                     theCanvas->SetName(varName.c_str());
                 }
-                
+
                 // Write root output
                 theCanvas->Write();
 
@@ -206,7 +209,7 @@ namespace theDoctor
                 bool exportEps = theGlobalOptions.GetGlobalBoolOption("Plot","exportEps");
                 bool exportPdf = theGlobalOptions.GetGlobalBoolOption("Plot","exportPdf");
 
-                // Optionnal export other formats 
+                // Optionnal export other formats
                 if (exportPng || exportEps || exportPdf)
                 {
                     if (category.find("[") != string::npos) category.replace(category.find("["),1,"_");
@@ -215,10 +218,10 @@ namespace theDoctor
                     if (shortPlotName.find("[") != string::npos) shortPlotName.replace(shortPlotName.find("["),1,"_");
                     if (shortPlotName.find("]") != string::npos) shortPlotName.replace(shortPlotName.find("]"),1,"_");
 
-                    string epsFolder = "./"+outputFolder+"/eps/"+category+"/";  string epsFile = epsFolder+shortPlotName+".eps";  
-                    string pngFolder = "./"+outputFolder+"/png/"+category+"/";  string pngFile = pngFolder+shortPlotName+".png";  
-                    string pdfFolder = "./"+outputFolder+"/pdf/"+category+"/";  string pdfFile = pdfFolder+shortPlotName+".pdf";  
-                    
+                    string epsFolder = "./"+outputFolder+"/eps/"+category+"/";  string epsFile = epsFolder+shortPlotName+".eps";
+                    string pngFolder = "./"+outputFolder+"/png/"+category+"/";  string pngFile = pngFolder+shortPlotName+".png";
+                    string pdfFolder = "./"+outputFolder+"/pdf/"+category+"/";  string pdfFile = pdfFolder+shortPlotName+".pdf";
+
                     gErrorIgnoreLevel = kWarning;
 
                     if (exportEps)
@@ -321,6 +324,10 @@ namespace theDoctor
             TPaveText* theTopRightInfo;
             TPaveText* theInPlotInfo;
             vector<TPad*> thePads;
+
+            TPad* legendTarget;
+            TPad* topPad;
+
 
             string type;
             std::map<string,string> parameters;
