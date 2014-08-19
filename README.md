@@ -68,7 +68,6 @@ Important :
 - Use C++ maps to better handle the various vectors of variables/processes/regions/histos/plots
 - Have an extra optional argument for datasets to be splitted in different process classes
 - Rethink the way lumi is managed, more generally define weighting via a function pointer
-- Add option to choose wether the data/MC ratio is on top or bottom
 
 Little improvements :
 - For custom binning, option to redivide the content of the bins to simulate a fixed bin width (to keep having an interpretation in term of pdf).

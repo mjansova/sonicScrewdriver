@@ -14,11 +14,11 @@
 namespace theDoctor
 {
 
-    class Plot1DDataMCComparisonFigure 
+    class Plot1DDataMCComparisonFigure
     {
-      
+
      public:
-     
+
       Plot1DDataMCComparisonFigure();
       ~Plot1DDataMCComparisonFigure();
 
@@ -35,30 +35,30 @@ namespace theDoctor
                                   string histoOptions)
       {
           vector<Plot> theOutput;
-          
+
           for (unsigned int f = 0 ; f < theFigurePerProcessMap->size() ; f++)
           for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
           {
               Channel  theChannel = (*theChannels)[c];
-              
+
               Name          theFigureName  =  (*theFigurePerProcessMap)[f].first;
               Map3DFigure   theFigureMap   =  (*theFigurePerProcessMap)[f].second;
-      
+
               theOutput.push_back(
                                     MakePlot(theFigureName,theFigureMap,
                                              theProcessClasses, theRegions, theChannel,
                                              theGlobalOptions)
                                  );
-   
+
           }
 
           return theOutput;
       }
 
       static Plot MakePlot(Name                  theFigureName,
-                           Map3DFigure           theFigureMap, 
+                           Map3DFigure           theFigureMap,
                            vector<ProcessClass>* theProcessClasses,
-                           vector<Region>*       theRegions, 
+                           vector<Region>*       theRegions,
                            Channel               theChannel,
                            OptionsScrewdriver    theGlobalOptions)
       {
@@ -73,11 +73,11 @@ namespace theDoctor
          thePlot.AddToInPlotInfo(theChannel.getLabel());
          //thePlot.getCanvas()->SetBottomMargin(0.15);
          //thePlot.getCanvas()->SetRightMargin(0.15);
-         
+
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DDataMCComparisonFigure","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DDataMCComparisonFigure","factorSignal");
          string factorSignalStr = floatToString(factorSignal);
-         
+
          string xlabel("");
          string ylabel(theFigureName.getLabel());
 
@@ -88,7 +88,7 @@ namespace theDoctor
         // ##########################################
         // ## Create invididual per-process histos ##
         // ##########################################
-        
+
         vector<TH1F*> perProcessHistos;
         for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
         {
@@ -121,7 +121,7 @@ namespace theDoctor
         // ########################
         // ## Create stack histo ##
         // ########################
-        
+
         THStack* theStack   = new THStack("","");
 
         TH1F* histoSumBackground = new TH1F("","",theRegions->size(), 0, theRegions->size());
@@ -131,7 +131,7 @@ namespace theDoctor
                                  +"|c:"+theChannel.getTag()
                                  +"|t:1DFigurePerProcess";
         histoSumBackground->SetName(nameHisto.c_str());
-   
+
         // Now loop on the histos
         for (int p = theProcessClasses->size()-1 ; p >= 0 ; p--)
         {
@@ -145,7 +145,7 @@ namespace theDoctor
 
             // Change style of histo and add it to legend
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
-         
+
             pointersForLegend.push_back(histoClone);
             optionsForLegend.push_back(string("f"));
 			labelsForLegend.push_back(processClass->getLabel());
@@ -156,7 +156,7 @@ namespace theDoctor
         }
 
         // Create stack histo + another histo for the error plotting for the background sum
-        TPad* theStackPad = thePlot.AddPad(0,0,1,0.8);
+        TPad* theStackPad = thePlot.AddPad(0,0,1,0.8,"legend");
         theStackPad->SetTopMargin(0.0);
 
         // Apply axis style and plot the stack
@@ -180,16 +180,16 @@ namespace theDoctor
                 // Get associated processClass
                 ProcessClass* processClass = &((*theProcessClasses)[p]);
                 if (processClass->getType() != "signal") continue;
-                    
+
                 TH1F* histoClone = perProcessHistos[p];
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->Scale(factorSignal);
-                
-                if (includeSignal == "stack") 
+
+                if (includeSignal == "stack")
                     histoClone->Add(histoSumBackground);
-               
+
                 histoClone->Draw("hist same");
-                
+
 				// Add to legend
 		        pointersForLegend.insert(pointersForLegend.begin(),histoClone);
 		        optionsForLegend.insert(optionsForLegend.begin(),string("l"));
@@ -199,7 +199,7 @@ namespace theDoctor
         		    labelsForLegend.insert(labelsForLegend.begin(),processClass->getLabel()+"(#times"+factorSignalStr+")");
             }
         }
-       
+
         // ############
         // ##  Data  ##
         // ############
@@ -259,7 +259,8 @@ namespace theDoctor
         // #############
 
         // Compute and draw the ratio
-        TPad* theRatioPad = thePlot.AddPad(0,0.8,1,1);
+        //
+        TPad* theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
         theRatioPad->SetBottomMargin(0.07);
         theRatioPad->SetTopMargin(0.3);
 
@@ -300,7 +301,7 @@ namespace theDoctor
          theHisto->SetLineColor(kBlack);
          theHisto->SetLineWidth(2);
       }
-	  
+
 	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
@@ -319,7 +320,7 @@ namespace theDoctor
       }
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string options = "")
-      { 
+      {
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
           theStack->SetTitle("");
@@ -343,7 +344,7 @@ namespace theDoctor
       }
 
       static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
-      { 
+      {
           // Y axis
           PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));
           theRatio->GetYaxis()->CenterTitle();
