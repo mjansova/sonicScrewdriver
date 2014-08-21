@@ -175,8 +175,8 @@ namespace theDoctor
           }
           else
           {
-             theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
              theStackPad = thePlot.AddPad(0,0,1,0.8,"legend");
+             theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
 
              theRatioPad->SetBottomMargin(0.07);
              theRatioPad->SetTopMargin(0.3);
@@ -312,6 +312,7 @@ namespace theDoctor
                     double canvas_yMax = 0;
                     theStackPad->GetRangeAxis(canvas_xMin, canvas_yMin, canvas_xMax, canvas_yMax);
 
+          DEBUG_MSG << "options = " << theVar->getOptions() << " , logY = " << OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY") << endl;
                     float arrowPosition;
                     if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY")) arrowPosition = canvas_yMax / 6.0;
                     else                                                                arrowPosition = canvas_yMax / 1.3;
@@ -431,13 +432,18 @@ namespace theDoctor
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
 
           theStack->SetTitle("");
+          DEBUG_MSG << "options = " << varOptions << " , logY = " << OptionsScrewdriver::GetBoolOption(varOptions,"logY") << endl;
           if (OptionsScrewdriver::GetBoolOption(varOptions,"logY"))
           {
+              DEBUG_MSG << endl;
               thePlot->SetLogY();
               theStack->SetMaximum(theStack->GetMaximum() * 6.0);
           }
           else
+          {
+              DEBUG_MSG << endl;
               theStack->SetMaximum(theStack->GetMaximum() * 1.3);
+          }
       }
 
       static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
