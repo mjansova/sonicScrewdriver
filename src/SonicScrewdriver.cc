@@ -41,7 +41,7 @@ void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, in
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
 
 
-int SonicScrewdriver::getIndexOfVariable(string tag)
+int SonicScrewdriver::GetIndexOfVariable(string tag)
 {
     for (unsigned int i = 0 ; i < theVariables.size() ; i++)
         if (theVariables[i].getTag() == tag) return i;
@@ -60,16 +60,10 @@ void SonicScrewdriver::AddDataset(string tag, string processClass, int trueNumbe
 }
 
 
-void SonicScrewdriver::SetTrueNumberOfEvents(string dataset, int n)
+void SonicScrewdriver::SetTrueNumberOfEvents(string datasetTag, int n)
 {
-    for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
-    {
-        if (theDatasets[i].getTag() == dataset)
-        {
-            theDatasets[i].setTrueNumberOfEvents(n);
-            return;
-        }
-    }
+    Dataset* dataset = GetDataset(datasetTag);
+    if (dataset != 0) dataset->setTrueNumberOfEvents(n);
 }
 
 void SonicScrewdriver::GetProcessClassTagList(vector<string> *output)
@@ -106,28 +100,46 @@ string SonicScrewdriver::GetProcessClassType(string processClass)
 }
 
 
-float SonicScrewdriver::GetDatasetLumiWeight(string dataset)
+float SonicScrewdriver::GetDatasetLumiWeight(string datasetTag)
 {
-    for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
-    {
-        if (theDatasets[i].getTag() != dataset) continue;
-        string type = GetProcessClassType(theDatasets[i].getProcessClass()); 
-        if ((type == "background") || (type == "signal"))
-            return theDatasets[i].getXsecOrLumi() * theLumi / theDatasets[i].getTrueNumberOfEvents();
-        else if (type == "data")
-            return 1.0;
-    }
-    return 0.0;
+    Dataset* dataset = GetDataset(datasetTag);
+    if (dataset == 0) return 0.0;
+
+    string type = GetProcessClassType(dataset->getProcessClass());
+
+    if (type == "data") return 1.0;
+    
+    return dataset->getXsecOrLumi() * theLumi / dataset->getTrueNumberOfEvents();
 }
 
-string SonicScrewdriver::GetProcessClass(string dataset)
+float SonicScrewdriver::GetDatasetCrossSection(string datasetTag)
+{
+    Dataset* dataset = GetDataset(datasetTag);
+    if (dataset == 0) return -1.0;
+    
+    string type = GetProcessClassType(dataset->getProcessClass());
+    if (type == "data") return -1.0;
+
+    return dataset->getXsecOrLumi();
+}
+
+string SonicScrewdriver::GetProcessClass(string datasetTag)
+{
+    Dataset* dataset = GetDataset(datasetTag);
+    if (dataset != 0) return dataset->getProcessClass();
+    else              return "";
+}
+
+Dataset* SonicScrewdriver::GetDataset(string datasetTag)
 {
     for (unsigned int i = 0 ; i < theDatasets.size() ; i++)
     {
-        if (theDatasets[i].getTag() != dataset) continue;
-        return theDatasets[i].getProcessClass(); 
+        if (theDatasets[i].getTag() != datasetTag) continue;
+        return &(theDatasets[i]);
     }
-    return "";
+
+    WARNING_MSG << "Could not find dataset named '" << datasetTag << "'" << endl;
+    return 0;
 }
 
 float SonicScrewdriver::GetLumi()
@@ -256,16 +268,16 @@ vector<Histo2DEntries>* SonicScrewdriver::Get2DHistosEntries()
 vector<Histo3DEntries>* SonicScrewdriver::Get3DHistosEntries()
 { return theHistoScrewdriver.Get3DHistosEntries(); }
 
-TH1F* SonicScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
+TH1F* SonicScrewdriver::Get1DHistoClone(string var, string processClass, string region, string channel)
 { return theHistoScrewdriver.get1DHistoClone(var,processClass,region,channel); }
 
-TH1F* SonicScrewdriver::get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
+TH1F* SonicScrewdriver::Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
 { return theHistoScrewdriver.get1DCompositeHistoClone(var,type,region,channel,otherParameters); }
 
-TH2F* SonicScrewdriver::get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
+TH2F* SonicScrewdriver::Get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
 { return theHistoScrewdriver.get2DHistoClone(varX,varY,processClass,region,channel); }
 
-TH2F* SonicScrewdriver::get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
+TH2F* SonicScrewdriver::Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
 { return theHistoScrewdriver.get2DCompositeHistoClone(varX,varY,type,region,channel,otherParameters); }
 
 

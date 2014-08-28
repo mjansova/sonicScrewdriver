@@ -10,15 +10,15 @@
 #include "interface/Region.h"
 #include "interface/Channel.h"
 
-namespace theDoctor 
+namespace theDoctor
 {
 
 
-    class SonicScrewdriver 
+    class SonicScrewdriver
     {
-      
+
      public:
-     
+
       SonicScrewdriver();
       ~SonicScrewdriver();
 
@@ -28,7 +28,7 @@ namespace theDoctor
 
       //
       // *** Add a variable to the knownledge of this Screwdriver.
-      //     
+      //
       //     The nBins/min/max are the default value used for all the plots
       //     which will be using this variable.
       //
@@ -43,47 +43,49 @@ namespace theDoctor
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    double* autoFillPointer = 0, string options = "");
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    int*    autoFillPointer = 0, string options = "");
 
-      int getIndexOfVariable(string tag);
-          
+      int GetIndexOfVariable(string tag);
+
       // #############################
       // #  ProcessClass management  #
       // #############################
 
       //
       // *** Add a process class to the knownledge of this Screwdriver.
-      //     
+      //
       //     The xsec is the cross-section used for the relevant plots
       //     that needs cross-section reweighting.
       //
 
       void AddProcessClass(string tag, string plotLabel, string type, Color_t color, string options = "");
-     
+
       //
       // *** Get the list of names of process classes
-      //     
+      //
       //    The list is returned in the "output" vector.
       //
-     
+
       void   GetProcessClassTagList(vector<string> *output);
       void   GetProcessClassLabelList(vector<string> *output);
 
       //
       // *** Get the type of a specific process class
       //
-     
+
       string GetProcessClassType(string processClass);
 
       // ########################
       // #  Dataset management  #
       // ########################
-      
+
       void AddDataset(string tag, string processClass, int trueNumberOfEvents = -1, float xsecOrLumi = -1, string options = "");
-      
-      void   GetDatasetList(vector<string> *output);
-      string GetProcessClass(string dataset);
-      float  GetDatasetLumiWeight(string dataset);
-      void   SetTrueNumberOfEvents(string dataset, int n);
-      
+
+      void     GetDatasetList(vector<string> *output);
+      string   GetProcessClass(string dataset);
+      float    GetDatasetLumiWeight(string dataset);
+      float    GetDatasetCrossSection(string dataset);
+
+      void     SetTrueNumberOfEvents(string dataset, int n);
+
       float GetLumi();
       void SetLumi(float inputLumi);
 
@@ -93,7 +95,7 @@ namespace theDoctor
 
       //
       // *** Add a channel to the knownledge of this Screwdriver.
-      //     
+      //
       //     The selector is a function returning true or false
       //     if the event currently being filled is or isnt
       //     in this channel
@@ -107,7 +109,7 @@ namespace theDoctor
 
       //
       // *** Add a region to the knownledge of this Screwdriver.
-      //     
+      //
       //     The selector is a function returning true or false
       //     if the event currently being filled is or isnt
       //     in this region
@@ -120,17 +122,17 @@ namespace theDoctor
 
       //
       // *** Get the list of names of regions
-      //     
+      //
       //    The list is returned in the "output" vector.
       //
-     
+
       void   GetRegionTagList(vector<string> *output);
       void   GetRegionLabelList(vector<string> *output);
 
       // #########################
       // #   Figure management   #
       // #########################
-     
+
       void AddFigurePerProcess(string tag, string label, string options = "");
       void AddFigure          (string tag, string label, string options = "");
 
@@ -140,7 +142,7 @@ namespace theDoctor
       // ########################
       // #   Histo management   #
       // ########################
-     
+
       //
       // *** "Automatically" fill every 1D/2D histo associated to the
       //     specified process class, and for which autoFill has been set to
@@ -148,7 +150,7 @@ namespace theDoctor
       //
       //     The value used to fill is obtained using the autoFillPointer
       //     of variables.
-      // 
+      //
 
       void AutoFillProcessClass(string processClass, float weight = 1.0);
 
@@ -156,46 +158,46 @@ namespace theDoctor
             // #  Histo1D management  #
             // ########################
 
-      // 
+      //
       // *** Add a 1-dimension histogram to the HistoScrewdriver
       //     for the specified set of variables/processClass.
       //
-      //     (If no variable/processClass is specified, every 
+      //     (If no variable/processClass is specified, every
       //     variable/processClass known is used)
       //
 
       void Create1DHistos();
 
       // *** Apply scale factor on an histogram
-      
+
       void ApplyScaleFactor(string var,    string processClass, string region, string channel, Figure scaleFactor);
 
       void ApplyScaleFactor(string processClass, string region, string channel, Figure scaleFactor);
-      
+
             // ########################
             // #  Histo2DEntries management  #
             // ########################
-     
-      // 
+
+      //
       // *** Add a 2-dimension histogram to the HistoScrewdriver
       //     for the specified set of variables/processClass.
       //
-      // 
-      
+      //
+
       void Add2DHisto(string varX, string varY);
 
             // ########################
             // #  Histo3DEntries management  #
             // ########################
-     
-      // 
+
+      //
       // *** Add a 3-dimension histogram to the HistoScrewdriver
       //     for the specified set of variables/processClass.
       //
       //     If autoFill is set to true, the histogram will be
       //     filled during the "automatic" fill.
-      // 
-      
+      //
+
       void Add3DHisto(string varX, string varY, string varZ);
 
       // ##########################
@@ -234,25 +236,27 @@ namespace theDoctor
       vector<Histo2DEntries>* Get2DHistosEntries();
       vector<Histo3DEntries>* Get3DHistosEntries();
 
-      TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
-      TH1F* get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
-      TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
-      TH2F* get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
+      TH1F* Get1DHistoClone(string var, string processClass, string region, string channel);
+      TH1F* Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
+      TH2F* Get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
+      TH2F* Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
 
      private:
+
+      Dataset* GetDataset(string tag);
 
       // *** Container for the variables
       vector<Variable> theVariables;
 
       // *** Container for the processClasses
       vector<ProcessClass> theProcessClasses;
-      
+
       // *** Container for the datasets
       vector<Dataset> theDatasets;
 
       // *** Container for the channels
       vector<Channel> theChannels;
-      
+
       // *** Container for the regions
       vector<Region> theRegions;
 
@@ -260,13 +264,13 @@ namespace theDoctor
 
           // *** Container for the figures process-dependent
           vector< pair<Name, Map3DFigure> > theFiguresPerProcessMap;
-          
+
           // *** Container for the figures
           vector< pair<Name, Map2DFigure> > theFiguresMap;
 
       // *** Manager for the histograms
       HistoScrewdriver theHistoScrewdriver;
-      
+
       // *** Manager for the plots
       PlotScrewdriver thePlotScrewdriver;
 
