@@ -16,7 +16,11 @@ int sonicScrewdriver_DummyUnity = 1;
 SonicScrewdriver::SonicScrewdriver():
     theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels)
 {
+    // FIXME this should be handled an other way
     AddVariable("yield","Yield","",1,0,0,&sonicScrewdriver_DummyUnity,"");
+    // FIXME this too
+    thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "min", 0.5);
+    thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "max", 1.5);
 }
 
 SonicScrewdriver::~SonicScrewdriver()

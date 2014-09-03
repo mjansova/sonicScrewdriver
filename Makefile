@@ -24,7 +24,7 @@ SOURCES       = $(wildcard src/*.cc)
 OBJECTS       = $(SOURCES:.cc=.o)
 #------------------------------------------------------------------------------
 
-all:  libSonicScrewdriver.so
+lib:  libSonicScrewdriver.so
 
 libSonicScrewdriver.so: $(OBJECTS) 
 	@echo "Building libSonicScrewdriver..."

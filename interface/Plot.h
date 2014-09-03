@@ -5,6 +5,16 @@
 #include "interface/PlotDefaultStyles.h"
 #include "interface/OptionsScrewdriver.h"
 
+void replaceSubstring(string& str, const string oldStr, const string newStr)
+{
+    size_t pos = 0;
+    while((pos = str.find(oldStr, pos)) != string::npos)
+    {
+        str.replace(pos, oldStr.length(), newStr);
+        pos += newStr.length();
+    }
+}
+
 using namespace std;
 
 namespace theDoctor
@@ -19,7 +29,7 @@ namespace theDoctor
             Plot(string name_, string type_, OptionsScrewdriver theGlobalOptions, string options = "")
             {
                 theCanvas = new TCanvas(name_.c_str(),"",850,750);
-                theLegend = new TLegend(0.65,0.70,0.89,0.89);
+                theLegend = new TLegend(0.65,0.70,0.89,0.89); theLegendMaxLabelSize = 0;
                 theTopLeftInfo  = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theTopRightInfo = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theInPlotInfo = new TPaveText(0.13,0.77,0.43,0.87,"NDC");
@@ -259,12 +269,25 @@ namespace theDoctor
             };
 
             // Legend edition
-            void AddToLegend(const TObject* obj, const char* label,Option_t* option)
-            { theLegend->AddEntry(obj,label,option); };
+            void AddToLegend(const TObject* obj, string label, Option_t* option)
+            {
+                // Add entry to label
+                theLegend->AddEntry(obj,label.c_str(),option);
+
+                // Estimate length of label
+                // (replacing latex stuff to avoid having big length when actual display is short)
+                replaceSubstring(label,"#rightarrow","->");
+                replaceSubstring(label,"#bar","");
+                replaceSubstring(label,"{","");
+                replaceSubstring(label,"}","");
+                replaceSubstring(label,"#times","x");
+
+                if (theLegendMaxLabelSize < label.size())
+                    theLegendMaxLabelSize = label.size();
+            };
 
             void PlaceLegend(TPad* pad, string place, float width, float height)
             {
-
                 float abs_right = 1.0-0.03-pad->GetRightMargin();
                 float abs_left  = 1.0-0.03-pad->GetLeftMargin();
                 float abs_top   = 1.0-0.03-pad->GetTopMargin();
@@ -306,9 +329,12 @@ namespace theDoctor
                     y_min = abs_bot;y_max = abs_bot + height;
                 }
 
-                theLegend->SetX1(x_min);
+                // FIXME : find a cleverer way instead of putting 0.02 by hand
+                float offset = max(0.0,(theLegendMaxLabelSize * 0.017) - width);
+
+                theLegend->SetX1(x_min-offset);
                 theLegend->SetY1(y_min);
-                theLegend->SetX2(x_max);
+                theLegend->SetX2(x_max-offset);
                 theLegend->SetY2(y_max);
 
             }
@@ -320,6 +346,7 @@ namespace theDoctor
 
             TCanvas* theCanvas;
             TLegend* theLegend;
+            unsigned int theLegendMaxLabelSize;
             TPaveText* theTopLeftInfo;
             TPaveText* theTopRightInfo;
             TPaveText* theInPlotInfo;

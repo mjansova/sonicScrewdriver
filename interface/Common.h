@@ -39,6 +39,9 @@ using namespace std;
 #define DEBUG_MSG cerr << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
 #define WARNING_MSG cerr << "WARNING (" << __FILE__ << ", l." << __LINE__ << ") "
 
+#define SONICSCREWDRIVER_RANGE_RESCALER_NOLOG    1.3
+#define SONICSCREWDRIVER_RANGE_RESCALER_WITHLOG  9.0
+
 #define COLORPLOT_RED 		kRed-7
 #define COLORPLOT_CYAN		kCyan-3
 #define COLORPLOT_ORANGE 	kOrange-2
@@ -50,5 +53,7 @@ using namespace std;
 #define COLORPLOT_GRAY		kGray
 
 string floatToString(float input);
+
+void replaceSubstring(string& str, const string oldStr, const string newStr);
 
 #endif

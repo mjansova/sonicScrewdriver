@@ -72,7 +72,7 @@ int main (int argc, char *argv[])
 
 	  // Backgrounds
 
-      myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_RED);
+      myScrewdriver.AddProcessClass("foo",     "Foo #rightarrow",     "background", COLORPLOT_RED);
            myScrewdriver.AddDataset("foo","foo",50000,0.495);
   
       myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_ORANGE);

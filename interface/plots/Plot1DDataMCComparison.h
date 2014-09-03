@@ -12,6 +12,7 @@
 #include "interface/PlotDefaultStyles.h"
 #include "interface/OptionsScrewdriver.h"
 
+
 namespace theDoctor
 {
 
@@ -160,20 +161,10 @@ namespace theDoctor
           vector<string> labelsForLegend;
           vector<string> optionsForLegend;
 
-
           TPad* theStackPad;
           TPad* theRatioPad;
-          if ( ratioPosition == "bottom" )
-          {
-             theStackPad = thePlot.AddPad(0,0.2,1,1,"legend,topInfo");
-             theRatioPad = thePlot.AddPad(0,0,1,0.2,"");
 
-             theRatioPad->SetTopMargin(0.05);
-             theRatioPad->SetBottomMargin(0.30);
-             theStackPad->SetBottomMargin(0.02);
-             theStackPad->SetTopMargin(0.06);
-          }
-          else
+          if (ratioPosition == "top")
           {
              theStackPad = thePlot.AddPad(0,0,1,0.8,"legend");
              theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
@@ -181,6 +172,16 @@ namespace theDoctor
              theRatioPad->SetBottomMargin(0.07);
              theRatioPad->SetTopMargin(0.3);
              theStackPad->SetTopMargin(0.0);
+          }
+          else
+          {
+             theStackPad = thePlot.AddPad(0,0.25,1,1,"legend,topInfo");
+             theRatioPad = thePlot.AddPad(0,0,1,0.25,"");
+
+             theRatioPad->SetTopMargin(0.05);
+             theRatioPad->SetBottomMargin(0.35);
+             theStackPad->SetBottomMargin(0.02);
+             theStackPad->SetTopMargin(0.06);
           }
 
           // #################################
@@ -273,9 +274,17 @@ namespace theDoctor
           labelsForLegend.push_back("data");
           optionsForLegend.push_back("pl");
 
+          if (dataHisto->GetMaximum() > stackBackground->GetMaximum())
+          {
+              bool logY = OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY");
+              if (logY) stackBackground->SetMaximum(dataHisto->GetMaximum() * SONICSCREWDRIVER_RANGE_RESCALER_WITHLOG);
+              else      stackBackground->SetMaximum(dataHisto->GetMaximum() * SONICSCREWDRIVER_RANGE_RESCALER_NOLOG);
+          }
+
           // Apply style to data and draw it
           ApplyDataStyle(&thePlot,dataHisto,theGlobalOptions);
           dataHisto->Draw("SAME E");
+
 
           // #################################
           // #####                       #####
@@ -313,8 +322,8 @@ namespace theDoctor
                     theStackPad->GetRangeAxis(canvas_xMin, canvas_yMin, canvas_xMax, canvas_yMax);
 
                     float arrowPosition;
-                    if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY")) arrowPosition = canvas_yMax / 6.0;
-                    else                                                                arrowPosition = canvas_yMax / 1.3;
+                    if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY")) arrowPosition = canvas_yMax / SONICSCREWDRIVER_RANGE_RESCALER_WITHLOG;
+                    else                                                                arrowPosition = canvas_yMax / SONICSCREWDRIVER_RANGE_RESCALER_NOLOG;
 
                     float cutValue = cutOnVariable.second.getValue();
                     float arrowLength = (canvas_xMax - canvas_xMin) * 0.07;
@@ -360,8 +369,10 @@ namespace theDoctor
 
           ratio->Draw("E");
 
+          bool includeSignalInRatio = theGlobalOptions.GetGlobalBoolOption("DataMCRatio", "includeSignal");
+
           // Add signal if specified in the options of the plotType
-          if ((includeSignal == "stack") || (includeSignal == "superimpose"))
+          if (includeSignalInRatio)
           {
               TH1F* histoSumBackground = theSumBackground->getClone();
 
@@ -421,24 +432,24 @@ namespace theDoctor
       {
 
           string ratioPosition = generalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
+          bool   logY = OptionsScrewdriver::GetBoolOption(varOptions,"logY");
 
-          if ( ratioPosition == "bottom") theStack->GetXaxis()->SetLabelSize(0.0);
-          else
-          {
+          if (ratioPosition == "top")
              PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
-          }
+          else
+             theStack->GetXaxis()->SetLabelSize(0.0);
 
           PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
 
           theStack->SetTitle("");
-          if (OptionsScrewdriver::GetBoolOption(varOptions,"logY"))
+          if (logY)
           {
               thePlot->SetLogY();
-              theStack->SetMaximum(theStack->GetMaximum() * 6.0);
+              theStack->SetMaximum(theStack->GetMaximum() * SONICSCREWDRIVER_RANGE_RESCALER_WITHLOG);
           }
           else
           {
-              theStack->SetMaximum(theStack->GetMaximum() * 1.3);
+              theStack->SetMaximum(theStack->GetMaximum() * SONICSCREWDRIVER_RANGE_RESCALER_NOLOG);
           }
       }
 
@@ -455,28 +466,39 @@ namespace theDoctor
       {
           string ratioPosition = generalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
 
+          float  ratioMin      = generalOptions.GetGlobalFloatOption("DataMCRatio","min");
+          float  ratioMax      = generalOptions.GetGlobalFloatOption("DataMCRatio","max");
+
+          if (ratioMin == -1) ratioMin = 0.5;
+          if (ratioMax == -1) ratioMax = 1.5;
+
           // Y axis
           PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));
           theRatio->GetYaxis()->CenterTitle();
           theRatio->GetYaxis()->SetTickLength(0.015);
           theRatio->GetYaxis()->SetTitleSize(0.17);
           theRatio->GetYaxis()->SetTitleOffset(0.25);
-          theRatio->SetMaximum(1.5);
-          theRatio->SetMinimum(0.5);
+          theRatio->SetMinimum(ratioMin);
+          theRatio->SetMaximum(ratioMax);
           theRatio->GetYaxis()->SetNdivisions(4);
 
           // X axis
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(),string(""));
-          if ( ratioPosition == "bottom")
+          if (ratioPosition == "top")
           {
-            PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(),xlabel) ;
-            theRatio->GetXaxis()->SetTitleSize(0.15);
+              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), "");
+              theRatio->GetXaxis()->SetLabelSize(0.0);
           }
-          else                            theRatio->GetXaxis()->SetLabelSize(0.0);
+          else
+          {
+              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), xlabel) ;
+              theRatio->GetXaxis()->SetTitleSize(0.22);
+              theRatio->GetXaxis()->SetTitleOffset(0.65);
+          }
+
           theRatio->GetXaxis()->SetTickLength(0.1);
 
           // Misc stuff
-          if ( ratioPosition != "bottom") theRatio->SetTitle("");
+          theRatio->SetTitle("");
           theRatio->SetStats(0);
 
       }
