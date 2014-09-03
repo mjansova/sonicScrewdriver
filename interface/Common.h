@@ -42,15 +42,18 @@ using namespace std;
 #define SONICSCREWDRIVER_RANGE_RESCALER_NOLOG    1.3
 #define SONICSCREWDRIVER_RANGE_RESCALER_WITHLOG  9.0
 
-#define COLORPLOT_RED 		kRed-7
-#define COLORPLOT_CYAN		kCyan-3
-#define COLORPLOT_ORANGE 	kOrange-2
-#define COLORPLOT_MAGENTA   kMagenta-5
-#define COLORPLOT_BLUE 		kAzure-2
-#define COLORPLOT_GREEN		kSpring-1
-#define COLORPLOT_GREEN2	kGreen+1
-#define COLORPLOT_BLACK		kBlack
-#define COLORPLOT_GRAY		kGray
+#define COLORPLOT_RED          kRed-7
+#define COLORPLOT_CYAN         kCyan-3
+#define COLORPLOT_ORANGE       kOrange-2
+#define COLORPLOT_MAGENTA      kMagenta-5
+#define COLORPLOT_BLUE         kAzure-2
+#define COLORPLOT_GREEN        kSpring-1
+#define COLORPLOT_GREEN2       kGreen+1
+#define COLORPLOT_BLACK        kBlack
+#define COLORPLOT_GRAY         kGray
+
+// Uncomment this to use TH1D instead of TH1F
+//#define TH1F TH1D
 
 string floatToString(float input);
 
