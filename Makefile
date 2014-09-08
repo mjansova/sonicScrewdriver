@@ -33,6 +33,9 @@ libSonicScrewdriver.so: $(OBJECTS)
 test:
 	@make -C test test
 
+browseTest:
+	@make -C test browse
+
 clean:
 	@echo "Cleaning..."
 	@rm -f $(OBJECTS)

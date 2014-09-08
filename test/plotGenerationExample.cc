@@ -1,11 +1,16 @@
+// ################
+// #   Includes   #
+// ################
+
 #include "common.h"
 
 // Sonic screwdriver
-
 #include "../interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
-// Structure used to read the tree
+// ####################
+// #   Event format   #
+// ####################
 
 typedef struct
 {
@@ -20,23 +25,47 @@ microEvent;
 // Global pointer used for the region/channel selectors
 microEvent* myEventPointer;
 
-// #########################################################################""
-// #########################################################################""
+// ###############
+// #   Regions   #
+// ###############
 
 // Regions
-bool preSelection_allmMuf();
-bool preSelection();
+vector<Cut> preSelection
+{
+    Cut("invariantMass", '>', 90)
+};
+
 vector<Cut> signalRegion
 {
     Cut("MET",     '>', 50),
     Cut("leptonPt",'>', 50)
 };
 
+// ################
+// #   Channels   #
+// ################
 
 // Channels
-bool combinedChannel();
-bool eChannel();
-bool muChannel();
+bool combinedChannel()
+{
+    return true;
+}
+
+bool eChannel()
+{
+   if (myEventPointer->leptonFlavor == 0) return true;
+   else                                   return false;
+}
+
+bool muChannel()
+{
+   if (myEventPointer->leptonFlavor == 1) return true;
+   else                                   return false;
+}
+
+// ####################
+// #   Main program   #
+// ####################
 
 int main (int argc, char *argv[])
 {
@@ -61,10 +90,10 @@ int main (int argc, char *argv[])
       myScrewdriver.AddVariable("invariantMass", "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "noUnderflowInFirstBin,noOverflowInLastBin");
       myScrewdriver.AddVariable("MET",           "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
       myScrewdriver.AddVariable("leptonPt",      "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
+      myScrewdriver.AddVariable("mMuf",          "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
       
       float customBinning[17] = {0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,50.0,60.0,70.0,80.0,90.0,100.0,125.0,150.0};
       myScrewdriver.AddVariable("leptonPt_customBinning",      "p_{T}(lepton)",    "GeV",    16,customBinning,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
-      myScrewdriver.AddVariable("mMuf",          "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -72,7 +101,7 @@ int main (int argc, char *argv[])
 
 	  // Backgrounds
 
-      myScrewdriver.AddProcessClass("foo",     "Foo #rightarrow",     "background", COLORPLOT_RED);
+      myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_RED);
            myScrewdriver.AddDataset("foo","foo",50000,0.495);
   
       myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_ORANGE);
@@ -93,7 +122,7 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     myScrewdriver.AddRegion("preSelection","Pre-selection",&preSelection);
+     myScrewdriver.AddRegion("preSelection","Pre-selection",               preSelection);
      myScrewdriver.AddRegion("signalRegion","Signal region","preSelection",signalRegion,"showCuts");
 
   // ##########################
@@ -124,6 +153,7 @@ int main (int argc, char *argv[])
 
      myScrewdriver.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
      myScrewdriver.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
+     myScrewdriver.SetGlobalBoolOption  ("DataMCRatio",       "includeSignal",                    true   );
      
      myScrewdriver.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
 
@@ -132,21 +162,12 @@ int main (int argc, char *argv[])
      myScrewdriver.SchedulePlots("1DSuperimposed");
      myScrewdriver.SchedulePlots("1DStack");
      myScrewdriver.SchedulePlots("1DDataMCComparison");
-     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=invariantMass,cutType=keepHighValues");
+     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=leptonPt,cutType=keepHighValues");
      myScrewdriver.SchedulePlots("2D");
-     /*
-     myScrewdriver.SchedulePlots("1DFrom2DProjection","varX=invariantMass,varY=leptonPt,projectionType=mean,tagY=meanLeptonPt,labelY=Mean Lepton Pt");
-     myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
-                                                    +",projectionType=mean"
-                                                    +",tagY=meanMass,labelY=Mean invariant mass");
-     myScrewdriver.SchedulePlots("1DFrom2DProjection",string("varX=mMuf,varY=invariantMass")
-                                                    +",projectionType=cutOptimalFigureOfMeritForVarXBeingSignalParameter,cutType=keepHighValues"
-                                                    +",tagY=bestCut,labelY=Best cut");
-     */
 
      // Config plots
 
-     myScrewdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
+     myScrewdriver.SetGlobalStringOption("Plot", "infoTopRight", "Work in progress");
      myScrewdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
      
      myScrewdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
@@ -170,7 +191,7 @@ int main (int argc, char *argv[])
     
          // Open dataset tree
          TTree* theTree;
-         TFile* f = new TFile((string("trees/")+currentDataset+".root").c_str());
+         TFile* f = new TFile(("trees/"+currentDataset+".root").c_str());
          f->GetObject("theTree",theTree);
          theTree->SetBranchAddress("theBranch",&myEvent);
       
@@ -205,7 +226,6 @@ int main (int argc, char *argv[])
 
      cout << "   > Making and writing plots ... " << endl;
 
-     system("mkdir -p ./plots/");
      myScrewdriver.MakePlots();
      myScrewdriver.WritePlots("./plots/");
 
@@ -214,33 +234,4 @@ int main (int argc, char *argv[])
      return (0);
 
 }
-
-// ##########################################
-// ##   Regions and channels definitions   ##
-// ##########################################
-
-bool preSelection()
-{
-    if (myEventPointer->invariantMass < 90) return false;
-    return true;
-}
-
-
-bool combinedChannel()
-{
-    return true;
-}
-
-bool eChannel()
-{
-   if (myEventPointer->leptonFlavor == 0) return true;
-   else                                   return false;
-}
-
-bool muChannel()
-{
-   if (myEventPointer->leptonFlavor == 1) return true;
-   else                                   return false;
-}
-
 

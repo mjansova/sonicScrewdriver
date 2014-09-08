@@ -421,11 +421,7 @@ namespace theDoctor
 
       static void ApplyDataStyle(Plot* thePlot, TH1F* theData, OptionsScrewdriver generalOptions)
       {
-          theData->SetMarkerStyle(8);
-          theData->SetMarkerSize(1);
-          theData->SetLineWidth(1);
-          theData->SetLineColor(kBlack);
-          theData->SetFillStyle(0);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theData, kBlack);
       }
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver generalOptions, string varOptions = "")
@@ -455,11 +451,7 @@ namespace theDoctor
 
       static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
       {
-          theRatio->SetMarkerStyle(8);
-          theRatio->SetMarkerSize(1);
-          theRatio->SetLineWidth(1);
-          theRatio->SetLineColor(kBlack);
-          theRatio->SetFillStyle(0);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theRatio, kBlack);
       }
 
       static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
