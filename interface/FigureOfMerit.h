@@ -18,7 +18,7 @@ namespace theDoctor
 
             static TH1F Compute(TH1F* signalHisto, TH1F* backgrHisto, short int cutType, OptionsScrewdriver theGlobalOptions)
             {
-                float f = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","backgroundSystematicUncertainty");
+                //float f = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","backgroundSystematicUncertainty");
 
                 TH1F theFOM = *((TH1F*) signalHisto->Clone());
                 int nBins = theFOM.GetNbinsX();
@@ -42,7 +42,11 @@ namespace theDoctor
 
                     if (B < 1) B = 1;
                     float sOverSqrtB = 0.0;
-                    if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B);
+                    // Previous way to get the FOM 
+                    // if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B);
+
+                    // New way to get the FOM
+                    if (S >= 3) sOverSqrtB = S / sqrt(S + B);
 
                     theFOM.SetBinContent(i,sOverSqrtB);
                     theFOM.SetBinError(i,0.0);
