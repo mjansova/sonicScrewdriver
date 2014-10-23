@@ -29,7 +29,7 @@ namespace theDoctor
             Plot(string name_, string type_, OptionsScrewdriver theGlobalOptions, string options = "")
             {
                 theCanvas = new TCanvas(name_.c_str(),"",850,750);
-                theLegend = new TLegend(0.65,0.70,0.89,0.89); theLegendMaxLabelSize = 0;
+                theLegend = new TLegend(0.65,0.70,0.89,0.89); theLegendMaxLabelSize = 0; theLegendNumberOfLines = 0;
                 theTopLeftInfo  = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theTopRightInfo = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theInPlotInfo = new TPaveText(0.13,0.77,0.43,0.87,"NDC");
@@ -158,7 +158,7 @@ namespace theDoctor
 
                 plotTo->cd();
 
-                PlaceLegend(plotTo,"topright",0.2,0.3);
+                PlaceLegend(plotTo,"topright",0.2,0.2);
                 theLegend->Draw();
 
                 theInPlotInfo->SetX1(    plotTo->GetLeftMargin()+0.03);
@@ -284,10 +284,17 @@ namespace theDoctor
 
                 if (theLegendMaxLabelSize < label.size())
                     theLegendMaxLabelSize = label.size();
+            
+                theLegendNumberOfLines++;
             };
 
             void PlaceLegend(TPad* pad, string place, float width, float height)
             {
+                if ((type == "1DDataMCComparisonFigure") || (type == "1DDataMCComparison"))
+                    theLegend->SetTextSize(0.045);
+                //if (height < theLegendNumberOfLines * 0.075)
+                height = theLegendNumberOfLines * 0.08;
+
                 float abs_right = 1.0-0.03-pad->GetRightMargin();
                 float abs_left  = 1.0-0.03-pad->GetLeftMargin();
                 float abs_top   = 1.0-0.03-pad->GetTopMargin();
@@ -346,6 +353,7 @@ namespace theDoctor
 
             TCanvas* theCanvas;
             TLegend* theLegend;
+            unsigned int theLegendNumberOfLines;
             unsigned int theLegendMaxLabelSize;
             TPaveText* theTopLeftInfo;
             TPaveText* theTopRightInfo;

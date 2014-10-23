@@ -44,7 +44,7 @@ class PlotDefaultStyles
 	 theLegend->SetFillColor(kWhite);
 	 theLegend->SetFillStyle(0);
 	 theLegend->SetTextFont(PLOTDEFAULTSTYLES_FONT+2);
-	 theLegend->SetTextSize(0.04);
+	 theLegend->SetTextSize(0.035);
   }
 
   // Canvas style
@@ -73,6 +73,15 @@ class PlotDefaultStyles
     thePad->SetTopMargin(0.05);
   }
 
+  // Data style
+  static void ApplyDefaultMarkerStyle(TH1F* histo, Color_t color)
+  {
+      histo->SetMarkerStyle(8);
+      histo->SetMarkerSize(1.25);
+      histo->SetLineWidth(2);
+      histo->SetLineColor(color);
+      histo->SetFillStyle(0);
+  }
 
 };
 #endif
