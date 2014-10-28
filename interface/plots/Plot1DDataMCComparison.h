@@ -220,13 +220,16 @@ namespace theDoctor
           stackBackground->Draw("HIST");
           ApplyAxisStyle(&thePlot,stackBackground,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
 
-          TH1F* histoSumBackgroundUncertainty = theSumBackground->getClone();
-
           // Display uncertainty as dashed rectangles
-          histoSumBackgroundUncertainty->SetFillColor(kBlack);
-          histoSumBackgroundUncertainty->SetFillStyle(3004);
-          histoSumBackgroundUncertainty->Draw("SAME E2");
+          bool showBackgroundUncertainty = theGlobalOptions.GetGlobalBoolOption( "DataMCComparison","showBackgroundUncertainty");
 
+          TH1F* histoSumBackgroundUncertainty = theSumBackground->getClone();
+          if (showBackgroundUncertainty)
+          {
+              histoSumBackgroundUncertainty->SetFillColor(kBlack);
+              histoSumBackgroundUncertainty->SetFillStyle(3004);
+              histoSumBackgroundUncertainty->Draw("SAME E2");
+          }
 
           // #################################
           // #####                       #####
