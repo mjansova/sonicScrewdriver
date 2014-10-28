@@ -38,7 +38,7 @@ browseTest:
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS)
+	@rm -f $(OBJECTS) *.so
 
 
 %.o: %.cc
