@@ -51,7 +51,7 @@ browse:
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS) *.tab
 
 %.$(ExeSuf): %.$(SrcSuf)
 	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS) $(LIBS) $(GCCPARSER)

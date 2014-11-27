@@ -17,7 +17,7 @@ namespace theDoctor
 
     class TableDataMC : public Table
     {
-      
+
      public:
 
             TableDataMC()
@@ -67,15 +67,15 @@ namespace theDoctor
 
                 if (includeSignal)
                 {
-                        for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
+                    for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
+                    {
+                        string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
+                        if (type == "signal")
                         {
-                                string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
-                                if (type == "signal")
-                                {
-                                        processesTags.push_back(rawProcessesTags[i]);
-                                        processesLabels.push_back(rawProcessesTags[i]);
-                                }
+                            processesTags.push_back(rawProcessesTags[i]);
+                            processesLabels.push_back(rawProcessesTags[i]);
                         }
+                    }
                 }
 
                 // Get labels for input regions

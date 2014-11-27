@@ -6,6 +6,7 @@
 
 // Sonic screwdriver
 #include "../interface/SonicScrewdriver.h" 
+#include "../interface/tables/TableDataMC.h" 
 using namespace theDoctor;
 
 // ####################
@@ -153,6 +154,7 @@ int main (int argc, char *argv[])
 
      myScrewdriver.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
      myScrewdriver.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
+     myScrewdriver.SetGlobalBoolOption  ("DataMCComparison",  "showBackgroundUncertainty",        true   );
      myScrewdriver.SetGlobalBoolOption  ("DataMCRatio",       "includeSignal",                    true   );
      
      myScrewdriver.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
@@ -228,6 +230,11 @@ int main (int argc, char *argv[])
 
      myScrewdriver.MakePlots();
      myScrewdriver.WritePlots("./plots/");
+
+     vector<string> regionsForTable  = { "preSelection", "signalRegion" };
+     TableDataMC(&myScrewdriver,regionsForTable,"combinedChannel","includeSignal").Print("yieldTable.tab",2);
+
+
 
      printBoxedMessage("Plot generation completed");
 
