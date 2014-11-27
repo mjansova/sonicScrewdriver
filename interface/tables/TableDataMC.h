@@ -8,10 +8,11 @@
 #include "interface/Figure.h"
 #include "interface/Table.h"
 #include "interface/SonicScrewdriver.h"
+#include "interface/OptionsScrewdriver.h"
 
 using namespace std;
 
-namespace theDoctor 
+namespace theDoctor
 {
 
     class TableDataMC : public Table
@@ -23,7 +24,7 @@ namespace theDoctor
             {
             }
 
-            TableDataMC(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel)
+            TableDataMC(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel, string options)
             {
                 vector<string> rawProcessesTags;
                 vector<string> rawProcessesLabels;
@@ -31,6 +32,8 @@ namespace theDoctor
                 vector<string> processesLabels;
                 vector<string> regionsTags;
                 vector<string> regionsLabels;
+
+                bool includeSignal = OptionsScrewdriver::GetBoolOption(options,"includeSignal");
 
                 screwdriver->GetProcessClassTagList  (&rawProcessesTags  );
                 screwdriver->GetProcessClassLabelList(&rawProcessesLabels);
@@ -62,6 +65,18 @@ namespace theDoctor
                     }
                 }
 
+                if (includeSignal)
+                {
+                        for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
+                        {
+                                string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
+                                if (type == "signal")
+                                {
+                                        processesTags.push_back(rawProcessesTags[i]);
+                                        processesLabels.push_back(rawProcessesTags[i]);
+                                }
+                        }
+                }
 
                 // Get labels for input regions
                 if (inputRegionTags.size() != 0)
@@ -71,7 +86,7 @@ namespace theDoctor
                     for (unsigned int i = 0 ; i < inputRegionTags.size() ; i++)
                     {
                         bool found = false;
-                        for (unsigned int j = 0 ; j < regionsTags.size()  ; j++) 
+                        for (unsigned int j = 0 ; j < regionsTags.size()  ; j++)
                         {
                             if (inputRegionTags[i] == regionsTags[j]) { inputRegionLabels.push_back(regionsLabels[j]); found = true; break; }
                         }

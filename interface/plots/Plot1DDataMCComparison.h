@@ -367,8 +367,20 @@ namespace theDoctor
           TH1F* ratio = theDataMCRatio->getClone();
           // (already rebinned if needed)
 
+          vector<TF1*> dashlines;
+
+          for ( float iline = 0.5; iline <= 1.5; iline += 0.1)
+          {
+             string dashlineName = string("dashline_")+floatToString(iline);
+             TF1* newDashline = new TF1(dashlineName.c_str(),floatToString(iline).c_str(),-10000,10000);
+             newDashline->SetLineColor(kBlack);
+             newDashline->SetLineStyle(2);
+             newDashline->SetLineWidth(0.8);
+             dashlines.push_back(newDashline);
+          }
+
           TF1* unity = new TF1("unity","1",-10000,10000);
-          unity->SetLineColor(kBlack);
+          unity->SetLineColor(kGray+2);
           unity->SetLineStyle(1);
           unity->SetLineWidth(1);
 
@@ -400,6 +412,12 @@ namespace theDoctor
                   histoClone->Divide(histoSumBackground);
                   histoClone->Draw("hist same");
               }
+          }
+
+          // Draw dash lines
+          for (unsigned int rank=0; rank <dashlines.size(); rank++)
+          {
+                dashlines[rank]->Draw("SAME");
           }
 
           // Draw unity
