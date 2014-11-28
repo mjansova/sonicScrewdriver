@@ -156,6 +156,7 @@ int main (int argc, char *argv[])
      myScrewdriver.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
      myScrewdriver.SetGlobalBoolOption  ("DataMCComparison",  "showBackgroundUncertainty",        true   );
      myScrewdriver.SetGlobalBoolOption  ("DataMCRatio",       "includeSignal",                    true   );
+     myScrewdriver.SetGlobalBoolOption  ("DataMCRatio",       "splitUncertainties",               true   );
      
      myScrewdriver.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
 

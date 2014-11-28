@@ -17,7 +17,8 @@ namespace theDoctor
                            Region* theRegion_, 
                            Channel* theChannel_,
                            Histo1D* theSumData,
-                           Histo1D* theSumBackground) : 
+                           Histo1D* theSumBackground,
+                           OptionsScrewdriver theGlobalOptions) : 
         Histo1D(Name("1DDataMCRatio","Data/MC"),theVar_,theRegion_,theChannel_)
         {
             string nameHisto =  string("v:")+theVar->getTag()
@@ -49,6 +50,17 @@ namespace theDoctor
             }
 
             theHisto->Add(histoSumData);
+
+            // Set the MC errors to 0 so that we can split the uncertainties of MC | Data in the ratio plot
+            bool splitUncertaintiesInRatio = (bool) theGlobalOptions.GetGlobalBoolOption("DataMCRatio","splitUncertainties");
+            if (splitUncertaintiesInRatio)
+            { 
+               for(int bin=0; bin < histoSumBackground->GetNbinsX(); bin++)
+               {
+                  histoSumBackground->SetBinError(bin, 0);
+               }
+            }
+
             theHisto->Divide(histoSumBackground);
         
         } 
@@ -96,7 +108,7 @@ namespace theDoctor
                 theDatas.push_back(theSumBackground);
 
                 theHistoScrewdriver->Add1DHistoForPlots(
-                        Histo1DDataMCRatio(theVar,theRegion,theChannel,theSumData,theSumBackground)
+                        Histo1DDataMCRatio(theVar,theRegion,theChannel,theSumData,theSumBackground,theGlobalOptions)
                         );
             }
         }
