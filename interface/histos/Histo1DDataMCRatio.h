@@ -8,17 +8,17 @@
 namespace theDoctor
 {
 
-    class Histo1DDataMCRatio : public Histo1D 
+    class Histo1DDataMCRatio : public Histo1D
     {
 
         public:
 
-        Histo1DDataMCRatio(Variable* theVar_, 
-                           Region* theRegion_, 
+        Histo1DDataMCRatio(Variable* theVar_,
+                           Region* theRegion_,
                            Channel* theChannel_,
                            Histo1D* theSumData,
                            Histo1D* theSumBackground,
-                           OptionsScrewdriver theGlobalOptions) : 
+                           OptionsScrewdriver theGlobalOptions) :
         Histo1D(Name("1DDataMCRatio","Data/MC"),theVar_,theRegion_,theChannel_)
         {
             string nameHisto =  string("v:")+theVar->getTag()
@@ -31,7 +31,7 @@ namespace theDoctor
             int regionRebin = 0;
             if (OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin") != -1.0)
             {
-                regionRebin = (int) OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin"); 
+                regionRebin = (int) OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin");
                 if (theVar->getNbins() % regionRebin != 0)
                 {
                     WARNING_MSG << "Cannot rebin " << theVar->getTag() << " in region " << theRegion->getTag() << endl;
@@ -42,7 +42,7 @@ namespace theDoctor
             TH1F* histoSumData = theSumData->getClone();
             TH1F* histoSumBackground = theSumBackground->getClone();
 
-            if (regionRebin) 
+            if (regionRebin)
             {
                 theHisto->Rebin(regionRebin);
                 histoSumData->Rebin(regionRebin);
@@ -54,7 +54,7 @@ namespace theDoctor
             // Set the MC errors to 0 so that we can split the uncertainties of MC | Data in the ratio plot
             bool splitUncertaintiesInRatio = (bool) theGlobalOptions.GetGlobalBoolOption("DataMCRatio","splitUncertainties");
             if (splitUncertaintiesInRatio)
-            { 
+            {
                for(int bin=0; bin < histoSumBackground->GetNbinsX(); bin++)
                {
                   histoSumBackground->SetBinError(bin, 0);
@@ -62,8 +62,8 @@ namespace theDoctor
             }
 
             theHisto->Divide(histoSumBackground);
-        
-        } 
+
+        }
 
         ~Histo1DDataMCRatio() { }
 
@@ -79,7 +79,7 @@ namespace theDoctor
                             vector<Channel>* theChannels,
                             HistoScrewdriver* theHistoScrewdriver,
                             OptionsScrewdriver theGlobalOptions,
-                            string histoOptions)      
+                            string histoOptions)
         {
             // Browse the (var x reg x chan) space
             for (unsigned int v = 0 ; v < theVariables->size() ; v++)

@@ -371,15 +371,23 @@ namespace theDoctor
           // (already rebinned if needed)
 
           vector<TF1*> dashlines;
+          float yGridStep = theGlobalOptions.GetGlobalFloatOption("DataMCRatio", "yGridStep");
 
-          for ( float iline = 0.5; iline <= 1.5; iline += 0.1)
+          if (yGridStep > 0)
+          for ( float iline = 1; iline <= 5; iline++)
           {
-             string dashlineName = string("dashline_")+floatToString(iline);
-             TF1* newDashline = new TF1(dashlineName.c_str(),floatToString(iline).c_str(),-10000,10000);
-             newDashline->SetLineColor(kGray+2);
-             newDashline->SetLineStyle(2);
-             newDashline->SetLineWidth(0.8);
-             dashlines.push_back(newDashline);
+             string dashlineName_p = string("dashline_+")+floatToString(iline);
+             string dashlineName_m = string("dashline_-")+floatToString(iline);
+             TF1* newDashline_p = new TF1(dashlineName_p.c_str(),floatToString(1+iline*yGridStep).c_str(),-10000,10000);
+             TF1* newDashline_m = new TF1(dashlineName_m.c_str(),floatToString(1-iline*yGridStep).c_str(),-10000,10000);
+             newDashline_p->SetLineColor(kGray+2);
+             newDashline_p->SetLineStyle(2);
+             newDashline_p->SetLineWidth(0.8);
+             newDashline_m->SetLineColor(kGray+2);
+             newDashline_m->SetLineStyle(2);
+             newDashline_m->SetLineWidth(0.8);
+             dashlines.push_back(newDashline_p);
+             dashlines.push_back(newDashline_m);
           }
 
           TF1* unity = new TF1("unity","1",-10000,10000);
@@ -394,7 +402,7 @@ namespace theDoctor
 
           bool splitUncertaintiesInRatio = theGlobalOptions.GetGlobalBoolOption("DataMCRatio", "splitUncertainties");
 
-          // Display separately MC and Data  uncertainties on ratio plot 
+          // Display separately MC and Data  uncertainties on ratio plot
           if(splitUncertaintiesInRatio)
           {
               TH1F* histoSumBackgroundUnit = theSumBackground->getClone();
@@ -437,10 +445,8 @@ namespace theDoctor
           }
 
           // Draw dash lines
-          for (unsigned int rank=0; rank <dashlines.size(); rank++)
-          {
-                dashlines[rank]->Draw("SAME");
-          }
+          for (unsigned int r=0; r <dashlines.size(); r++)
+                dashlines[r]->Draw("SAME");
 
           // Draw unity
           unity->Draw("SAME");
