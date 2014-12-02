@@ -122,10 +122,10 @@ namespace theDoctor
           thePlot.AddToInPlotInfo(theChannel->getLabel());
           thePlot.AddToInPlotInfo(theRegion->getLabel());
 
-          string ratioPosition = theGlobalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
-          string includeSignal = theGlobalOptions.GetGlobalStringOption("DataMCComparison","includeSignal");
-          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "DataMCComparison","factorSignal");
-          string factorSignalStr = floatToString(factorSignal);
+          string ratioPosition      = theGlobalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
+          string includeSignal      = theGlobalOptions.GetGlobalStringOption("DataMCComparison","includeSignal");
+          float  factorSignal       = theGlobalOptions.GetGlobalFloatOption( "DataMCComparison","factorSignal");
+          string factorSignalStr    = floatToString(factorSignal);
 
           int regionRebin = 0;
           if (OptionsScrewdriver::GetFloatOption(theRegion->getOptions(),"rebin") != -1.0)
@@ -370,6 +370,18 @@ namespace theDoctor
           TH1F* ratio = theDataMCRatio->getClone();
           // (already rebinned if needed)
 
+          vector<TF1*> dashlines;
+
+          for ( float iline = 0.5; iline <= 1.5; iline += 0.1)
+          {
+             string dashlineName = string("dashline_")+floatToString(iline);
+             TF1* newDashline = new TF1(dashlineName.c_str(),floatToString(iline).c_str(),-10000,10000);
+             newDashline->SetLineColor(kGray+2);
+             newDashline->SetLineStyle(2);
+             newDashline->SetLineWidth(0.8);
+             dashlines.push_back(newDashline);
+          }
+
           TF1* unity = new TF1("unity","1",-10000,10000);
           unity->SetLineColor(kBlack);
           unity->SetLineStyle(1);
@@ -379,6 +391,25 @@ namespace theDoctor
           ApplyRatioAxisStyle(&thePlot,ratio,xlabel,theGlobalOptions,theVar->getOptions());
 
           ratio->Draw("E");
+
+          bool splitUncertaintiesInRatio = theGlobalOptions.GetGlobalBoolOption("DataMCRatio", "splitUncertainties");
+
+          // Display separately MC and Data  uncertainties on ratio plot 
+          if(splitUncertaintiesInRatio)
+          {
+              TH1F* histoSumBackgroundUnit = theSumBackground->getClone();
+              for(int bin=0; bin < histoSumBackgroundUnit->GetNbinsX(); bin++)
+              {
+                    float bincontent_tmp = histoSumBackgroundUnit->GetBinContent(bin);
+                    float binerror_tmp   = histoSumBackgroundUnit->GetBinError(bin);
+                    histoSumBackgroundUnit->SetBinContent(bin, 1);
+                    if(bincontent_tmp != 0) histoSumBackgroundUnit->SetBinError(bin, binerror_tmp/bincontent_tmp);
+                    else                    histoSumBackgroundUnit->SetBinError(bin, 0);
+              }
+              histoSumBackgroundUnit->SetFillColor(kBlack);
+              histoSumBackgroundUnit->SetFillStyle(3004);
+              histoSumBackgroundUnit->Draw("SAME E2");
+          }
 
           bool includeSignalInRatio = theGlobalOptions.GetGlobalBoolOption("DataMCRatio", "includeSignal");
 
@@ -403,6 +434,12 @@ namespace theDoctor
                   histoClone->Divide(histoSumBackground);
                   histoClone->Draw("hist same");
               }
+          }
+
+          // Draw dash lines
+          for (unsigned int rank=0; rank <dashlines.size(); rank++)
+          {
+                dashlines[rank]->Draw("SAME");
           }
 
           // Draw unity
