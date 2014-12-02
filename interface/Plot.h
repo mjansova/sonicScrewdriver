@@ -284,7 +284,7 @@ namespace theDoctor
 
                 if (theLegendMaxLabelSize < label.size())
                     theLegendMaxLabelSize = label.size();
-            
+
                 theLegendNumberOfLines++;
             };
 
@@ -294,6 +294,7 @@ namespace theDoctor
                     theLegend->SetTextSize(0.045);
                 //if (height < theLegendNumberOfLines * 0.075)
                 height = theLegendNumberOfLines * 0.08;
+                if (height > 0.5) height = 0.5;
 
                 float abs_right = 1.0-0.03-pad->GetRightMargin();
                 float abs_left  = 1.0-0.03-pad->GetLeftMargin();

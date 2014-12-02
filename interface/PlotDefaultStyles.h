@@ -10,9 +10,9 @@
 
 class PlotDefaultStyles
 {
-  
+
  public:
- 
+
   PlotDefaultStyles();
   ~PlotDefaultStyles();
 
@@ -79,6 +79,7 @@ class PlotDefaultStyles
       histo->SetMarkerStyle(8);
       histo->SetMarkerSize(1.25);
       histo->SetLineWidth(2);
+      histo->SetMarkerColor(color);
       histo->SetLineColor(color);
       histo->SetFillStyle(0);
   }

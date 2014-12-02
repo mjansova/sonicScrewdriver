@@ -254,12 +254,7 @@ namespace theDoctor
 
 	  static void ApplyHistoFigureStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string options = "")
       {
-          theHisto->SetMarkerStyle(8);
-          theHisto->SetMarkerSize(1);
-          theHisto->SetMarkerColor(color);
-          theHisto->SetLineWidth(1);
-          theHisto->SetLineColor(color);
-          theHisto->SetFillStyle(0);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theHisto, color);
 	  }
 
       static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, OptionsScrewdriver theGlobalOptions, string options = "")

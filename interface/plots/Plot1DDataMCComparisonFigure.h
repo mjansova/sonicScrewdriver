@@ -74,6 +74,7 @@ namespace theDoctor
          //thePlot.getCanvas()->SetBottomMargin(0.15);
          //thePlot.getCanvas()->SetRightMargin(0.15);
 
+         string ratioPosition = theGlobalOptions.GetGlobalStringOption("DataMCComparison",        "ratioPosition");
          string includeSignal = theGlobalOptions.GetGlobalStringOption("1DDataMCComparisonFigure","includeSignal");
          float  factorSignal  = theGlobalOptions.GetGlobalFloatOption( "1DDataMCComparisonFigure","factorSignal");
          string factorSignalStr = floatToString(factorSignal);
@@ -155,9 +156,29 @@ namespace theDoctor
             histoSumBackground->Add(histoClone);
         }
 
-        // Create stack histo + another histo for the error plotting for the background sum
-        TPad* theStackPad = thePlot.AddPad(0,0,1,0.8,"legend");
-        theStackPad->SetTopMargin(0.0);
+        TPad* theRatioPad;
+        TPad* theStackPad;
+        if (ratioPosition == "top")
+        {
+           theStackPad = thePlot.AddPad(0,0,1,0.8,"legend");
+           theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
+
+           theRatioPad->SetBottomMargin(0.07);
+           theRatioPad->SetTopMargin(0.3);
+           theStackPad->SetTopMargin(0.0);
+        }
+        else
+        {
+           theStackPad = thePlot.AddPad(0,0.25,1,1,"legend,topInfo");
+           theRatioPad = thePlot.AddPad(0,0,1,0.25,"");
+
+           theRatioPad->SetTopMargin(0.05);
+           theRatioPad->SetBottomMargin(0.35);
+           theStackPad->SetBottomMargin(0.02);
+           theStackPad->SetTopMargin(0.06);
+        }
+
+        theStackPad->cd();
 
         // Apply axis style and plot the stack
         theStack->Draw("HIST");
@@ -258,11 +279,7 @@ namespace theDoctor
         // ##  Ratio  ##
         // #############
 
-        // Compute and draw the ratio
-        //
-        TPad* theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
-        theRatioPad->SetBottomMargin(0.07);
-        theRatioPad->SetTopMargin(0.3);
+        theRatioPad->cd();
 
         // Make the histogram
         TH1F* histoRatio = new TH1F("","",theRegions->size(), 0, theRegions->size());
@@ -274,13 +291,21 @@ namespace theDoctor
         histoRatio->Add(histoSumData);
         histoRatio->Divide(histoSumBackground);
 
+        // Set labels for ratio histogram
+        for (unsigned int r = 0 ; r < theRegions->size() ; r++)
+        {
+            Region* region = &((*theRegions)[r]);
+            histoRatio->GetXaxis()->SetBinLabel(r+1, region->getLabel().c_str());
+        }
+
+
         TF1* unity = new TF1("unity","1",-10000,10000);
         unity->SetLineColor(kBlack);
         unity->SetLineStyle(1);
         unity->SetLineWidth(1);
 
         ApplyRatioStyle(&thePlot,histoRatio,theGlobalOptions);
-        ApplyRatioAxisStyle(&thePlot,histoRatio,theGlobalOptions);
+        ApplyRatioAxisStyle(&thePlot,histoRatio,xlabel,theGlobalOptions,theFigureName.getOptions());
 
         histoRatio->Draw("E");
 
@@ -319,52 +344,75 @@ namespace theDoctor
           theData->SetFillStyle(0);
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string options = "")
+      static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver generalOptions, string options = "")
       {
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
-          theStack->SetTitle("");
+          string ratioPosition = generalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
+          bool   logY = OptionsScrewdriver::GetBoolOption(options,"logY");
 
-          if (OptionsScrewdriver::GetBoolOption(options,"logY"))
+          if (ratioPosition == "top")
+             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
+          else
+             theStack->GetXaxis()->SetLabelSize(0.0);
+
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
+
+          theStack->SetTitle("");
+          if (logY)
           {
               thePlot->SetLogY();
-              theStack->SetMaximum(theStack->GetMaximum() * 6.0);
+              theStack->SetMaximum(theStack->GetMaximum() * SONICSCREWDRIVER_RANGE_RESCALER_WITHLOG);
           }
           else
-              theStack->SetMaximum(theStack->GetMaximum() * 1.6);
+          {
+              theStack->SetMaximum(theStack->GetMaximum() * SONICSCREWDRIVER_RANGE_RESCALER_NOLOG);
+          }
       }
 
       static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
       {
-          theRatio->SetMarkerStyle(8);
-          theRatio->SetMarkerSize(1);
-          theRatio->SetLineWidth(1);
-          theRatio->SetLineColor(kBlack);
-          theRatio->SetFillStyle(0);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theRatio, kBlack);
       }
 
-      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
+      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
       {
+          string ratioPosition = generalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
+
+          float  ratioMin      = generalOptions.GetGlobalFloatOption("DataMCRatio","min");
+          float  ratioMax      = generalOptions.GetGlobalFloatOption("DataMCRatio","max");
+
+          if (ratioMin == -1) ratioMin = 0.5;
+          if (ratioMax == -1) ratioMax = 1.5;
+
           // Y axis
           PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));
           theRatio->GetYaxis()->CenterTitle();
           theRatio->GetYaxis()->SetTickLength(0.015);
           theRatio->GetYaxis()->SetTitleSize(0.17);
           theRatio->GetYaxis()->SetTitleOffset(0.25);
-          theRatio->SetMaximum(1.5);
-          theRatio->SetMinimum(0.5);
+          theRatio->SetMinimum(ratioMin);
+          theRatio->SetMaximum(ratioMax);
           theRatio->GetYaxis()->SetNdivisions(4);
 
           // X axis
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(),string(""));
-          theRatio->GetXaxis()->SetLabelSize(0.0);
+          if (ratioPosition == "top")
+          {
+              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), "");
+              theRatio->GetXaxis()->SetLabelSize(0.0);
+          }
+          else
+          {
+              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), xlabel) ;
+              theRatio->GetXaxis()->SetTitleSize(0.22);
+              theRatio->GetXaxis()->SetTitleOffset(0.65);
+          }
+
           theRatio->GetXaxis()->SetTickLength(0.1);
 
           // Misc stuff
           theRatio->SetTitle("");
           theRatio->SetStats(0);
-      }
 
+      }
 
     };
 
