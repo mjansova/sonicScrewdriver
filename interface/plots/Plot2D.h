@@ -13,7 +13,7 @@
 namespace theDoctor
 {
 
-    class Plot2D 
+    class Plot2D
     {
 
         public:
@@ -34,12 +34,12 @@ namespace theDoctor
                                         string histoOptions)
             {
                 vector<Plot> theOutput;
-      
+
                 vector<Histo2DEntries>* the2DHistosEntries = theHistoScrewdriver->Get2DHistosEntries();
 
                 for (unsigned int h = 0 ; h < the2DHistosEntries->size()   ; h++)
                 {
-                    Histo2DEntries* theHisto        = &((*the2DHistosEntries)[h]); 
+                    Histo2DEntries* theHisto        = &((*the2DHistosEntries)[h]);
                     Variable*       theXVar         = theHisto->getVariableX();
                     Variable*       theYVar         = theHisto->getVariableY();
                     ProcessClass*   theProcessClass = theHisto->getProcessClass();
@@ -58,7 +58,7 @@ namespace theDoctor
             static Plot MakePlot(Variable*          theXVar,
                                  Variable*          theYVar,
                                  ProcessClass*      theProcessClass,
-                                 Region*            theRegion, 
+                                 Region*            theRegion,
                                  Channel*           theChannel,
                                  Histo2DEntries*    theHisto,
                                  OptionsScrewdriver theGlobalOptions)
@@ -76,7 +76,7 @@ namespace theDoctor
                 thePlot.SetParameter("processClass",theProcessClass->getTag());
                 thePlot.SetParameter("region",      theRegion->getTag());
                 thePlot.SetParameter("channel",     theChannel->getTag());
-                
+
                 thePlot.AddToInPlotInfo(theChannel->getLabel());
                 thePlot.AddToInPlotInfo(theRegion->getLabel());
                 thePlot.AddToInPlotInfo(theProcessClass->getLabel());
@@ -102,7 +102,7 @@ namespace theDoctor
                 histoClone->Draw("COLZ");
                 thePlot.Update();
                 TPaletteAxis *pal = (TPaletteAxis*) histoClone->GetListOfFunctions()->FindObject("palette");
-                if (pal != 0) 
+                if (pal != 0)
                 {
                     pal->SetX1NDC(0.901);
                     pal->SetY1NDC(0.1);
@@ -121,7 +121,7 @@ namespace theDoctor
             }
 
             static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
-            {	
+            {
                 PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
                 PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
                 //theHisto->SetTitle(title.c_str());

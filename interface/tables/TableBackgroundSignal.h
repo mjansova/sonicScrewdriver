@@ -11,12 +11,12 @@
 
 using namespace std;
 
-namespace theDoctor 
+namespace theDoctor
 {
 
     class TableBackgroundSignal : public Table
     {
-      
+
      public:
 
             TableBackgroundSignal();
@@ -69,7 +69,7 @@ namespace theDoctor
                     for (unsigned int i = 0 ; i < inputRegionTags.size() ; i++)
                     {
                         bool found = false;
-                        for (unsigned int j = 0 ; j < regionsTags.size()  ; j++) 
+                        for (unsigned int j = 0 ; j < regionsTags.size()  ; j++)
                         {
                             if (inputRegionTags[i] == regionsTags[j]) { inputRegionLabels.push_back(regionsLabels[j]); found = true; break; }
                         }

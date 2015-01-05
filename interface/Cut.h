@@ -1,34 +1,34 @@
 #ifndef Cut_h
 #define Cut_h
 
-#include "interface/Common.h" 
-#include "interface/Variable.h" 
+#include "interface/Common.h"
+#include "interface/Variable.h"
 
 using namespace std;
 
 namespace theDoctor
 {
 
-    class Cut 
+    class Cut
     {
-      
+
      public:
-     
+
       Cut(string targetTag_, char type_, float value_)
       {
           targetTag = targetTag_;
           type        = type_;
           value       = value_;
-          
+
           target    = 0;
-      }; 
+      };
 
       ~Cut() { };
 
       string    getTargetTag() const { return targetTag; };
       Variable* getTarget()    const { return target;    };
       char      getType()      const { return type;      };
-      float     getValue()     const { return value;     }; 
+      float     getValue()     const { return value;     };
 
       void checkAndLink(vector<Variable>* theVariables)
       {
@@ -66,7 +66,7 @@ namespace theDoctor
         string    targetTag;
         Variable* target;
         char      type;
-        float     value;	
+        float     value;
 
     };
 

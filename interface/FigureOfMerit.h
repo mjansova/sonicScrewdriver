@@ -1,14 +1,14 @@
 #ifndef FigureOfMerit_h
 #define FigureOfMerit_h
 
-#include "interface/Common.h" 
+#include "interface/Common.h"
 
 using namespace std;
 
 namespace theDoctor
 {
 
-    class FigureOfMerit 
+    class FigureOfMerit
     {
 
         public:
@@ -42,7 +42,7 @@ namespace theDoctor
 
                     if (B < 1) B = 1;
                     float sOverSqrtB = 0.0;
-                    // Previous way to get the FOM 
+                    // Previous way to get the FOM
                     // if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B);
 
                     // New way to get the FOM
@@ -53,7 +53,7 @@ namespace theDoctor
                 }
 
                 return theFOM;
-            }; 
+            };
 
     };
 

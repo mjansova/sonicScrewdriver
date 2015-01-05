@@ -45,11 +45,11 @@ void printBoxedMessage(string message)
     cout << "─┐  " << endl;
 
     cout << "   │  " << message << "  │  " << endl;
-    
+
     cout << "   └──";
     for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┘  " << endl; 
- 
+    cout << "─┘  " << endl;
+
     cout << endl;
 
 }

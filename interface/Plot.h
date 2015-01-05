@@ -232,6 +232,7 @@ namespace theDoctor
                     string pngFolder = "./"+outputFolder+"/png/"+category+"/";  string pngFile = pngFolder+shortPlotName+".png";
                     string pdfFolder = "./"+outputFolder+"/pdf/"+category+"/";  string pdfFile = pdfFolder+shortPlotName+".pdf";
 
+                    // FIXME : move this somewhere else, maybe constructor of sonicscrewdriver
                     gErrorIgnoreLevel = kWarning;
 
                     if (exportEps)

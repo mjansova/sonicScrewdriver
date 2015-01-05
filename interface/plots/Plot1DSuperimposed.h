@@ -14,11 +14,11 @@
 namespace theDoctor
 {
 
-    class Plot1DSuperimposed 
+    class Plot1DSuperimposed
     {
-      
+
      public:
-     
+
       Plot1DSuperimposed();
       ~Plot1DSuperimposed();
 
@@ -35,7 +35,7 @@ namespace theDoctor
                                   string histoOptions)
       {
           vector<Plot> theOutput;
-          
+
           for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
           for (unsigned int v = 0 ; v < theVariables->size() ; v++)
           for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
@@ -47,13 +47,13 @@ namespace theDoctor
               Variable* theVar     = &((*theVariables)[v]);
               Region*   theRegion  = &((*theRegions)[r]);
               Channel*  theChannel = &((*theChannels)[c]);
-      
+
               // Now loop on the histos
               for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
               {
 
                   ProcessClass thisProcess = (*theProcessClasses)[i];
-                  
+
                   if (OptionsScrewdriver::GetBoolOption(thisProcess.getOptions(),"no1DPlots")) continue;
 
                   // If it it, we add it to the relevant backgrounds
@@ -70,14 +70,14 @@ namespace theDoctor
               theOutput.push_back(
                                     MakePlot(theVar,theRegion,theChannel,theBackgrounds,theSignals,theDatas,theGlobalOptions)
                                  );
-   
+
           }
 
           return theOutput;
       }
 
-      static Plot MakePlot(Variable* theVar, 
-                           Region* theRegion, 
+      static Plot MakePlot(Variable* theVar,
+                           Region* theRegion,
                            Channel* theChannel,
                            vector<Histo1DEntries*> theBackgrounds,
                            vector<Histo1DEntries*> theSignals,
@@ -98,7 +98,7 @@ namespace theDoctor
 
          bool includeSignal = theGlobalOptions.GetGlobalBoolOption("1DSuperimposed","includeSignal");
          bool includeData   = theGlobalOptions.GetGlobalBoolOption("1DSuperimposed","includeData");
-         
+
          // Prepare the labels for x and y axis
          // xlabel = labelDeLaVariable (Unité)
          // ylabel = Normalized entries / largeurDeBin Unité
@@ -130,14 +130,14 @@ namespace theDoctor
             // Get the histo
             TH1F* histoClone = theBackgrounds[i]->getClone();
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
-            
+
             // Normalize histogram to unity
             if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
             // Draw the histo
-            if (!firstHisto) 
-            {   
-                histoClone->Draw("hist E0");      
+            if (!firstHisto)
+            {
+                histoClone->Draw("hist E0");
                 ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
                 firstHisto = histoClone;
             }
@@ -159,19 +159,19 @@ namespace theDoctor
             {
                 // Get associated processClass
                 ProcessClass* processClass = theSignals[i]->getProcessClass();
-                    
+
                 // Get the histo
                 TH1F* histoClone = theSignals[i]->getClone();
                 ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->SetLineStyle(9);
-               
+
                 // Normalize histogram to unity
                 if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
                 // Draw the histo
-                if (!firstHisto) 
-                {   
-                    histoClone->Draw("hist E0");      
+                if (!firstHisto)
+                {
+                    histoClone->Draw("hist E0");
                     ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
                     firstHisto = histoClone;
                 }
@@ -185,7 +185,7 @@ namespace theDoctor
                 thePlot.AddToLegend(histoClone,processClass->getLabelC() ,"l");
             }
         }
-       
+
 		// Add data if specified in the options of the plot type
         if (includeData)
         {
@@ -193,7 +193,7 @@ namespace theDoctor
             {
                 // Get associated processClass
                 ProcessClass* processClass = theDatas[i]->getProcessClass();
-                    
+
                 // Get the histo
                 TH1F* histoClone = theDatas[i]->getClone();
                 ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
@@ -207,9 +207,9 @@ namespace theDoctor
                 if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
                 // Draw the histo
-                if (!firstHisto) 
-                {   
-                    histoClone->Draw("hist E0");      
+                if (!firstHisto)
+                {
+                    histoClone->Draw("hist E0");
                     ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
                     firstHisto = histoClone;
                 }
@@ -234,7 +234,7 @@ namespace theDoctor
         // #####                       #####
         // ###        Cut arrow          ###
         // #####                       #####
-        // #################################   
+        // #################################
 
         TArrow* cutArrow;
         TLine*  cutLine;
@@ -245,11 +245,11 @@ namespace theDoctor
             // Draw line/arrow only for variable the region actually cuts on
             if (cutOnVariable.first == true)
             {
-                double canvas_xMin = theVar->getMin(); 
+                double canvas_xMin = theVar->getMin();
                 double canvas_xMax = theVar->getMax();
                 double canvas_yMin = 0;
                 double canvas_yMax = firstHisto->GetBinContent(firstHisto->GetMaximumBin());
-                
+
                 float arrowPosition;
                 if (OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"logY")) arrowPosition = canvas_yMax / 6.0;
                 else                                                                arrowPosition = canvas_yMax / 1.3;
@@ -285,11 +285,11 @@ namespace theDoctor
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(6);
          theHisto->SetLineColor(color);
-         
+
       }
 
       static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
-      {    
+      {
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
          theHisto->SetTitle("");

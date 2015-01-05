@@ -11,9 +11,9 @@
 namespace theDoctor
 {
 
-    class Histo2DFrom3DProjection : public Histo2D 
+    class Histo2DFrom3DProjection : public Histo2D
     {
-      
+
      public:
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
@@ -31,7 +31,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoParameters)      
+                          string histoParameters)
       {
 
           string varXName       = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
@@ -59,7 +59,7 @@ namespace theDoctor
                   Region*       theRegion       = &((*theRegions)[r]);
                   Channel*      theChannel      = &((*theChannels)[c]);
                   ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
-
+                  /*
                   if ((projectionType == "maxFigureOfMeritForVarXYBeingSignalParameter")
                    || (projectionType == "cutOptimalFigureOfMeritForVarXYBeingSignalParameter"))
                   {
@@ -83,12 +83,13 @@ namespace theDoctor
                                                       thisProcessHisto,
                                                       theGlobalOptions,
                                                       histoParameters)
-                                                             );
+                                                     );
 
 
                   }
                   else
                   {
+                  */
                       Histo3DEntries* thisProcessHisto = theHistoScrewdriver->get3DHistoEntriesPointer(theXVar->getTag(),
                                                                                                        theYVar->getTag(),
                                                                                                        theZVar->getTag(),
@@ -107,22 +108,22 @@ namespace theDoctor
                                                       thisProcessHisto,
                                                       theGlobalOptions,
                                                       histoParameters)
-                                                             );
-                  }
+                                                     );
+                  //}
               }
           }
      }
 
 
       ~Histo2DFrom3DProjection() { };
-      
-      Histo2DFrom3DProjection(Variable* theXVar_, 
-                              Variable* theYVar_, 
-                              Variable* theZVar_, 
-                              Region*   theRegion_, 
+
+      Histo2DFrom3DProjection(Variable* theXVar_,
+                              Variable* theYVar_,
+                              Variable* theZVar_,
+                              Region*   theRegion_,
                               Channel*  theChannel_,
                               ProcessClass* theProcessClass,
-                              Histo3D* theInputHisto,
+                              Histo3DEntries* theInputHisto,
                               OptionsScrewdriver theGlobalOptions,
                               string histoParameters) :
       Histo2D(Name("2DFrom3DProjection",""),theXVar_,theYVar_,theRegion_,theChannel_,string("vZ=")+theZVar_->getTag()
@@ -141,16 +142,16 @@ namespace theDoctor
 
           string projectionType = OptionsScrewdriver::GetStringOption(histoParameters,"projectionType");
 
-          int   nBinsX = theXVar_->getNbins(); 
-          int   nBinsY = theYVar_->getNbins(); 
-          int   nBinsZ = theZVar_->getNbins(); 
+          int   nBinsX = theXVar_->getNbins();
+          int   nBinsY = theYVar_->getNbins();
+          int   nBinsZ = theZVar_->getNbins();
           float minZ   = theZVar_->getMin();
           float maxZ   = theZVar_->getMax();
 
-          TH3F* theInputHisto_ = theInputHisto->getClone();
+          TH3F* theInputHisto_ = theInputHisto->getHisto();
 
-          for (int i = 1 ; i < nBinsX+1 ; i++)
-          for (int j = 1 ; j < nBinsY+1 ; j++)
+          for (int i = 0 ; i <= nBinsX+1 ; i++)
+          for (int j = 0 ; j <= nBinsY+1 ; j++)
           {
               // Read bin (i,j)
               TH1F ijIshBinHisto("tempHisto","",nBinsZ,minZ,maxZ);

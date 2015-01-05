@@ -11,15 +11,15 @@
 namespace theDoctor
 {
 
-    class Histo1DFigureOfMerit : public Histo1D 
+    class Histo1DFigureOfMerit : public Histo1D
     {
-      
+
      public:
 
       ~Histo1DFigureOfMerit() { };
-      
-      Histo1DFigureOfMerit(Variable* theVar_, 
-                           Region* theRegion_, 
+
+      Histo1DFigureOfMerit(Variable* theVar_,
+                           Region* theRegion_,
                            Channel* theChannel_,
                            const Histo1DEntries* theSignal,
                            const Histo1D* theSumBackground,
@@ -46,7 +46,7 @@ namespace theDoctor
               theHisto->SetBinError(i,theFigureOfMeritHisto.GetBinError(i));
           }
           //DEBUG_MSG << "var = " << theSumBackground->getVariable() << "bkg =    " << theSumBackground->getHisto() << endl;
-      }; 
+      };
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
@@ -60,7 +60,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoParameters)      
+                          string histoParameters)
       {
           string varName = OptionsScrewdriver::GetStringOption(histoParameters,"var");
           // Browse the (var x reg x chan) space
@@ -85,15 +85,15 @@ namespace theDoctor
                   // Get the cut type we're using for this variable
                   string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
                   int cutType = 0;
-                  if (cutType_ == string("keepLowValues"))  cutType = -1; 
-                  else if (cutType_ == string("keepHighValues")) cutType =  1; 
+                  if (cutType_ == string("keepLowValues"))  cutType = -1;
+                  else if (cutType_ == string("keepHighValues")) cutType =  1;
 
                   // Loop on the signals
                   for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
                   {
                       ProcessClass* theProcessClass = &((*theProcessClasses)[p]);
                       if (theProcessClass->getType() != "signal") continue;
-                  
+
                       Histo1DEntries* thisSignal = theHistoScrewdriver->get1DHistoEntriesPointer(theVar->getTag(),
                               theProcessClass->getTag(),
                               theRegion->getTag(),

@@ -35,7 +35,7 @@
 namespace theDoctor
 {
 
-    class PlotScrewdriver 
+    class PlotScrewdriver
     {
 
         public:
@@ -76,7 +76,7 @@ namespace theDoctor
             else { WARNING_MSG << "Plot-type '" << plotType << "' unknown." << endl; return; }
 
             // Schedule histo needed for plot
-            for (unsigned int i = 0 ; i < dependencies.size() ; i++) 
+            for (unsigned int i = 0 ; i < dependencies.size() ; i++)
                 ScheduleHisto(dependencies[i].first,dependencies[i].second);
 
             // Schedule plot
@@ -97,17 +97,17 @@ namespace theDoctor
                 string histoType = histo.first;
                 string histoOptions = histo.second;
 
-                     if (histoType == "1DSumBackground") 
+                     if (histoType == "1DSumBackground")
                     Histo1DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
-                else if (histoType == "1DSumData") 
+                else if (histoType == "1DSumData")
                     Histo1DSumData      ::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
-                else if (histoType == "1DDataMCRatio") 
+                else if (histoType == "1DDataMCRatio")
                     Histo1DDataMCRatio  ::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "1DFigureOfMerit")
                     Histo1DFigureOfMerit::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "1DFrom2DProjection")
                     Histo1DFrom2DProjection::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
-                else if (histoType == "2DSumBackground") 
+                else if (histoType == "2DSumBackground")
                     Histo2DSumBackground::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
                 else if (histoType == "2DFigureOfMeritForVarXBeingSignalParameter")
                     Histo2DFigureOfMeritForVarXBeingSignalParameter::Produce(theVariables,theProcessClasses,theRegions,theChannels,theHistoScrewdriver,theGlobalOptions,histoOptions);
@@ -142,36 +142,36 @@ namespace theDoctor
 
                 vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DStack           ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DSuperimposed")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DSuperimposed    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DFigureOfMerit")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DDataMCComparison")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DDataMCComparison::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "2D")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot2D                ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "2DSuperimposed")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot2DSuperimposed    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DFrom2DProjection")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DFrom2DProjection::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "2DFrom3DProjection")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot2DFrom3DProjection::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DDataMCComparisonFigure")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DDataMCComparisonFigure::Produce(theFiguresPerProcessMap, theProcessClasses, theRegions, theChannels, theGlobalOptions, plotOptions);
                 else if (plotType == "1DFigure")
-                    inputFromProducer = 
+                    inputFromProducer =
                         Plot1DFigure               ::Produce(theFiguresMap,                               theRegions, theChannels, theGlobalOptions, plotOptions);
-                        
+
                 for (unsigned int j = 0 ; j < inputFromProducer.size() ; j++)
                 {
                     thePlots.push_back(inputFromProducer[j]);
@@ -186,7 +186,7 @@ namespace theDoctor
 
             TDirectory* channelDir = 0;
             TDirectory* regionDir  = 0;
-            TDirectory* varDir     = 0; 
+            TDirectory* varDir     = 0;
 
             int ret;
             ret = system(("rm -f "+outputFolder+"/1DStack.root").c_str());
@@ -196,7 +196,7 @@ namespace theDoctor
             ret = system(("rm -f "+outputFolder+"/2D.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2DSuperimposed.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFrom2DProjection.root").c_str());
-            ret = system(("rm -f "+outputFolder+"/2DFrom3DPRojection.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/2DFrom3DProjection.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DDataMCComparisonFigure.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFigure.root").c_str());
             // FIXME stupid fix for ret not being used
@@ -218,7 +218,7 @@ namespace theDoctor
                     {  channelDir = outputFile.GetDirectory((*theChannels)[c].getTagC()); }
 
                     channelDir->cd();
-   
+
                     if ((plotType != "1DDataMCComparisonFigure") && (plotType != "1DFigure"))
                     for (unsigned int r = 0 ; r < theRegions->size() ; r++)
                     {
@@ -246,16 +246,16 @@ namespace theDoctor
                                 if (!regionDir->GetDirectory((varX+"[vs]"+varY).c_str()))
                                 { varDir = regionDir->mkdir((varX+"[vs]"+varY).c_str()); varDir->cd(); }
                             }
-                            else if (plotType == "3DProjectedTo2D")
+                            else if (plotType == "2DFrom3DProjection")
                             {
                                 string varX = thePlots[j].GetParameter("variableX");
                                 string varY = thePlots[j].GetParameter("variableY");
                                 string tagZ = thePlots[j].GetParameter("tagZ");
-                                addPath += "/" + varX + "|" + varY + "[vs]" +tagZ;
-                                if (!regionDir->GetDirectory((varX+"|"+varY+"[vs]"+tagZ).c_str()))
-                                { varDir = regionDir->mkdir((varX+"|"+varY+"[vs]"+tagZ).c_str()); varDir->cd(); }
+                                addPath += "/" + varX + "[vs]" + varY + "__" +tagZ;
+                                if (!regionDir->GetDirectory((varX+"[vs]"+varY+"__"+tagZ).c_str()))
+                                { varDir = regionDir->mkdir((varX+"[vs]"+varY+"__"+tagZ).c_str()); varDir->cd(); }
                             }
-                           
+
 
                             thePlots[j].Write(outputFolder,
                                     plotType+"/"+(*theChannels)[c].getTag()+"/"+(*theRegions)[r].getTag()+addPath,

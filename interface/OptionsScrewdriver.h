@@ -1,14 +1,14 @@
 #ifndef OptionsScrewdriver_h
 #define OptionsScrewdriver_h
 
-#include "interface/Common.h" 
+#include "interface/Common.h"
 
 using namespace std;
 
 namespace theDoctor
 {
 
-    class OptionsScrewdriver 
+    class OptionsScrewdriver
     {
 
         public:
@@ -35,7 +35,7 @@ namespace theDoctor
 
                     if (option != field) continue;
 
-                    string value; 
+                    string value;
                     getline(stream2,value,'=');
                     return value;
                 }
@@ -73,11 +73,11 @@ namespace theDoctor
 
                     if (option != field) continue;
 
-                    string value; 
+                    string value;
                     getline(stream2,value,'=');
                     return atof(value.c_str());
                 }
-                
+
                 return -1.0;
             }
 
@@ -89,7 +89,7 @@ namespace theDoctor
                 {
                     if (option == field) return true;
                 }
-                
+
                 return false;
             }
 

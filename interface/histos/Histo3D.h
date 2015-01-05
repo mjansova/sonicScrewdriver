@@ -9,9 +9,9 @@
 namespace theDoctor
 {
 
-    class Histo3D 
+    class Histo3D
     {
-      
+
      public:
 
       Histo3D(Name        theHistoType_,
@@ -31,12 +31,12 @@ namespace theDoctor
 
           theHistoParameters = theHistoParameters_;
 
-          if(theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning() && theZVar_->usingCustomBinning())
+          if(!theXVar_->usingCustomBinning() && !theYVar_->usingCustomBinning() && !theZVar_->usingCustomBinning())
               theHisto = new TH3F("","",
                                   theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                   theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
                                   theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());
-          else if (!theXVar_->usingCustomBinning() && !theYVar_->usingCustomBinning() && !theZVar_->usingCustomBinning())
+          else if (theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning() && theZVar_->usingCustomBinning())
               theHisto = new TH3F("","",
                                   theXVar->getNbins(),theXVar->getCustomBinning(),
                                   theYVar->getNbins(),theYVar->getCustomBinning(),
@@ -48,7 +48,7 @@ namespace theDoctor
                           << "Root doesn't allow it." << endl;
           }
           theHisto->Sumw2();
-      }; 
+      };
 
       ~Histo3D() { };
 
@@ -66,13 +66,13 @@ namespace theDoctor
      protected:
 
         TH3F*     theHisto;
-        
+
         Variable* theXVar;
         Variable* theYVar;
         Variable* theZVar;
         Region*   theRegion;
         Channel*  theChannel;
-        
+
         Name      theHistoType;
         string    theHistoParameters;
 

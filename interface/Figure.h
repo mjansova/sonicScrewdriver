@@ -1,50 +1,50 @@
 #ifndef Figure_h
 #define Figure_h
 
-#include "interface/Common.h" 
+#include "interface/Common.h"
 
 using namespace std;
 
 namespace theDoctor
 {
 
-    class Figure 
+    class Figure
     {
-      
+
      public:
-     
+
       Figure(double value_ = 0, float error_ = 0)
       {
           theValue = value_;
           theError = error_;
-      }; 
+      };
 
       ~Figure() { };
 
       double value() const { return theValue; };
       double error() const { return theError; };
 
-      double valueWithVariation(int n) const 
-      { 
+      double valueWithVariation(int n) const
+      {
 
-          return theValue + n * theError; 
+          return theValue + n * theError;
       }
 
 
-      void keepVariation(int n, string options = "") 
-      { 
-          theValue = theValue + n*theError; 
-          theError = 0.0; 
+      void keepVariation(int n, string options = "")
+      {
+          theValue = theValue + n*theError;
+          theError = 0.0;
           if ((options == "noNegativeValue") && (theValue < 0)) theValue = 0.0;
       }
 
-      string Print(unsigned int p = 2, string options = "") const 
-      { 
+      string Print(unsigned int p = 2, string options = "") const
+      {
           std::ostringstream s;
-          
+
           s.setf(std::ios::fixed);
           s.precision(p);
-          
+
           if (options == "noError")
               s << theValue;
           else
@@ -53,13 +53,13 @@ namespace theDoctor
           return s.str();
       }
 
-      string PrintLatex(unsigned int p = 2, string options = "") const 
-      { 
+      string PrintLatex(unsigned int p = 2, string options = "") const
+      {
           std::ostringstream s;
-          
+
           s.setf(std::ios::fixed);
           s.precision(2);
- 
+
           if (options == "noError")
               s << theValue;
           else
@@ -72,7 +72,7 @@ namespace theDoctor
       {
             return applyOperation(*this,input,string("add"));
       }
-     
+
       void operator+=(const Figure input)
       {
           Figure newFigure = applyOperation(*this,input,string("add"));
@@ -84,7 +84,7 @@ namespace theDoctor
       {
             return applyOperation(*this,input,string("substract"));
       }
-     
+
       void operator-=(const Figure input)
       {
           Figure newFigure = applyOperation(*this,input,string("substract"));
@@ -96,7 +96,7 @@ namespace theDoctor
       {
             return applyOperation(*this,input,string("multiply"));
       }
-     
+
       void operator*=(const Figure input)
       {
           Figure newFigure = applyOperation(*this,input,string("multiply"));
@@ -108,7 +108,7 @@ namespace theDoctor
       {
             return applyOperation(*this,input,string("divide"));
       }
-     
+
       void operator/=(const Figure input)
       {
           Figure newFigure = applyOperation(*this,input,string("divide"));
@@ -122,17 +122,17 @@ namespace theDoctor
           TH1F a("a","a",1,-0.5,0.5);
           TH1F b("b","b",1,-0.5,0.5);
 
-        
+
           a.SetBinContent(1,figureA.value());
           a.SetBinError(1,figureA.error());
 
           b.SetBinContent(1,figureB.value());
           b.SetBinError(1,figureB.error());
-     
+
                if (type == "add")       a.Add(&b);
           else if (type == "divide")    a.Divide(&b);
           else if (type == "multiply")  a.Multiply(&b);
-          else if (type == "substract") 
+          else if (type == "substract")
           {
               b.Scale(-1.0);
               a.Add(&b);
@@ -145,12 +145,12 @@ namespace theDoctor
           return Figure(newValue,newError);
       }
 
-      
+
 
 
      private:
 
-        double theValue;	
+        double theValue;
         double theError;
 
     };

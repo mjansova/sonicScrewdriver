@@ -7,16 +7,16 @@
 namespace theDoctor
 {
 
-    class Histo2DSumBackground : public Histo2D 
+    class Histo2DSumBackground : public Histo2D
     {
-      
+
      public:
 
-      Histo2DSumBackground(Variable* theXVar_, 
+      Histo2DSumBackground(Variable* theXVar_,
                            Variable* theYVar_,
-                           Region* theRegion_, 
+                           Region* theRegion_,
                            Channel* theChannel_,
-                           vector<Histo2DEntries*> theBackgrounds) : 
+                           vector<Histo2DEntries*> theBackgrounds) :
       Histo2D(Name("2DSumBackground","Entries"),theXVar_,theYVar_,theRegion_,theChannel_)
       {
           string nameHisto =  string("vX:")+theXVar->getTag()
@@ -32,10 +32,10 @@ namespace theDoctor
           {
               theHisto->Add(theBackgrounds[i]->getClone());
           }
-      }; 
+      };
 
       ~Histo2DSumBackground() { };
-  
+
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
       }
@@ -46,7 +46,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoOptions)      
+                          string histoOptions)
       {
           vector<Histo2DEntries>* histo2DList = theHistoScrewdriver->Get2DHistosEntries();
           std::set< pair<string,string> > varCouples;
@@ -63,7 +63,7 @@ namespace theDoctor
 
           for (std::set< pair<string,string> >::iterator varCouple = varCouples.begin() ; varCouple != varCouples.end() ; varCouple++)
           {
-              
+
               string varX = varCouple->first;
               string varY = varCouple->second;
 
@@ -84,7 +84,7 @@ namespace theDoctor
 
                       Region*   theRegion  = &((*theRegions)[r]);
                       Channel*  theChannel = &((*theChannels)[c]);
-              
+
                       // Now loop on the histos
                       for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
                       {

@@ -9,14 +9,14 @@
 
 using namespace std;
 
-namespace theDoctor 
+namespace theDoctor
 {
 
-    class Table 
+    class Table
     {
-      
+
      public:
-      
+
       Table();
       Table(vector<string> colTags_, vector<string> rowTags_, vector<string> colLabels_, vector<string> rowLabels_);
       Table(vector<string> colTags_, vector<string> rowTags_);
@@ -24,21 +24,21 @@ namespace theDoctor
 
       void SetLabels(vector<string> colLabels_, vector<string> rowLabels_);
       void Init(vector<string> colTags_, vector<string> rowTags_);
-      
+
       ~Table();
 
-      bool Set(int colId, int rowId, Figure value);  
-      bool Set(string colTag, string rowTag, Figure value);  
-     
-      Figure Get(int colId, int rowId);  
-      Figure Get(string colTag, string rowTag);  
+      bool Set(int colId, int rowId, Figure value);
+      bool Set(string colTag, string rowTag, Figure value);
+
+      Figure Get(int colId, int rowId);
+      Figure Get(string colTag, string rowTag);
 
       void Print(int prec = 2, string options = "", std::ostream& output = cout);
       void PrintLatex(int prec = 2, string options = "", std::ostream& output = cout);
 
       void Print(string fileName, int prec = 2, string options = "");
       void PrintLatex(string fileName, int prec = 2, string options = "");
-     
+
      private:
 
       // Data management
@@ -50,7 +50,7 @@ namespace theDoctor
       unsigned int nCol;
       unsigned int nRow;
       vector< vector<Figure> > data;
-      
+
     };
 
 }

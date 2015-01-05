@@ -10,17 +10,17 @@
 namespace theDoctor
 {
 
-    class Histo3DFigureOfMeritForVarXYBeingSignalParameter : public Histo3D 
+    class Histo3DFigureOfMeritForVarXYBeingSignalParameter : public Histo3D
     {
-      
+
      public:
 
       ~Histo3DFigureOfMeritForVarXYBeingSignalParameter() { };
-      
+
       Histo3DFigureOfMeritForVarXYBeingSignalParameter(Variable* theXVar_,
                                                        Variable* theYVar_,
                                                        Variable* theZVar_,
-                                                       Region* theRegion_, 
+                                                       Region* theRegion_,
                                                        Channel* theChannel_,
                                                        Histo3DEntries* theSignal,
                                                        Histo1D* theSumBackground,
@@ -38,13 +38,13 @@ namespace theDoctor
                                    +"|s:"  +theSignal->getProcessClassTag();
 
           theHisto->SetName(nameHisto.c_str());
-              
+
           TH3F* sigHisto    = theSignal->getClone();
           TH1F* backgrHisto = theSumBackground->getClone();
 
-          int   nBinsX = theXVar_->getNbins(); 
-          int   nBinsY = theYVar_->getNbins(); 
-          int   nBinsZ = theZVar_->getNbins(); 
+          int   nBinsX = theXVar_->getNbins();
+          int   nBinsY = theYVar_->getNbins();
+          int   nBinsZ = theZVar_->getNbins();
           float minZ   = theZVar_->getMin();
           float maxZ   = theZVar_->getMax();
 
@@ -67,7 +67,7 @@ namespace theDoctor
               }
 
           }
-      }; 
+      };
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
@@ -80,7 +80,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoParameters)      
+                          string histoParameters)
       {
 
           string varXName = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
@@ -115,8 +115,8 @@ namespace theDoctor
                   // Get the cut type we're using for this variable
                   string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
                   int cutType = 0;
-                  if (cutType_ == string("keepLowValues"))  cutType = -1; 
-                  else if (cutType_ == string("keepHighValues")) cutType =  1; 
+                  if (cutType_ == string("keepLowValues"))  cutType = -1;
+                  else if (cutType_ == string("keepHighValues")) cutType =  1;
 
                   // Loop on the signals
                   for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)

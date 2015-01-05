@@ -6,11 +6,11 @@
 namespace theDoctor
 {
 
-    class Dataset : public Name  
+    class Dataset : public Name
     {
-      
+
      public:
-     
+
       // Please note : processClass is stored in the "plotLabel" string of Name,
       //               though it is not meant to be used for plotting it or whatever anyway.
 
@@ -20,7 +20,7 @@ namespace theDoctor
           xsecOrLumi = xsecOrLumi_;
           trueNumberOfEvents = trueNumberOfEvents_;
           options = options_;
-      }; 
+      };
 
       ~Dataset() { };
 
@@ -29,12 +29,12 @@ namespace theDoctor
       int    getTrueNumberOfEvents()      { return trueNumberOfEvents; };
       void   setTrueNumberOfEvents(int n) { trueNumberOfEvents = n;    };
       string getOptions()                 { return options;            };
-      
+
      private:
 
       float xsecOrLumi;
       int trueNumberOfEvents;
-      
+
       string options;
 
     };

@@ -9,9 +9,9 @@
 namespace theDoctor
 {
 
-    class Histo2D 
+    class Histo2D
     {
-      
+
      public:
 
       Histo2D(Name        theHistoType_,
@@ -49,7 +49,7 @@ namespace theDoctor
 
 
           theHisto->Sumw2();
-      }; 
+      };
 
       ~Histo2D() { };
 
@@ -66,12 +66,12 @@ namespace theDoctor
      protected:
 
         TH2F*     theHisto;
-        
+
         Variable* theXVar;
         Variable* theYVar;
         Region*   theRegion;
         Channel*  theChannel;
-        
+
         Name      theHistoType;
         string    theHistoParameters;
 

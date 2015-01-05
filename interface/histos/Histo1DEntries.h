@@ -10,14 +10,14 @@
 namespace theDoctor
 {
 
-    class Histo1DEntries : public Histo1D 
+    class Histo1DEntries : public Histo1D
     {
-      
+
      public:
 
-      Histo1DEntries(Variable* theVar_, 
-                     ProcessClass* theProcessClass_, 
-                     Region* theRegion_, 
+      Histo1DEntries(Variable* theVar_,
+                     ProcessClass* theProcessClass_,
+                     Region* theRegion_,
                      Channel* theChannel_) :
       Histo1D(Name("1DEntries","Entries"),theVar_,theRegion_,theChannel_)
       {
@@ -35,15 +35,15 @@ namespace theDoctor
               theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
           else
               theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getCustomBinning());
-          
+
           theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
           theHistoRawEntries->Sumw2();
-      }; 
+      };
 
       ~Histo1DEntries() { };
 
       // Accessors
-      ProcessClass*  getProcessClass()     const { return theProcessClass;       };  
+      ProcessClass*  getProcessClass()     const { return theProcessClass;       };
       string         getProcessClassTag()  const { return theProcessClass->getTag(); };
       TH1F*          getEntriesHisto()     const { return theHistoRawEntries;                   };
       TH1F*          getEntriesClone()     const { return (TH1F*) theHistoRawEntries->Clone();  };
@@ -70,20 +70,20 @@ namespace theDoctor
       {
           //DEBUG_MSG << "integral : " << GetYieldAndError().Print() << endl;
 
-          if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noUnderflowInFirstBin")) 
+          if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noUnderflowInFirstBin"))
            && (value < theVar->getMin())) value = theVar->getMin();
-          
+
           if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noOverflowInLastBin"))
-           && (value > theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this 
+           && (value > theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this
 
           theHisto->Fill(value,weight);
           theHistoRawEntries->Fill(value);
       }
-      
+
       void ApplyScaleFactor(Figure scaleFactor) const
-      { 
+      {
             TH1F histoScaleFactor("histoScaleFactor","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
-        
+
             for (int i = 0 ; i <= histoScaleFactor.GetNbinsX()+1 ; i++)
             {
                 histoScaleFactor.SetBinContent(i,scaleFactor.value());
@@ -97,7 +97,7 @@ namespace theDoctor
 
       ProcessClass* theProcessClass;
       TH1F* theHistoRawEntries;
-    
+
     };
 
 }

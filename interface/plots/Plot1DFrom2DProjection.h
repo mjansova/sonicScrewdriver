@@ -14,17 +14,17 @@
 namespace theDoctor
 {
 
-    class Plot1DFrom2DProjection 
+    class Plot1DFrom2DProjection
     {
-      
+
      public:
-     
+
       Plot1DFrom2DProjection();
       ~Plot1DFrom2DProjection();
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
-          Histo1DFrom2DProjection::GetHistoDependencies(output,options); 
+          Histo1DFrom2DProjection::GetHistoDependencies(output,options);
           output.push_back(pair<string,string>("1DFrom2DProjection",options));
       }
 
@@ -37,11 +37,11 @@ namespace theDoctor
                                   string plotOptions)
       {
           vector<Plot> theOutput;
-          
+
           string varXName       = OptionsScrewdriver::GetStringOption(plotOptions,"varX");
           string varYName       = OptionsScrewdriver::GetStringOption(plotOptions,"varY");
           string projectionType = OptionsScrewdriver::GetStringOption(plotOptions,"projectionType");
-  
+
           string optionsTag =  string("vY=")+varYName
                                    +",proj="+projectionType;
 
@@ -51,10 +51,10 @@ namespace theDoctor
           {
               Variable*     theXVar          = &((*theVariables)[vX]);
               Variable*     theYVar          = &((*theVariables)[vY]);
-           
+
               if (theXVar->getTag() != varXName) continue;
               if (theYVar->getTag() != varYName) continue;
-   
+
               for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
               for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
               {
@@ -68,7 +68,7 @@ namespace theDoctor
                   for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
                   {
                       ProcessClass thisProcess = (*theProcessClasses)[i];
-                    
+
                       if ((projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
                        || (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter"))
                       {
@@ -81,7 +81,7 @@ namespace theDoctor
                                                                                          theRegion->getTag(),
                                                                                          theChannel->getTag(),
                                                                                          optionsTag+",p="+thisProcess.getTag());
-                      
+
                       // Add it to the vector
                       theHistos.push_back(thisHisto);
                       theHistosProcessClasses.push_back(&((*theProcessClasses)[i]));
@@ -96,9 +96,9 @@ namespace theDoctor
           return theOutput;
       }
 
-      static Plot MakePlot(Variable* theXVar, 
+      static Plot MakePlot(Variable* theXVar,
                            Variable* theYVar,
-                           Region* theRegion, 
+                           Region* theRegion,
                            Channel* theChannel,
                            vector<Histo1D*> theHistos,
                            vector<ProcessClass*> theHistosProcessClasses,
@@ -122,7 +122,7 @@ namespace theDoctor
          thePlot.SetParameter("channel",theChannel->getTag());
          thePlot.SetParameter("projectionType",projectionType);
          thePlot.SetParameter("tagY",OptionsScrewdriver::GetStringOption(plotOptions,"tagY"));
-         
+
          thePlot.AddToInPlotInfo(theChannel->getLabel());
          thePlot.AddToInPlotInfo(theRegion->getLabel());
 
@@ -143,26 +143,26 @@ namespace theDoctor
 
         float globalMax = 0.0;
         TH1F* firstHisto = 0;
-        
+
         for (unsigned int i = 0 ; i < theHistos.size() ; i++)
         {
             // Get associated processClass
             ProcessClass* processClass = theHistosProcessClasses[i];
-            
+
             // Get the histo
             TH1F* histoClone = theHistos[i]->getClone();
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
 
             // Draw the histo
-            if (!firstHisto) 
-            {  
-                histoClone->Draw("hist E0");      
+            if (!firstHisto)
+            {
+                histoClone->Draw("hist E0");
                 ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theXVar->getOptions());
                 firstHisto = histoClone;
             }
-            else            
-            { 
-                histoClone->Draw("hist E0 same"); 
+            else
+            {
+                histoClone->Draw("hist E0 same");
             }
 
             // Get the max value
@@ -186,11 +186,11 @@ namespace theDoctor
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(6);
          theHisto->SetLineColor(color);
-         
+
       }
 
       static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
-      {    
+      {
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
          theHisto->SetTitle("");

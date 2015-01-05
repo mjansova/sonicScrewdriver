@@ -11,9 +11,9 @@
 namespace theDoctor
 {
 
-    class Histo1DFrom2DProjection : public Histo1D 
+    class Histo1DFrom2DProjection : public Histo1D
     {
-      
+
      public:
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
@@ -24,7 +24,7 @@ namespace theDoctor
           if ((projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
           ||  (projectionType == "cutOptimalFigureOfMeritForVarXBeingSignalParameter"))
           {
-              Histo2DFigureOfMeritForVarXBeingSignalParameter::GetHistoDependencies(output); 
+              Histo2DFigureOfMeritForVarXBeingSignalParameter::GetHistoDependencies(output);
               output.push_back(pair<string,string>("2DFigureOfMeritForVarXBeingSignalParameter",options));
           }
       }
@@ -35,7 +35,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoParameters)      
+                          string histoParameters)
       {
 
           string varXName       = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
@@ -111,10 +111,10 @@ namespace theDoctor
 
 
       ~Histo1DFrom2DProjection() { };
-      
-      Histo1DFrom2DProjection(Variable* theXVar, 
-                              Variable* theYVar, 
-                              Region*   theRegion_, 
+
+      Histo1DFrom2DProjection(Variable* theXVar,
+                              Variable* theYVar,
+                              Region*   theRegion_,
                               Channel*  theChannel_,
                               ProcessClass* theProcessClass,
                               Histo2D* theInputHisto,
@@ -135,8 +135,8 @@ namespace theDoctor
 
           string projectionType = OptionsScrewdriver::GetStringOption(histoParameters,"projectionType");
 
-          int   nBinsX = theXVar->getNbins(); 
-          int   nBinsY = theYVar->getNbins(); 
+          int   nBinsX = theXVar->getNbins();
+          int   nBinsY = theYVar->getNbins();
           float minY   = theYVar->getMin();
           float maxY   = theYVar->getMax();
 

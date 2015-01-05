@@ -14,17 +14,17 @@
 namespace theDoctor
 {
 
-    class Plot2DSuperimposed 
+    class Plot2DSuperimposed
     {
-      
+
      public:
-     
+
       Plot2DSuperimposed();
       ~Plot2DSuperimposed();
 
       static void GetHistoDependencies(vector<pair<string,string> >& output)
       {
-          Histo2DSumBackground::GetHistoDependencies(output); 
+          Histo2DSumBackground::GetHistoDependencies(output);
           output.push_back(pair<string,string>("2DSumBackground",""));
       }
 
@@ -37,7 +37,7 @@ namespace theDoctor
                                   string histoOptions)
       {
           vector<Plot> theOutput;
-         
+
           // Get list of 2D couples available
           vector<Histo2DEntries>* histo2DList = theHistoScrewdriver->Get2DHistosEntries();
           std::set< pair<string,string> > varCouples;
@@ -55,7 +55,7 @@ namespace theDoctor
           // Produce the histo for each couple
           for (std::set< pair<string,string> >::iterator varCouple = varCouples.begin() ; varCouple != varCouples.end() ; varCouple++)
           {
-              
+
               string varX = varCouple->first;
               string varY = varCouple->second;
 
@@ -109,9 +109,9 @@ namespace theDoctor
           return theOutput;
       }
 
-      static Plot MakePlot(Variable* theXVar, 
+      static Plot MakePlot(Variable* theXVar,
                            Variable* theYVar,
-                           Region* theRegion, 
+                           Region* theRegion,
                            Channel* theChannel,
                            Histo2D* theSumBackground,
                            Histo2DEntries* theSignal,
@@ -153,7 +153,7 @@ namespace theDoctor
 
          if (histoBackground->Integral() != 0) histoBackground->Scale(1.0 / histoBackground->Integral());
          if (histoSignal    ->Integral() != 0) histoSignal    ->Scale(1.0 / histoSignal    ->Integral());
-        
+
          ApplyHistoStyle(&thePlot,histoSignal,    theGlobalOptions);
          ApplyHistoStyle(&thePlot,histoBackground,theGlobalOptions);
          histoBackground->SetLineColor(COLORPLOT_BLUE);
@@ -176,7 +176,7 @@ namespace theDoctor
          histoBackground->Draw("COLZ");
          thePlot.Update();
          TPaletteAxis *pal = (TPaletteAxis*) histoBackground->GetListOfFunctions()->FindObject("palette");
-         if (pal != 0) 
+         if (pal != 0)
          {
              pal->SetX1NDC(0.901);
              pal->SetY1NDC(0.1);
@@ -196,7 +196,7 @@ namespace theDoctor
       }
 
       static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
-      {	
+      {
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
           //theHisto->SetTitle(title.c_str());

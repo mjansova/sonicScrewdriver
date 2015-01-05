@@ -10,14 +10,14 @@
 namespace theDoctor
 {
 
-    class Histo1D 
+    class Histo1D
     {
-      
+
      public:
 
       Histo1D(Name      theHistoType_,
-              Variable* theVar_, 
-              Region*   theRegion_, 
+              Variable* theVar_,
+              Region*   theRegion_,
               Channel*  theChannel_,
               string    theHistoParameters_ = "") :
       theHistoType(theHistoType_)
@@ -26,21 +26,21 @@ namespace theDoctor
           theRegion          = theRegion_;
           theChannel         = theChannel_;
           theHistoParameters = theHistoParameters_;
-          
+
           if (theVar_->usingCustomBinning())
               theHisto        = new TH1F("","",theVar->getNbins(),theVar->getCustomBinning());
           else
               theHisto        = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
-          
+
           theHisto->Sumw2();
-      }; 
+      };
 
       virtual ~Histo1D() { };
 
       // Accessors
       TH1F*     getHisto()           const { return theHisto;                  };
       TH1F*     getClone()           const { return (TH1F*) theHisto->Clone(); };
-      
+
       Variable* getVariable()        const { return theVar;             };  string  getVariableTag()  const { return theVar->getTag();      };
       Region*   getRegion()          const { return theRegion;          };  string  getRegionTag()    const { return theRegion->getTag();   };
       Channel*  getChannel()         const { return theChannel;         };  string  getChannelTag()   const { return theChannel->getTag();  };
@@ -49,7 +49,7 @@ namespace theDoctor
 
       void dump() const
       {
-          cout 
+          cout
           << "theHisto = "           <<   theHisto            << endl
           << "theVar = "             <<   theVar              << endl
           << "theRegion = "          <<   theRegion           << endl

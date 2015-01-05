@@ -14,17 +14,17 @@
 namespace theDoctor
 {
 
-    class Plot2DFrom3DProjection 
+    class Plot2DFrom3DProjection
     {
-      
+
      public:
-     
+
       Plot2DFrom3DProjection();
       ~Plot2DFrom3DProjection();
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
-          Histo2DFrom3DProjection::GetHistoDependencies(output,options); 
+          Histo2DFrom3DProjection::GetHistoDependencies(output,options);
           output.push_back(pair<string,string>("2DFrom3DProjection",options));
       }
 
@@ -37,12 +37,12 @@ namespace theDoctor
                                   string plotOptions)
       {
           vector<Plot> theOutput;
-          
+
           string varXName       = OptionsScrewdriver::GetStringOption(plotOptions,"varX");
           string varYName       = OptionsScrewdriver::GetStringOption(plotOptions,"varY");
           string varZName       = OptionsScrewdriver::GetStringOption(plotOptions,"varZ");
           string projectionType = OptionsScrewdriver::GetStringOption(plotOptions,"projectionType");
-  
+
           string optionsTag =  string("vZ=")+varZName
                                    +",proj="+projectionType;
 
@@ -54,11 +54,11 @@ namespace theDoctor
               Variable*     theXVar          = &((*theVariables)[vX]);
               Variable*     theYVar          = &((*theVariables)[vY]);
               Variable*     theZVar          = &((*theVariables)[vZ]);
-           
+
               if (theXVar->getTag() != varXName) continue;
               if (theYVar->getTag() != varYName) continue;
               if (theZVar->getTag() != varZName) continue;
-   
+
               for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
               for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
               {
@@ -72,12 +72,13 @@ namespace theDoctor
                   for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
                   {
                       ProcessClass thisProcess = (*theProcessClasses)[i];
-                    
+
+                      /*
                       if ((projectionType == "maxFigureOfMeritForVarXYBeingSignalParameter")
                        || (projectionType == "cutOptimalFigureOfMeritForVarXYBeingSignalParameter"))
                       {
                           if (thisProcess.getType() != "signal") continue;
-                      }
+                      }*/
 
                       // Get the histo
                       Histo2D* thisHisto = theHistoScrewdriver->get2DHistoForPlotPointer("2DFrom3DProjection",
@@ -86,28 +87,24 @@ namespace theDoctor
                                                                                          theRegion->getTag(),
                                                                                          theChannel->getTag(),
                                                                                          optionsTag+",p="+thisProcess.getTag());
-                      
-                      // Add it to the vector
-                      theHistos.push_back(thisHisto);
-                      theHistosProcessClasses.push_back(&((*theProcessClasses)[i]));
+                      theOutput.push_back(
+                          MakePlot(theXVar,theYVar,theZVar,&thisProcess,theRegion,theChannel,thisHisto,theGlobalOptions,plotOptions)
+                          );
                   }
 
-                  theOutput.push_back(
-                          MakePlot(theXVar,theYVar,theZVar,theRegion,theChannel,theHistos,theHistosProcessClasses,theGlobalOptions,plotOptions)
-                          );
 
               }
           }
           return theOutput;
       }
 
-      static Plot MakePlot(Variable* theXVar, 
+      static Plot MakePlot(Variable* theXVar,
                            Variable* theYVar,
                            Variable* theZVar,
-                           Region* theRegion, 
+                           ProcessClass* theProcessClass,
+                           Region* theRegion,
                            Channel* theChannel,
-                           vector<Histo2D*> theHistos,
-                           vector<ProcessClass*> theHistosProcessClasses,
+                           Histo2D* theHisto,
                            OptionsScrewdriver theGlobalOptions,
                            string plotOptions)
       {
@@ -119,6 +116,7 @@ namespace theDoctor
                                                      +"|vZ:" +theZVar->getTag()
                                                      +"|r:"  +theRegion->getTag()
                                                      +"|c:"  +theChannel->getTag()
+                                                     +"|P:"  +theProcessClass->getTag();
                                                      +"|p:"  +projectionType;
 
 
@@ -126,17 +124,17 @@ namespace theDoctor
          thePlot.SetParameter("variableX",theXVar->getTag());
          thePlot.SetParameter("variableY",theYVar->getTag());
          thePlot.SetParameter("variableZ",theZVar->getTag());
+         thePlot.SetParameter("processClass",theProcessClass->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
          thePlot.SetParameter("projectionType",projectionType);
          thePlot.SetParameter("tagZ",OptionsScrewdriver::GetStringOption(plotOptions,"tagZ"));
-         
+
          thePlot.AddToInPlotInfo(theChannel->getLabel());
          thePlot.AddToInPlotInfo(theRegion->getLabel());
+         thePlot.AddToInPlotInfo(theProcessClass->getLabel());
 
          // Prepare the labels for x and y axis
-         // xlabel = labelDeLaVariable (Unité)
-         // ylabel = Normalized entries / largeurDeBin Unité
 
          string xlabel(theXVar->getLabel());
          string ylabel(theYVar->getLabel());
@@ -146,60 +144,45 @@ namespace theDoctor
          if (theXVar->getUnit() != "") xlabel += string(" [") + theXVar->getUnit() + string("]");
          if (theYVar->getUnit() != "") ylabel += string(" [") + theYVar->getUnit() + string("]");
 
-        float globalMax = 0.0;
-        TH2F* firstHisto = 0;
-        
-        for (unsigned int i = 0 ; i < theHistos.size() ; i++)
-        {
-            // Get associated processClass
-            //ProcessClass* processClass = theHistosProcessClasses[i];
-            
-            // Get the histo
-            TH2F* histoClone = theHistos[i]->getClone();
-            // FIXME
-            //ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
+         // Get the histo
+         TH2F* histoClone = theHisto->getClone();
 
-            // Draw the histo
-            if (!firstHisto) 
-            {  
-                histoClone->Draw("hist E0");      
-                
-                // FIXME
-                //ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theXVar->getOptions());
-                
-                firstHisto = histoClone;
-            }
-            else            
-            { 
-                histoClone->Draw("hist E0 same"); 
-            }
+         ApplyHistoStyle(&thePlot,histoClone,theProcessClass->getColor(),theGlobalOptions,theProcessClass->getOptions());
+         ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theXVar->getOptions(),theYVar->getOptions());
 
-            // Get the max value
-            if (globalMax < histoClone->GetMaximum())
-                globalMax = histoClone->GetMaximum();
-        }
+         thePlot.getCanvas()->SetRightMargin(0.1);
+         histoClone->Draw("COLZ");
+         thePlot.Update();
+         TPaletteAxis *pal = (TPaletteAxis*) histoClone->GetListOfFunctions()->FindObject("palette");
+         if (pal != 0)
+         {
+             pal->SetX1NDC(0.901);
+             pal->SetY1NDC(0.1);
+             pal->SetX2NDC(0.93);
+             pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
+         }
+
+         return thePlot;
+
 
         return thePlot;
       }
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH2F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
-         theHisto->SetFillColor(0);
-         theHisto->SetLineWidth(6);
-         theHisto->SetLineColor(color);
-         
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
-      {    
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
-         theHisto->SetTitle("");
-         theHisto->SetStats(0);
+      static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
+      {
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
+          //theHisto->SetTitle(title.c_str());
+          theHisto->SetTitle("");
+          theHisto->SetStats(0);
+          thePlot->SetLogZ();
       }
-
 
     };
 

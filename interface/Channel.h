@@ -1,25 +1,25 @@
 #ifndef Channel_h
 #define Channel_h
 
-#include "Name.h" 
+#include "Name.h"
 
 namespace theDoctor
 {
 
-    class Channel : public Name 
+    class Channel : public Name
     {
-      
+
      public:
-     
+
       Channel(string tag_, string plotLabel_, bool (*selector_)(), string options_ = ""):
       Name(tag_,plotLabel_, options_)
       {
             selector = selector_;
             flag = false;
-      }; 
+      };
 
-      ~Channel() 
-      { 
+      ~Channel()
+      {
       };
 
       bool passSelection()       { return selector(); };
@@ -33,7 +33,7 @@ namespace theDoctor
       bool (*selector)() ;
       bool flag;
 
-      
+
     };
 
 }

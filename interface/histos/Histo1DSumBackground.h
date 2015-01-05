@@ -7,15 +7,15 @@
 namespace theDoctor
 {
 
-    class Histo1DSumBackground : public Histo1D 
+    class Histo1DSumBackground : public Histo1D
     {
-      
+
      public:
 
-      Histo1DSumBackground(Variable* theVar_, 
-                           Region* theRegion_, 
+      Histo1DSumBackground(Variable* theVar_,
+                           Region* theRegion_,
                            Channel* theChannel_,
-                           vector<Histo1DEntries*> theBackgrounds) : 
+                           vector<Histo1DEntries*> theBackgrounds) :
       Histo1D(Name("1DSumBackground","Entries"),theVar_,theRegion_,theChannel_)
       {
           string nameHisto =  string("v:")+theVar->getTag()
@@ -30,10 +30,10 @@ namespace theDoctor
           {
               theHisto->Add(theBackgrounds[i]->getClone());
           }
-      }; 
+      };
 
       ~Histo1DSumBackground() { };
-  
+
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
       }
@@ -53,7 +53,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoOptions)      
+                          string histoOptions)
       {
           // Browse the (var x reg x chan)
           for (unsigned int v = 0 ; v < theVariables->size() ; v++)
@@ -66,7 +66,7 @@ namespace theDoctor
               Variable* theVar     = &((*theVariables)[v]);
               Region*   theRegion  = &((*theRegions)[r]);
               Channel*  theChannel = &((*theChannels)[c]);
-      
+
               // Now loop on the histos
               for (unsigned int i = 0 ; i < theProcessClasses->size() ; i++)
               {

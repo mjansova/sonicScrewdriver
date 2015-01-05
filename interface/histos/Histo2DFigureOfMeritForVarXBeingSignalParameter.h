@@ -10,16 +10,16 @@
 namespace theDoctor
 {
 
-    class Histo2DFigureOfMeritForVarXBeingSignalParameter : public Histo2D 
+    class Histo2DFigureOfMeritForVarXBeingSignalParameter : public Histo2D
     {
-      
+
      public:
 
       ~Histo2DFigureOfMeritForVarXBeingSignalParameter() { };
-      
+
       Histo2DFigureOfMeritForVarXBeingSignalParameter(Variable* theXVar_,
                            Variable* theYVar_,
-                           Region* theRegion_, 
+                           Region* theRegion_,
                            Channel* theChannel_,
                            Histo2DEntries* theSignal,
                            Histo1D* theSumBackground,
@@ -36,12 +36,12 @@ namespace theDoctor
                                    +"|s:"  +theSignal->getProcessClassTag();
 
           theHisto->SetName(nameHisto.c_str());
-              
+
           TH2F* sigHisto    = theSignal->getClone();
           TH1F* backgrHisto = theSumBackground->getClone();
 
-          int   nBinsX = theXVar_->getNbins(); 
-          int   nBinsY = theYVar_->getNbins(); 
+          int   nBinsX = theXVar_->getNbins();
+          int   nBinsY = theYVar_->getNbins();
           float minY   = theYVar_->getMin();
           float maxY   = theYVar_->getMax();
 
@@ -63,7 +63,7 @@ namespace theDoctor
               }
 
           }
-      }; 
+      };
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
@@ -77,7 +77,7 @@ namespace theDoctor
                           vector<Channel>* theChannels,
                           HistoScrewdriver* theHistoScrewdriver,
                           OptionsScrewdriver theGlobalOptions,
-                          string histoParameters)      
+                          string histoParameters)
       {
 
           string varXName = OptionsScrewdriver::GetStringOption(histoParameters,"varX");
@@ -108,8 +108,8 @@ namespace theDoctor
                   // Get the cut type we're using for this variable
                   string cutType_ = OptionsScrewdriver::GetStringOption(histoParameters,"cutType");
                   int cutType = 0;
-                  if (cutType_ == string("keepLowValues"))  cutType = -1; 
-                  else if (cutType_ == string("keepHighValues")) cutType =  1; 
+                  if (cutType_ == string("keepLowValues"))  cutType = -1;
+                  else if (cutType_ == string("keepHighValues")) cutType =  1;
 
                   // Loop on the signals
                   for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)

@@ -52,7 +52,7 @@ namespace theDoctor
             theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
             theHistoRawEntries->Sumw2();
 
-        }; 
+        };
 
         ~Histo3DEntries() { };
 

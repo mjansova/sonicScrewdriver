@@ -14,17 +14,17 @@
 namespace theDoctor
 {
 
-    class Plot1DFigureOfMerit 
+    class Plot1DFigureOfMerit
     {
-      
+
      public:
-     
+
       Plot1DFigureOfMerit();
       ~Plot1DFigureOfMerit();
 
       static void GetHistoDependencies(vector<pair<string,string> >& output, string options = "")
       {
-          Histo1DSumBackground::GetHistoDependencies(output); 
+          Histo1DSumBackground::GetHistoDependencies(output);
           output.push_back(pair<string,string>("1DSumBackground",""));
           output.push_back(pair<string,string>("1DFigureOfMerit",options));
       }
@@ -38,16 +38,16 @@ namespace theDoctor
                                   string histoOptions)
       {
           vector<Plot> theOutput;
-          
+
           string varName              = OptionsScrewdriver::GetStringOption(histoOptions,"var");
-          
+
           // Browse the (var x reg x chan) space
           for (unsigned int v = 0 ; v < theVariables->size() ; v++)
           {
 
               Variable* theVar = &((*theVariables)[v]);
               if (theVar->getTag() != varName) continue;
-              
+
               for (unsigned int r = 0 ; r < theRegions->size()   ; r++)
               for (unsigned int c = 0 ; c < theChannels->size()  ; c++)
               {
@@ -62,7 +62,7 @@ namespace theDoctor
                   {
 
                       ProcessClass thisProcess = (*theProcessClasses)[i];
-                  
+
                       if (OptionsScrewdriver::GetBoolOption(thisProcess.getOptions(),"no1DPlots")) continue;
 
                       // If this processClass is not a signal, we skip it
@@ -88,8 +88,8 @@ namespace theDoctor
           return theOutput;
       }
 
-      static Plot MakePlot(Variable* theVar, 
-                           Region* theRegion, 
+      static Plot MakePlot(Variable* theVar,
+                           Region* theRegion,
                            Channel* theChannel,
                            vector<Histo1D*> theSignals,
                            vector<ProcessClass*> theSignalProcessClasses,
@@ -104,7 +104,7 @@ namespace theDoctor
          thePlot.SetParameter("variable",theVar->getTag());
          thePlot.SetParameter("region",theRegion->getTag());
          thePlot.SetParameter("channel",theChannel->getTag());
-         
+
          thePlot.AddToInPlotInfo(theChannel->getLabel());
          thePlot.AddToInPlotInfo(theRegion->getLabel());
 
@@ -125,7 +125,7 @@ namespace theDoctor
 
         float globalMax = 0.0;
         TH1F* firstHisto = 0;
-        
+
         for (unsigned int i = 0 ; i < theSignals.size() ; i++)
         {
             // Get associated processClass
@@ -136,9 +136,9 @@ namespace theDoctor
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
 
             // Draw the histo
-            if (!firstHisto) 
-            {   
-                histoClone->Draw("hist E0");      
+            if (!firstHisto)
+            {
+                histoClone->Draw("hist E0");
                 ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theVar->getOptions());
                 firstHisto = histoClone;
             }
@@ -165,11 +165,11 @@ namespace theDoctor
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(6);
          theHisto->SetLineColor(color);
-         
+
       }
 
       static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
-      {    
+      {
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
          theHisto->SetTitle("");
