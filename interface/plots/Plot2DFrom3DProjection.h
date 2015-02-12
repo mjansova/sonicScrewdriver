@@ -118,7 +118,15 @@ namespace theDoctor
                                                      +"|c:"  +theChannel->getTag()
                                                      +"|P:"  +theProcessClass->getTag();
                                                      +"|p:"  +projectionType;
+         // Prepare the labels for x and y axis
 
+         string xlabel(theXVar->getLabel());
+         string ylabel(theYVar->getLabel());
+         string zlabel = OptionsScrewdriver::GetStringOption(plotOptions,"labelZ");
+
+         // Add the unit
+         if (theXVar->getUnit() != "") xlabel += string(" [") + theXVar->getUnit() + string("]");
+         if (theYVar->getUnit() != "") ylabel += string(" [") + theYVar->getUnit() + string("]");
 
          Plot thePlot(plotName,"2DFrom3DProjection",theGlobalOptions,plotOptions);
          thePlot.SetParameter("variableX",theXVar->getTag());
@@ -133,16 +141,7 @@ namespace theDoctor
          thePlot.AddToInPlotInfo(theChannel->getLabel());
          thePlot.AddToInPlotInfo(theRegion->getLabel());
          thePlot.AddToInPlotInfo(theProcessClass->getLabel());
-
-         // Prepare the labels for x and y axis
-
-         string xlabel(theXVar->getLabel());
-         string ylabel(theYVar->getLabel());
-         string zlabel = OptionsScrewdriver::GetStringOption(plotOptions,"labelZ");
-
-         // Add the unit
-         if (theXVar->getUnit() != "") xlabel += string(" [") + theXVar->getUnit() + string("]");
-         if (theYVar->getUnit() != "") ylabel += string(" [") + theYVar->getUnit() + string("]");
+         thePlot.AddToInPlotInfo(zlabel);
 
          // Get the histo
          TH2F* histoClone = theHisto->getClone();
@@ -181,7 +180,7 @@ namespace theDoctor
           //theHisto->SetTitle(title.c_str());
           theHisto->SetTitle("");
           theHisto->SetStats(0);
-          thePlot->SetLogZ();
+          //thePlot->SetLogZ();
       }
 
     };
