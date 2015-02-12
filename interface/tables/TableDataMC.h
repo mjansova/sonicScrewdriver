@@ -24,7 +24,7 @@ namespace theDoctor
             {
             }
 
-            TableDataMC(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel, string options)
+            TableDataMC(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel, string options = "")
             {
                 vector<string> rawProcessesTags;
                 vector<string> rawProcessesLabels;
