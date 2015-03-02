@@ -32,6 +32,7 @@
 #include <TStyle.h>
 #include <TError.h>
 #include <THStack.h>
+#include <TColor.h>
 #include <TPaletteAxis.h>
 
 using namespace std;

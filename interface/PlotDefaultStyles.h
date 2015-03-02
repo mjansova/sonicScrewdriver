@@ -84,5 +84,31 @@ class PlotDefaultStyles
       histo->SetFillStyle(0);
   }
 
+
+  static void SetSmoothPalette(string option = "")
+  {
+      const int NRGBs = 5;
+      const int NCont = 999;
+
+      if (option == "soft")
+      {
+          double stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00  };
+          double red[NRGBs]   = { 0.25, 0.25, 0.95, 1.00, 1.00  };
+          double green[NRGBs] = { 0.25, 0.90, 1.00, 0.40, 0.25  };
+          double blue[NRGBs]  = { 0.75, 1.00, 0.30, 0.20, 0.25  };
+          TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+          gStyle->SetNumberContours(NCont);
+      }
+      else
+      {
+          double stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
+          double red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
+          double green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
+          double blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
+          TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+          gStyle->SetNumberContours(NCont);
+      }
+  }
+
 };
 #endif
