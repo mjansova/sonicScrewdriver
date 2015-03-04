@@ -157,6 +157,11 @@ namespace theDoctor
                   theHisto->SetBinContent(i,iIshBinHisto.GetMean() );
                   theHisto->SetBinError(  i,iIshBinHisto.GetMeanError());
               }
+              else if (projectionType == "meanWithSigma")
+              {
+                  theHisto->SetBinContent(i,iIshBinHisto.GetMean() );
+                  theHisto->SetBinError(  i,iIshBinHisto.GetRMS()  );
+              }
               else if (projectionType == "maxFigureOfMeritForVarXBeingSignalParameter")
               {
                   theHisto->SetBinContent(i,iIshBinHisto.GetMaximum() );

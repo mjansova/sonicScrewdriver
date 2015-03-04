@@ -85,20 +85,20 @@ namespace theDoctor
             }
 
             // Logarithm scale management
-            void SetLogX()
+            void SetLogX(bool mode = true)
             {
-                if (thePads.size() != 0) thePads[0]->SetLogx();
-                else theCanvas->SetLogx();
+                if (thePads.size() != 0) thePads[0]->SetLogx(mode);
+                else theCanvas->SetLogx(mode);
             }
-            void SetLogY()
+            void SetLogY(bool mode = true)
             {
-                if (thePads.size() != 0) thePads[0]->SetLogy();
-                else theCanvas->SetLogy();
+                if (thePads.size() != 0) thePads[0]->SetLogy(mode);
+                else theCanvas->SetLogy(mode);
             }
-            void SetLogZ()
+            void SetLogZ(bool mode = true)
             {
-                if (thePads.size() != 0) thePads[0]->SetLogz();
-                else theCanvas->SetLogz();
+                if (thePads.size() != 0) thePads[0]->SetLogz(mode);
+                else theCanvas->SetLogz(mode);
             }
 
             void SetActive()   { theCanvas->cd();                            };

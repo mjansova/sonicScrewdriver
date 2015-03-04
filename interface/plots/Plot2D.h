@@ -100,21 +100,12 @@ namespace theDoctor
 
                 thePlot.getCanvas()->SetRightMargin(0.1);
                 histoClone->Draw("COLZ");
-                thePlot.Update();
-                TPaletteAxis *pal = (TPaletteAxis*) histoClone->GetListOfFunctions()->FindObject("palette");
-                if (pal != 0)
-                {
-                    pal->SetX1NDC(0.901);
-                    pal->SetY1NDC(0.1);
-                    pal->SetX2NDC(0.93);
-                    pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
-                }
+                PlotDefaultStyles::ApplyDefaultStylePalette(histoClone,thePlot.getCanvas());
 
                 return thePlot;
             }
 
-
-        private:
+        //private:
 
             static void ApplyHistoStyle(Plot* thePlot, TH2F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
             {

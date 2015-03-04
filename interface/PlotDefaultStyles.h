@@ -3,7 +3,6 @@
 
 #include "interface/Common.h"
 
-
 #define PLOTDEFAULTSTYLES_FONT 40		// Helvetica
 //#define PLOTDEFAULTSTYLES_FONT 130	// Times
 
@@ -84,6 +83,24 @@ class PlotDefaultStyles
       histo->SetFillStyle(0);
   }
 
+  static void ApplyDefaultStylePalette(TH2F* histo, TCanvas* theCanvas)
+  {
+      theCanvas->Modified();
+      theCanvas->Update();
+      TPaletteAxis* pal = (TPaletteAxis*) histo->GetListOfFunctions()->FindObject("palette");
+      if (pal != 0)
+      {
+          pal->SetX1NDC(0.901);
+          pal->SetY1NDC(0.1);
+          pal->SetX2NDC(0.93);
+          pal->SetY2NDC(1.0-theCanvas->GetTopMargin());
+      }
+      else
+      {
+          // FIXME make this more explicit, ie give name of histo/plot
+          WARNING_MSG << "Palette not found !" << endl;
+      }
+  }
 
   static void SetSmoothPalette(string option = "")
   {
