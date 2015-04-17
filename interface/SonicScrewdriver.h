@@ -39,9 +39,14 @@ namespace theDoctor
       void AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float*  autoFillPointer = 0, string options = "");
       void AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, double* autoFillPointer = 0, string options = "");
       void AddVariable(string tag, string plotLabel, string unit, int nBins, int   min, int   max, int*    autoFillPointer = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float   (*autoFillFunction)() = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins, int   min, int   max, int     (*autoFillFunction)() = 0, string options = "");
+
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    float*  autoFillPointer = 0, string options = "");
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    double* autoFillPointer = 0, string options = "");
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    int*    autoFillPointer = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    float   (*autoFillFunction)() = 0, string options = "");
+      void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    int     (*autoFillFunction)() = 0, string options = "");
 
       int GetIndexOfVariable(string tag);
 

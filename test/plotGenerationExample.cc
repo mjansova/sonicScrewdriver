@@ -23,8 +23,17 @@ typedef struct
 }
 microEvent;
 
-// Global pointer used for the region/channel selectors
-microEvent* myEventPointer;
+// The current event
+microEvent myEvent;
+
+// ##################################################
+// #   Additional variables to compute on the fly   #
+// ##################################################
+
+float leptonPtOverMET()
+{
+    return myEvent.leptonPt / myEvent.MET;
+}
 
 // ###############
 // #   Regions   #
@@ -54,14 +63,14 @@ bool combinedChannel()
 
 bool eChannel()
 {
-   if (myEventPointer->leptonFlavor == 0) return true;
-   else                                   return false;
+   if (myEvent.leptonFlavor == 0) return true;
+   else                           return false;
 }
 
 bool muChannel()
 {
-   if (myEventPointer->leptonFlavor == 1) return true;
-   else                                   return false;
+   if (myEvent.leptonFlavor == 1) return true;
+   else                           return false;
 }
 
 // ####################
@@ -80,18 +89,15 @@ int main (int argc, char *argv[])
      // Create a sonic Screwdriver
       SonicScrewdriver myScrewdriver;
 
-     // Create a container for the event
-     microEvent myEvent;
-     myEventPointer = &myEvent;
-
   // ##########################
   // ##   Create Variables   ##
   // ##########################
 
-      myScrewdriver.AddVariable("invariantMass", "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "noUnderflowInFirstBin,noOverflowInLastBin");
-      myScrewdriver.AddVariable("MET",           "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
-      myScrewdriver.AddVariable("leptonPt",      "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
-      myScrewdriver.AddVariable("mMuf",          "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
+      myScrewdriver.AddVariable("invariantMass",    "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "noUnderflowInFirstBin,noOverflowInLastBin");
+      myScrewdriver.AddVariable("MET",              "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
+      myScrewdriver.AddVariable("leptonPt",         "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
+      myScrewdriver.AddVariable("mMuf",             "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
+      myScrewdriver.AddVariable("leptonPtOverMET",  "Lepton pT / Missing E_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
       
       float customBinning[17] = {0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,50.0,60.0,70.0,80.0,90.0,100.0,125.0,150.0};
       myScrewdriver.AddVariable("leptonPt_customBinning",      "p_{T}(lepton)",    "GeV",    16,customBinning,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");

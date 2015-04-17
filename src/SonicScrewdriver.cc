@@ -44,6 +44,14 @@ void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, in
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, int*    autoFillPointer, string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
 
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max,     int (*autoFillFunction)(),   string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       int (*autoFillFunction)(),   string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float (*autoFillFunction)(), string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    }
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       float (*autoFillFunction)(), string options)
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    }
 
 int SonicScrewdriver::GetIndexOfVariable(string tag)
 {
