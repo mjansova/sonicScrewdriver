@@ -79,13 +79,13 @@ namespace theDoctor
              && (valueX < theXVar->getMin())) valueX = theXVar->getMin();
 
             if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"noOverflowInLastBin"))
-             && (valueX > theXVar->getMax())) valueX = theXVar->getMax() - 0.001; // FIXME Find a better way to do this
+             && (valueX >= theXVar->getMax())) valueX = theXVar->getMax() - 0.001; // FIXME Find a better way to do this
 
             if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"noUnderflowInFirstBin"))
              && (valueY < theYVar->getMin())) valueY = theYVar->getMin();
 
             if ((!OptionsScrewdriver::GetBoolOption(theYVar->getOptions(),"noOverflowInLastBin"))
-             && (valueY > theYVar->getMax())) valueY = theYVar->getMax() - 0.001; // FIXME Find a better way to do this
+             && (valueY >= theYVar->getMax())) valueY = theYVar->getMax() - 0.001; // FIXME Find a better way to do this
 
             theHisto->Fill(valueX,valueY,weight);
             theHistoRawEntries->Fill(valueX,valueY);

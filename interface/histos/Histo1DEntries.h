@@ -74,7 +74,7 @@ namespace theDoctor
            && (value < theVar->getMin())) value = theVar->getMin();
 
           if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noOverflowInLastBin"))
-           && (value > theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this
+           && (value >= theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this
 
           theHisto->Fill(value,weight);
           theHistoRawEntries->Fill(value);
