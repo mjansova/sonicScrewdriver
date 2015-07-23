@@ -292,6 +292,59 @@ TH2F* SonicScrewdriver::Get2DHistoClone(string varX, string varY, string process
 TH2F* SonicScrewdriver::Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
 { return theHistoScrewdriver.get2DCompositeHistoClone(varX,varY,type,region,channel,otherParameters); }
 
+void SonicScrewdriver::ExportHistosEntries(string outputFile)
+{ 
+    vector<Histo1DEntries>* Entries1D = Get1DHistosEntries();
+    vector<Histo2DEntries>* Entries2D = Get2DHistosEntries();
+    vector<Histo3DEntries>* Entries3D = Get3DHistosEntries();
+
+    TFile* f = new TFile(outputFile.c_str(),"RECREATE");
+
+    for (unsigned int i = 0 ; i < Entries1D->size() ; i++)
+        Entries1D->at(i).getHisto()->Write();
+    for (unsigned int i = 0 ; i < Entries2D->size() ; i++)
+        Entries2D->at(i).getHisto()->Write();
+    for (unsigned int i = 0 ; i < Entries3D->size() ; i++)
+        Entries3D->at(i).getHisto()->Write();
+
+    f->Close();
+    
+}
+
+void SonicScrewdriver::ImportHistosEntries(string inputFile)
+{ 
+    TFile* f = new TFile(inputFile.c_str(),"READ");
+    
+    vector<Histo1DEntries>* Entries1D = Get1DHistosEntries();
+    vector<Histo2DEntries>* Entries2D = Get2DHistosEntries();
+    vector<Histo3DEntries>* Entries3D = Get3DHistosEntries();
+
+    for (unsigned int i = 0 ; i < Entries1D->size() ; i++)
+    {
+        TH1F* localHisto = Entries1D->at(i).getHisto();
+        string name = localHisto->GetName();
+        TH1F* fileHisto = (TH1F*) f->Get(name.c_str());
+        localHisto->Add(fileHisto);
+    }
+    for (unsigned int i = 0 ; i < Entries2D->size() ; i++)
+    {
+        TH2F* localHisto = Entries2D->at(i).getHisto();
+        string name = localHisto->GetName();
+        TH2F* fileHisto = (TH2F*) f->Get(name.c_str());
+        localHisto->Add(fileHisto);
+    }
+    for (unsigned int i = 0 ; i < Entries3D->size() ; i++)
+    {
+        TH3F* localHisto = Entries3D->at(i).getHisto();
+        string name = localHisto->GetName();
+        TH3F* fileHisto = (TH3F*) f->Get(name.c_str());
+        localHisto->Add(fileHisto);
+    }
+
+    f->Close();
+    
+}
+
 
 
 

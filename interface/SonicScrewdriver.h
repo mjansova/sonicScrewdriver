@@ -240,6 +240,8 @@ namespace theDoctor
       vector<Histo1DEntries>* Get1DHistosEntries();
       vector<Histo2DEntries>* Get2DHistosEntries();
       vector<Histo3DEntries>* Get3DHistosEntries();
+      void ExportHistosEntries(string outputFile);
+      void ImportHistosEntries(string inputFile);
 
       TH1F* Get1DHistoClone(string var, string processClass, string region, string channel);
       TH1F* Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
