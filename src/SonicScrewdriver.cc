@@ -19,6 +19,7 @@ SonicScrewdriver::SonicScrewdriver():
     // FIXME this should be handled an other way
     AddVariable("yield","Yield","",1,0,0,&sonicScrewdriver_DummyUnity,"");
     // FIXME this too
+    PlotDefaultStyles::SetSmoothPalette("smooth");
     thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "min", 0.5);
     thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "max", 1.5);
 }
@@ -120,7 +121,7 @@ float SonicScrewdriver::GetDatasetLumiWeight(string datasetTag)
     string type = GetProcessClassType(dataset->getProcessClass());
 
     if (type == "data") return 1.0;
-    
+   
     return dataset->getXsecOrLumi() * theLumi / dataset->getTrueNumberOfEvents();
 }
 

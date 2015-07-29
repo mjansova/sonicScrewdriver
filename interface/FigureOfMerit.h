@@ -18,7 +18,12 @@ namespace theDoctor
 
             static TH1F Compute(TH1F* signalHisto, TH1F* backgrHisto, short int cutType, OptionsScrewdriver theGlobalOptions)
             {
-                //float f = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","backgroundSystematicUncertainty");
+
+                string type = theGlobalOptions.GetGlobalStringOption("FigureOfMerit","type");
+                if (type == "") type = "Zbi";
+
+                float Bmin = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","minBackground");
+                float f = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","backgroundSystematicUncertainty");
 
                 TH1F theFOM = *((TH1F*) signalHisto->Clone());
                 int nBins = theFOM.GetNbinsX();
@@ -26,6 +31,7 @@ namespace theDoctor
                 if (backgrHisto == 0)
                 {
                     WARNING_MSG << "Background histogram for Figure of Merit computation is empty ?" << endl;
+                    theFOM.Scale(0);
                     return theFOM;
                 }
 
@@ -40,20 +46,43 @@ namespace theDoctor
                     // Keep-low-value case
                     else              { S = signalHisto->Integral(0,i);       B = backgrHisto->Integral(0,i);       }
 
-                    if (B < 1) B = 1;
-                    float sOverSqrtB = 0.0;
-                    // Previous way to get the FOM
-                    // if (S >= 3) sOverSqrtB = S / sqrt(B + f*f * B*B);
+                    if (B < Bmin) B = Bmin;
 
-                    // New way to get the FOM
-                    if (S >= 3) sOverSqrtB = S / sqrt(S + B);
+                    float FOM = -1;
+                    if (type == "sOverSqrtB")
+                    {
+                        FOM = S / sqrt(B + f*f*B*B);
+                    }
+                    else if (type == "sOverSqrtSplusB")
+                    {
+                        FOM = S / sqrt(S + B + f*f*B*B);
+                    }
+                    else if (type == "Zbi")
+                    {
+                        FOM = Zbi(S,B,f);
+                    }
 
-                    theFOM.SetBinContent(i,sOverSqrtB);
+                    theFOM.SetBinContent(i,FOM);
                     theFOM.SetBinError(i,0.0);
                 }
 
                 return theFOM;
             };
+
+            // From arXiv:physics/0702156
+            static float Zbi(float n_sig, float n_b, float rel_uncert_b)
+            {
+                float  n_on     = n_sig+n_b;
+                float  mu_b_hat = n_b;
+                float  sigma_b  = rel_uncert_b*n_b;
+                float  tau      = mu_b_hat/(sigma_b*sigma_b);
+                float  n_off    = tau*mu_b_hat;
+                float  P_Bi     = TMath::BetaIncomplete(1./(1.+tau),n_on,n_off+1);
+                float  Z_Bi     = sqrt(2)*TMath::ErfInverse(1 - 2*P_Bi);
+
+                return Z_Bi;
+            };
+
 
     };
 

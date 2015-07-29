@@ -35,22 +35,6 @@ float leptonPtOverMET()
     return myEvent.leptonPt / myEvent.MET;
 }
 
-// ###############
-// #   Regions   #
-// ###############
-
-// Regions
-vector<Cut> preSelection
-{
-    Cut("invariantMass", '>', 90)
-};
-
-vector<Cut> signalRegion
-{
-    Cut("MET",     '>', 50),
-    Cut("leptonPt",'>', 50)
-};
-
 // ################
 // #   Channels   #
 // ################
@@ -87,20 +71,20 @@ int main (int argc, char *argv[])
   // ####################
   
      // Create a sonic Screwdriver
-      SonicScrewdriver myScrewdriver;
+      SonicScrewdriver s;
 
   // ##########################
   // ##   Create Variables   ##
   // ##########################
 
-      myScrewdriver.AddVariable("invariantMass",    "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "noUnderflowInFirstBin,noOverflowInLastBin");
-      myScrewdriver.AddVariable("MET",              "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
-      myScrewdriver.AddVariable("leptonPt",         "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
-      myScrewdriver.AddVariable("mMuf",             "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
-      myScrewdriver.AddVariable("leptonPtOverMET",  "Lepton pT / Missing E_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
+      s.AddVariable("invariantMass",    "Invariant mass",   "GeV",    40,60,160,   &(myEvent.invariantMass),  "noUnderflowInFirstBin,noOverflowInLastBin");
+      s.AddVariable("MET",              "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
+      s.AddVariable("leptonPt",         "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
+      s.AddVariable("mMuf",             "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
+      s.AddVariable("leptonPtOverMET",  "Lepton pT / E^#text{miss}_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
       
       float customBinning[17] = {0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,50.0,60.0,70.0,80.0,90.0,100.0,125.0,150.0};
-      myScrewdriver.AddVariable("leptonPt_customBinning",      "p_{T}(lepton)",    "GeV",    16,customBinning,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
+      s.AddVariable("leptonPt_customBinning",      "p_{T}(lepton)",    "GeV",    16,customBinning,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -108,37 +92,52 @@ int main (int argc, char *argv[])
 
 	  // Backgrounds
 
-      myScrewdriver.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_RED);
-           myScrewdriver.AddDataset("foo","foo",50000,0.495);
+      s.AddProcessClass("foo",     "Foo",     "background", COLORPLOT_RED);
+           s.AddDataset("foo","foo",50000,0.495);
   
-      myScrewdriver.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_ORANGE);
-           myScrewdriver.AddDataset("bar","bar",50000,0.495);
+      s.AddProcessClass("bar",     "Bar",     "background", COLORPLOT_ORANGE);
+           s.AddDataset("bar","bar",50000,0.495);
 
 	  // Signal(s)
 
-      myScrewdriver.AddProcessClass("muf",     "Muf",               "signal",  COLORPLOT_BLUE, "no1DPlots");
-           myScrewdriver.AddDataset("muf","muf",50000 / 11,0.01);
-      myScrewdriver.AddProcessClass("muf_125", "Muf (m=125 GeV)",    "signal",  COLORPLOT_BLUE);
+      s.AddProcessClass("muf",     "Muf",               "signal",  COLORPLOT_BLUE, "no1DPlots");
+           s.AddDataset("muf","muf",50000 / 11,0.01);
+      s.AddProcessClass("muf_125", "Muf (m=125 GeV)",    "signal",  COLORPLOT_BLUE);
 
 	  // Data
 
-      myScrewdriver.AddProcessClass("data" ,   "Data",    "data",       COLORPLOT_BLACK);
-           myScrewdriver.AddDataset("data","data",-1,50000);
+      s.AddProcessClass("data" ,   "Data",    "data",       COLORPLOT_BLACK);
+           s.AddDataset("data","data",-1,-1);
+
+      s.SetLumi(50000);
   
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
-     myScrewdriver.AddRegion("preSelection","Pre-selection",               preSelection);
-     myScrewdriver.AddRegion("signalRegion","Signal region","preSelection",signalRegion,"showCuts");
+     vector<Cut> preSelection { Cut("invariantMass", '>', 90) };
+        s.AddRegion("preSelection","Pre-selection",               preSelection);
+    
+     // Signal region is a daughter of "preSelection", with additional cuts
+     vector<Cut> signalRegion { Cut("MET", '>', 50), Cut("leptonPt",'>', 50) };
+        s.AddRegion("signalRegion","Signal region","preSelection",signalRegion);
+     
+     vector<Cut> signalRegion2 { Cut("MET", '>', 60), Cut("leptonPt",'>', 60) };
+        s.AddRegion("signalRegion2","Signal region2","preSelection",signalRegion2);
+     vector<Cut> signalRegion3 { Cut("MET", '>', 70), Cut("leptonPt",'>', 70) };
+        s.AddRegion("signalRegion3","Signal region3","preSelection",signalRegion3);
+     vector<Cut> signalRegion4 { Cut("MET", '>', 80), Cut("leptonPt",'>', 80) };
+        s.AddRegion("signalRegion4","Signal region4","preSelection",signalRegion4);
+     vector<Cut> signalRegion5 { Cut("MET", '>', 90), Cut("leptonPt",'>', 90) };
+        s.AddRegion("signalRegion5","Signal region5","preSelection",signalRegion5);
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
-     myScrewdriver.AddChannel("combinedChannel","e/#mu-channel",&combinedChannel);
-     //myScrewdriver.AddChannel("eChannel",       "e-channel",    &eChannel       );
-     //myScrewdriver.AddChannel("muChannel",      "#mu-channel",  &muChannel      );
+     s.AddChannel("combinedChannel","e/#mu-channel",&combinedChannel);
+     //s.AddChannel("eChannel",       "e-channel",    &eChannel       );
+     //s.AddChannel("muChannel",      "#mu-channel",  &muChannel      );
 
   // ########################################
   // ##       Create histograms and        ##
@@ -146,50 +145,50 @@ int main (int argc, char *argv[])
   // ########################################
   
      // Create histograms
-     myScrewdriver.Create1DHistos();
+     s.Create1DHistos();
      
-     myScrewdriver.Add2DHisto("invariantMass","leptonPt");
-     myScrewdriver.Add2DHisto("mMuf","invariantMass");
+     s.Add2DHisto("invariantMass","leptonPt");
+     s.Add2DHisto("mMuf","invariantMass");
 
      // Set options
 
-     myScrewdriver.SetGlobalBoolOption  ("1DSuperimposed",    "includeSignal",                    true   );
+     s.SetGlobalBoolOption  ("1DSuperimposed",    "includeSignal",                    true   );
      
-     myScrewdriver.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
-     myScrewdriver.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
+     s.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
+     s.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
 
-     myScrewdriver.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
-     myScrewdriver.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
-     myScrewdriver.SetGlobalBoolOption  ("DataMCComparison",  "showBackgroundUncertainty",        true   );
-     myScrewdriver.SetGlobalBoolOption  ("DataMCRatio",       "includeSignal",                    true   );
-     myScrewdriver.SetGlobalBoolOption  ("DataMCRatio",       "splitUncertainties",               false  );
-     myScrewdriver.SetGlobalFloatOption ("DataMCRatio",       "yGridStep",                        0.25   );
+     s.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
+     s.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
+     s.SetGlobalBoolOption  ("DataMCComparison",  "showBackgroundUncertainty",        true   );
+     s.SetGlobalBoolOption  ("DataMCRatio",       "includeSignal",                    true   );
+     s.SetGlobalBoolOption  ("DataMCRatio",       "splitUncertainties",               false  );
+     s.SetGlobalFloatOption ("DataMCRatio",       "yGridStep",                        0.25   );
      
-     myScrewdriver.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
+     s.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
 
      // Schedule plots
      
-     myScrewdriver.SchedulePlots("1DSuperimposed");
-     myScrewdriver.SchedulePlots("1DStack");
-     myScrewdriver.SchedulePlots("1DDataMCComparison");
-     myScrewdriver.SchedulePlots("1DFigureOfMerit","var=leptonPt,cutType=keepHighValues");
-     myScrewdriver.SchedulePlots("2D");
+     s.SchedulePlots("1DSuperimposed");
+     s.SchedulePlots("1DStack");
+     s.SchedulePlots("1DDataMCComparison");
+     s.SchedulePlots("1DFigureOfMerit","var=leptonPt,cutType=keepHighValues");
+     s.SchedulePlots("2D");
 
      // Config plots
 
-     myScrewdriver.SetGlobalStringOption("Plot", "infoTopRight", "Work in progress");
-     myScrewdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
+     s.SetGlobalStringOption("Plot", "infoTopRight", "Work in progress");
+     s.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
      
-     myScrewdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
-     myScrewdriver.SetGlobalBoolOption("Plot", "exportEps", false);
-     myScrewdriver.SetGlobalBoolOption("Plot", "exportPng", false);
+     s.SetGlobalBoolOption("Plot", "exportPdf", true);
+     s.SetGlobalBoolOption("Plot", "exportEps", false);
+     s.SetGlobalBoolOption("Plot", "exportPng", false);
 
   // ########################################
   // ##        Run over the events         ##
   // ########################################
   
      vector<string> datasetsList;
-     myScrewdriver.GetDatasetList(&datasetsList);
+     s.GetDatasetList(&datasetsList);
 
      cout << "   > Reading datasets " << endl;
 
@@ -197,7 +196,7 @@ int main (int argc, char *argv[])
      {
          // Get current dataset
          string currentDataset = datasetsList[d];
-         string currentProcessClass = myScrewdriver.GetProcessClass(currentDataset); 
+         string currentProcessClass = s.GetProcessClass(currentDataset); 
     
          // Open dataset tree
          TTree* theTree;
@@ -216,14 +215,14 @@ int main (int argc, char *argv[])
             theTree->GetEntry(i);
             
             // Reweight event to luminosity
-            float weight = myScrewdriver.GetDatasetLumiWeight(currentDataset);
+            float weight = s.GetDatasetLumiWeight(currentDataset);
               
             // Fill all the variables
-            myScrewdriver.AutoFillProcessClass(currentProcessClass,weight);
+            s.AutoFillProcessClass(currentProcessClass,weight);
 
             // Also fill muf_125
             if ((currentProcessClass == "muf") && (myEvent.mMuf == 125))
-                myScrewdriver.AutoFillProcessClass("muf_125",weight);
+                s.AutoFillProcessClass("muf_125",weight);
 
          }
          printProgressBar(nEntries,nEntries,currentDataset);
@@ -236,11 +235,11 @@ int main (int argc, char *argv[])
 
      cout << "   > Making and writing plots ... " << endl;
 
-     myScrewdriver.MakePlots();
-     myScrewdriver.WritePlots("./plots/");
+     s.MakePlots();
+     s.WritePlots("./plots/");
 
-     vector<string> regionsForTable  = { "preSelection", "signalRegion" };
-     TableDataMC(&myScrewdriver,regionsForTable,"combinedChannel","includeSignal").Print("yieldTable.tab",2);
+     vector<string> regionsForTable  = { "preSelection", "signalRegion", "signalRegion2", "signalRegion3", "signalRegion4" };
+     TableDataMC(&s,regionsForTable,"combinedChannel","includeSignal").Print("yieldTable.tab",2);
 
 
 

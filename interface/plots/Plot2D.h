@@ -64,6 +64,7 @@ namespace theDoctor
                                  OptionsScrewdriver theGlobalOptions)
             {
 
+
                 string plotName = string("t:2D|vX:")+theXVar->getTag()
                                             +"|vY:" +theYVar->getTag()
                                             +"|p:"  +theProcessClass->getTag()
@@ -109,7 +110,6 @@ namespace theDoctor
 
             static void ApplyHistoStyle(Plot* thePlot, TH2F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
             {
-                PlotDefaultStyles::SetSmoothPalette("soft");
             }
 
             static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")

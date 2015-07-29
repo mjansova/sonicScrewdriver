@@ -140,6 +140,8 @@ namespace theDoctor
                 string plotType          = plot.first;
                 string plotOptions       = plot.second;
 
+                //DEBUG_MSG << "Producing plot type " << plotType << endl;
+
                 vector<Plot> inputFromProducer;
                 if (plotType == "1DStack")
                     inputFromProducer =
