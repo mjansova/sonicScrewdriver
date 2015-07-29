@@ -34,6 +34,7 @@
 #include <THStack.h>
 #include <TColor.h>
 #include <TPaletteAxis.h>
+#include <TMath.h>
 
 using namespace std;
 

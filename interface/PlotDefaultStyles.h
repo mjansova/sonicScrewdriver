@@ -97,12 +97,14 @@ class PlotDefaultStyles
       }
       else
       {
-          // FIXME make this more explicit, ie give name of histo/plot
-          WARNING_MSG << "Palette not found !" << endl;
+          // Disabling this warning message - palette not found usually
+          // mean that the 2D plot is empty, which might not be a bug (i.e. for a given process
+          // its empty because variables are not defined for it)
+          //WARNING_MSG << "Palette not found for 2D histo " << histo->GetName() << endl;
       }
   }
 
-  static void SetSmoothPalette(string option = "")
+  static void SetSmoothPalette(string option = "standard")
   {
       const int NRGBs = 5;
       const int NCont = 999;
@@ -128,4 +130,5 @@ class PlotDefaultStyles
   }
 
 };
+
 #endif
