@@ -122,15 +122,6 @@ int main (int argc, char *argv[])
      vector<Cut> signalRegion { Cut("MET", '>', 50), Cut("leptonPt",'>', 50) };
         s.AddRegion("signalRegion","Signal region","preSelection",signalRegion);
      
-     vector<Cut> signalRegion2 { Cut("MET", '>', 60), Cut("leptonPt",'>', 60) };
-        s.AddRegion("signalRegion2","Signal region2","preSelection",signalRegion2);
-     vector<Cut> signalRegion3 { Cut("MET", '>', 70), Cut("leptonPt",'>', 70) };
-        s.AddRegion("signalRegion3","Signal region3","preSelection",signalRegion3);
-     vector<Cut> signalRegion4 { Cut("MET", '>', 80), Cut("leptonPt",'>', 80) };
-        s.AddRegion("signalRegion4","Signal region4","preSelection",signalRegion4);
-     vector<Cut> signalRegion5 { Cut("MET", '>', 90), Cut("leptonPt",'>', 90) };
-        s.AddRegion("signalRegion5","Signal region5","preSelection",signalRegion5);
-
   // ##########################
   // ##   Create Channels    ##
   // ##########################
@@ -238,7 +229,7 @@ int main (int argc, char *argv[])
      s.MakePlots();
      s.WritePlots("./plots/");
 
-     vector<string> regionsForTable  = { "preSelection", "signalRegion", "signalRegion2", "signalRegion3", "signalRegion4" };
+     vector<string> regionsForTable  = { "preSelection", "signalRegion" };
      TableDataMC(&s,regionsForTable,"combinedChannel","includeSignal").Print("yieldTable.tab",2);
 
 

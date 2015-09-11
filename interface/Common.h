@@ -55,7 +55,7 @@ using namespace std;
 #define COLORPLOT_GRAY         kGray
 
 // Uncomment this to use TH1D instead of TH1F
-//#define TH1F TH1D
+#define TH1F TH1D
 
 string floatToString(float input);
 
