@@ -116,7 +116,7 @@ where :
 
 ### Figures
 
-Figures are a special kind of variable as they are not event-by-event variables, but rather global numbers such as scale factors or yields, but that might depend on the process, region and channel.
+Figures are a special kind of variable as they are not event-by-event variables, but rather global numbers such as scale factors or yields, but that might depend on the process, region and channel. First, you need to declare the figure :
 
 ```C++
 s.AddFigurePerProcess("tag", "label", "options"); // Depends of process x region x channel
@@ -127,6 +127,17 @@ where :
 - `tag` is the shortcut name of the figure (to be used by the system) ;
 - `label` is the fancy name of the figure (to be used on plots).
 - `options` is a optional string containing options separated by comas, that aim to customize the behavior of this figure.
+
+Then you can fill the values for each process/region/channel with :
+
+```C++
+s.SetFigure("figureTag","processTag","regionTag","channelTag",valueWithError)
+```
+
+where :
+- `figureTag` is the tag of the figure as declared before
+- `processTag`, `regionTag` and `channelTag` are the tag of the process x region x channel (process being ommited if the figure doesnt depend on process)
+- `valueWithError` is a variable with Figure type, e.g. `Figure(3.14,1.0)` corresponds to 3.14 +/- 1.0
 
 <a name="PlotConfiguration"></a>
 2. Configure the plots
@@ -161,15 +172,15 @@ where :
 
 The current supported kind of plots are :
 
-|   Name               |  Description                                                                        | Options |
-| -------------------- | ----------------------------------------------------------------------------------- | ------ |
-| `1DStack`            | Weighted backgrounds are stacked on top of each other                               | |
-| `1DSuperimosed`      | Backgrounds are renormalized to unity and superimosed, aiming to compare the shapes | |
-| `1DDataMCComparison` | Weighted backgrounds are stacked then data are superimposed and a data/MC ratio is drawn | |
-| `2D`                 | All created 2D histograms will lead to a 2D plot, one for each process class        | |
-| `2DSuperimposed`      | Not supported yet because of ROOT issues                                            | |
-| `1DFigureOfMerit`    | Create a plot showing the evolution of a figure of merit after cutting on a given variable | `var` to indicate the variable tag to cut on, and `cutType` should be set to `keepHighValues` or `keepLowValues` |
-| `1DFrom2DProjection` | (Badly supported at this point) Aiming to create 1D plots from 2D ones, in particular to compute efficiency curves. | See with the developers or in the code.. |
+|   Name                     |  Description                                                                        | Options |
+| -------------------------- | ----------------------------------------------------------------------------------- | ------- |
+| `1DStack`                  | Weighted backgrounds are stacked on top of each other                               |         |
+| `1DSuperimosed`            | Backgrounds are renormalized to unity and superimosed, aiming to compare the shapes |         |
+| `1DDataMCComparison`       | Weighted backgrounds are stacked then data are superimposed and a data/MC ratio is drawn |    |
+| `2D`                       | All created 2D histograms will lead to a 2D plot, one for each process class        |         |
+| `2DSuperimposed`           | Not supported yet because of ROOT issues                                            |         |
+| `1DFigureOfMerit`          | Create a plot showing the evolution of a figure of merit after cutting on a given variable | `var` to indicate the variable tag to cut on, and `cutType` should be set to `keepHighValues` or `keepLowValues` |
+| `1DFrom2DProjection`       | (Badly supported at this point) Aiming to create 1D plots from 2D ones, in particular to compute efficiency curves. | See with the developers or in the code.. |
 | `1DFigure`                 | For a given list of figures and a given channel, produce a plot of the figures as function of the regions | `name` to indicate the tag of the plot, `figures` to list the figures separated by `:`,`channel` to specify the channel, `min` and `max` to fix the y-range. |
 | `1DDataMCComparisonFigure` | For each FigurePerProcess declared, produce a data/MC comparison as function of the regions | |
 
@@ -177,13 +188,13 @@ The current supported kind of plots are :
 
 #### Include signal in plots
 
-| Method                  | Range              | Option               | Values                               |
-| ----------------------- | ------------------ | -------------------- | ------------------------------------ |
-| s.SetGlobalBoolOption   | "1DSuperimposed"   | "includeSignal"      | `true` or `false`                    |
-| s.SetGlobalStringOption | "1DStack"          | "includeSignal"      | `"no"`, `"superimosed"` or `"stack"` |
-| s.SetGlobalFloatOption  | "1DStack"          | "factorSignal"       | A float                              |
-| s.SetGlobalStringOption | "DataMCComparison" | "includeSignal"      | `"no"`, `"superimosed"` or `"stack"` |
-| s.SetGlobalFloatOption  | "DataMCComparison" | "factorSignal"       | A float                              |
+| Method                  | Range              | Option               | Values                                |
+| ----------------------- | ------------------ | -------------------- | ------------------------------------- |
+| s.SetGlobalBoolOption   | "1DSuperimposed"   | "includeSignal"      | `true` or `false`                     |
+| s.SetGlobalStringOption | "1DStack"          | "includeSignal"      | `"no"`, `"superimposed"` or `"stack"` |
+| s.SetGlobalFloatOption  | "1DStack"          | "factorSignal"       | A float                               |
+| s.SetGlobalStringOption | "DataMCComparison" | "includeSignal"      | `"no"`, `"superimposed"` or `"stack"` |
+| s.SetGlobalFloatOption  | "DataMCComparison" | "factorSignal"       | A float                               |
 
 #### Figure of Merit
 
@@ -210,9 +221,79 @@ The current supported kind of plots are :
 3. Loop on your data
 --------------------
 
+This is typically done with something like :
+
+```C++
+vector<string> datasetsList;
+s.GetDatasetList(&datasetsList);
+
+cout << "   > Reading datasets " << endl;
+
+for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
+{
+    // Get current dataset
+    string currentDataset = datasetsList[d];
+    string currentProcessClass = s.GetProcessClass(currentDataset); 
+    
+    // Open tree corresponding to currentDataset
+    TTree* theTree = ...
+
+    // Loop over the events
+    int nEntries = theTree->GetEntries();
+    for (int i = 0 ; i < nEntries ; i++)
+    {
+        theTree->GetEntry(i);
+
+        // This weight, or whatever weight you want to use
+        float weight = s * GetDatasetLumiWeight(currentDataset);
+
+        // Then use black magic to fill the right histograms with current event
+        s.AutoFillProcessClass(currentProcessClass,weight);
+    }
+}
+```
+
 <a name="ProduceOutput"></a>
 4. Produce and browse the outputs
 ---------------------------------
+
+After looping on your data, but before producing any plots, you might want to apply scale factors to your (1D) histograms (warning : it doesnt affects 2D or 3D histograms).
+To do so, use
+
+```C++
+s.ApplyScaleFactor("processTag","regionTag","channelTag",scaleFactor)
+```
+
+where :
+- `processTag`, `regionTag`, `channelTag` is the relevant process x region x channel
+- `scaleFactor` is the scale factor to apply to all variable plots corresponding to the process x region x channel, e.g. `Figure(3.14,1.0)` corresponding to 3.14 +/- 1.0 
+
+Producing and writing the plots is done with
+
+```C++
+s.MakePlots();
+s.WritePlots("./folder/for/plots/")
+```
+
+which after the end of the program you can then browse. In root format for instance, with
+
+```C++
+root -l ./folder/for/plots/*.root
+```
+
+You may also produce and export yield tables, for a given channel, with :
+
+```C++
+TableDataMC(&s,{ "regionTag1", "regionTag2" }, "channelTag").Print("yieldTable.tab",precision)
+```
+
+where :
+- `&s` is the pointer of the screwdriver
+- `{ "regionTag1", "regionTag2" }` is the list of regions to consider
+- `"channelTag"` is the channel to consider
+- `"yieldTable.tab"` is the output file name
+- `precision` is an integer stating the precision to use when printing the yields (e.g. 2 for 2 decimal precision)
+- Additionnaly, as an additional argument after `"channelTag"`, you may add `"includeSignal"` to include signal process classes in the tab
 
 <a name="CustomPlots"></a>
 Appendix A. About user-custom plots and manipulation
