@@ -243,10 +243,10 @@ namespace theDoctor
       void ExportHistosEntries(string outputFile);
       void ImportHistosEntries(string inputFile);
 
-      TH1F* Get1DHistoClone(string var, string processClass, string region, string channel);
-      TH1F* Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
-      TH2F* Get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
-      TH2F* Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
+      TH1D* Get1DHistoClone(string var, string processClass, string region, string channel);
+      TH1D* Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
+      TH2D* Get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
+      TH2D* Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
 
      private:
 

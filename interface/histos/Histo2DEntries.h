@@ -32,20 +32,20 @@ namespace theDoctor
             theHisto->SetName(nameHisto.c_str());
 
             if (theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning())
-              theHistoRawEntries = new TH2F("","",
+              theHistoRawEntries = new TH2D("","",
                                             theXVar->getNbins(),theXVar->getCustomBinning(),
                                             theYVar->getNbins(),theYVar->getCustomBinning());
 
             else if (theXVar_->usingCustomBinning())
-              theHistoRawEntries = new TH2F("","",
+              theHistoRawEntries = new TH2D("","",
                                             theXVar->getNbins(),theXVar->getCustomBinning(),
                                             theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
             else if (theXVar_->usingCustomBinning())
-              theHistoRawEntries = new TH2F("","",
+              theHistoRawEntries = new TH2D("","",
                                             theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                             theYVar->getNbins(),theYVar->getCustomBinning());
             else
-              theHistoRawEntries = new TH2F("","",
+              theHistoRawEntries = new TH2D("","",
                                             theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                             theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
 
@@ -57,8 +57,8 @@ namespace theDoctor
         ~Histo2DEntries() { };
 
         // Accessors
-        TH2F*         getEntriesHisto()    { return theHistoRawEntries;                  };
-        TH2F*         getEntriesClone()    { return (TH2F*) theHistoRawEntries->Clone(); };
+        TH2D*         getEntriesHisto()    { return theHistoRawEntries;                  };
+        TH2D*         getEntriesClone()    { return (TH2D*) theHistoRawEntries->Clone(); };
         ProcessClass* getProcessClass()    { return theProcessClass;                     };
         string        getProcessClassTag() { return theProcessClass->getTag();           };
 
@@ -94,7 +94,7 @@ namespace theDoctor
         private:
 
             ProcessClass* theProcessClass;
-            TH2F* theHistoRawEntries;
+            TH2D* theHistoRawEntries;
     };
 
 }

@@ -39,8 +39,8 @@ namespace theDoctor
                 }
             }
 
-            TH1F* histoSumData = theSumData->getClone();
-            TH1F* histoSumBackground = theSumBackground->getClone();
+            TH1D* histoSumData = theSumData->getClone();
+            TH1D* histoSumBackground = theSumBackground->getClone();
 
             if (regionRebin)
             {

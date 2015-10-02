@@ -36,9 +36,9 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
 
-          TH1F* signalHisto          = theSignal->getHisto();
-          TH1F* sumBackgroundHisto   = theSumBackground->getHisto();
-          TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(signalHisto,sumBackgroundHisto,cutType,theGlobalOptions);
+          TH1D* signalHisto          = theSignal->getHisto();
+          TH1D* sumBackgroundHisto   = theSumBackground->getHisto();
+          TH1D theFigureOfMeritHisto = FigureOfMerit::Compute(signalHisto,sumBackgroundHisto,cutType,theGlobalOptions);
 
           // Copy it to this histogram
           int nBins = theFigureOfMeritHisto.GetNbinsX();

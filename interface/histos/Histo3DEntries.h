@@ -38,13 +38,13 @@ namespace theDoctor
             theHisto->SetName(nameHisto.c_str());
             if(theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning() && theZVar_->usingCustomBinning())
             {
-                theHistoRawEntries = new TH3F("","",
+                theHistoRawEntries = new TH3D("","",
                                               theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                               theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
                                               theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());
             }
             else{
-                theHistoRawEntries = new TH3F("","",
+                theHistoRawEntries = new TH3D("","",
                                               theXVar->getNbins(),theXVar->getCustomBinning(),
                                               theYVar->getNbins(),theYVar->getCustomBinning(),
                                               theZVar->getNbins(),theZVar->getCustomBinning());
@@ -57,8 +57,8 @@ namespace theDoctor
         ~Histo3DEntries() { };
 
         // Accessors
-        TH3F*         getEntriesHisto()    { return theHistoRawEntries;                  };
-        TH3F*         getEntriesClone()    { return (TH3F*) theHistoRawEntries->Clone(); };
+        TH3D*         getEntriesHisto()    { return theHistoRawEntries;                  };
+        TH3D*         getEntriesClone()    { return (TH3D*) theHistoRawEntries->Clone(); };
         ProcessClass* getProcessClass()    { return theProcessClass;                           };
         string        getProcessClassTag() { return theProcessClass->getTag();                 };
 
@@ -100,7 +100,7 @@ namespace theDoctor
         private:
 
             ProcessClass* theProcessClass;
-            TH3F* theHistoRawEntries;
+            TH3D* theHistoRawEntries;
     };
 
 }

@@ -114,12 +114,12 @@ namespace theDoctor
              ylabel += string(" ") + theVar->getUnit();
          }
 
-         vector<TH1F*>  pointersForLegend;
+         vector<TH1D*>  pointersForLegend;
          vector<string> labelsForLegend;
          vector<string> optionsForLegend;
 
         float globalMax = 0.0;
-        TH1F* firstHisto = 0;
+        TH1D* firstHisto = 0;
 
         // Now loop on the histos
         for (unsigned int i = 0 ; i < theBackgrounds.size() ; i++)
@@ -128,7 +128,7 @@ namespace theDoctor
             ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
 
             // Get the histo
-            TH1F* histoClone = theBackgrounds[i]->getClone();
+            TH1D* histoClone = theBackgrounds[i]->getClone();
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
 
             // Normalize histogram to unity
@@ -161,7 +161,7 @@ namespace theDoctor
                 ProcessClass* processClass = theSignals[i]->getProcessClass();
 
                 // Get the histo
-                TH1F* histoClone = theSignals[i]->getClone();
+                TH1D* histoClone = theSignals[i]->getClone();
                 ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->SetLineStyle(9);
 
@@ -195,7 +195,7 @@ namespace theDoctor
                 ProcessClass* processClass = theDatas[i]->getProcessClass();
 
                 // Get the histo
-                TH1F* histoClone = theDatas[i]->getClone();
+                TH1D* histoClone = theDatas[i]->getClone();
                 ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->SetMarkerStyle(8);
                 histoClone->SetMarkerSize(1);
@@ -280,7 +280,7 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(6);
@@ -288,7 +288,7 @@ namespace theDoctor
 
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, TH1D* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
       {
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);

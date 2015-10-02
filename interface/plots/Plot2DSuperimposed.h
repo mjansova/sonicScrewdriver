@@ -148,8 +148,8 @@ namespace theDoctor
          if (theXVar->getUnit() != "") xlabel += string(" [") + theXVar->getUnit() + string("]");
          if (theYVar->getUnit() != "") ylabel += string(" [") + theYVar->getUnit() + string("]");
 
-         TH2F* histoBackground = theSumBackground->getClone();
-         TH2F* histoSignal     = theSignal->getClone();
+         TH2D* histoBackground = theSumBackground->getClone();
+         TH2D* histoSignal     = theSignal->getClone();
 
          if (histoBackground->Integral() != 0) histoBackground->Scale(1.0 / histoBackground->Integral());
          if (histoSignal    ->Integral() != 0) histoSignal    ->Scale(1.0 / histoSignal    ->Integral());
@@ -190,12 +190,12 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH2F* theHisto, OptionsScrewdriver theGlobalOptions)
+      static void ApplyHistoStyle(Plot* thePlot, TH2D* theHisto, OptionsScrewdriver theGlobalOptions)
       {
          theHisto->SetLineWidth(2);
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, TH2D* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
       {
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);

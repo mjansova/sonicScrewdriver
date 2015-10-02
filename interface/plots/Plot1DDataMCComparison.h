@@ -157,7 +157,7 @@ namespace theDoctor
               ylabel += string(" ") + theVar->getUnit();
           }
 
-          vector<TH1F*>  pointersForLegend;
+          vector<TH1D*>  pointersForLegend;
           vector<string> labelsForLegend;
           vector<string> optionsForLegend;
 
@@ -202,7 +202,7 @@ namespace theDoctor
               ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
 
               // Get the histo
-              TH1F* histoClone = theBackgrounds[i]->getClone();
+              TH1D* histoClone = theBackgrounds[i]->getClone();
               if (regionRebin) histoClone->Rebin(regionRebin);
 
               // Change style of histo and add it to legend
@@ -223,7 +223,7 @@ namespace theDoctor
           // Display uncertainty as dashed rectangles
           bool showBackgroundUncertainty = theGlobalOptions.GetGlobalBoolOption( "DataMCComparison","showBackgroundUncertainty");
 
-          TH1F* histoSumBackgroundUncertainty = theSumBackground->getClone();
+          TH1D* histoSumBackgroundUncertainty = theSumBackground->getClone();
           if (showBackgroundUncertainty)
           {
               histoSumBackgroundUncertainty->SetFillColor(kBlack);
@@ -241,14 +241,14 @@ namespace theDoctor
           if ((includeSignal != "") && (includeSignal != "no") && (includeSignal != "false"))
           {
 
-              TH1F* histoSumBackground = theSumBackground->getClone();
+              TH1D* histoSumBackground = theSumBackground->getClone();
 
               for (unsigned int i = 0 ; i < theSignals.size() ; i++)
               {
                 // Get associated processClass
                 ProcessClass* processClass = theSignals[i]->getProcessClass();
 
-                TH1F* histoClone = theSignals[i]->getClone();
+                TH1D* histoClone = theSignals[i]->getClone();
                 if (regionRebin) histoClone->Rebin(regionRebin);
 
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
@@ -277,7 +277,7 @@ namespace theDoctor
           // #################################
 
           // Get the histo for data
-          TH1F* dataHisto = theSumData->getClone();
+          TH1D* dataHisto = theSumData->getClone();
           if (regionRebin) dataHisto->Rebin(regionRebin);
 
           // Add it to the legend
@@ -367,7 +367,7 @@ namespace theDoctor
 
           theRatioPad->cd();
           // Ratio
-          TH1F* ratio = theDataMCRatio->getClone();
+          TH1D* ratio = theDataMCRatio->getClone();
           // (already rebinned if needed)
 
           vector<TF1*> dashlines;
@@ -405,7 +405,7 @@ namespace theDoctor
           // Display separately MC and Data  uncertainties on ratio plot
           if(splitUncertaintiesInRatio)
           {
-              TH1F* histoSumBackgroundUnit = theSumBackground->getClone();
+              TH1D* histoSumBackgroundUnit = theSumBackground->getClone();
               for(int bin=0; bin < histoSumBackgroundUnit->GetNbinsX(); bin++)
               {
                     float bincontent_tmp = histoSumBackgroundUnit->GetBinContent(bin);
@@ -424,7 +424,7 @@ namespace theDoctor
           // Add signal if specified in the options of the plotType
           if (includeSignalInRatio)
           {
-              TH1F* histoSumBackground = theSumBackground->getClone();
+              TH1D* histoSumBackground = theSumBackground->getClone();
 
               if (regionRebin) histoSumBackground->Rebin(regionRebin);
 
@@ -433,7 +433,7 @@ namespace theDoctor
                   // Get associated processClass
                   ProcessClass* processClass = theSignals[i]->getProcessClass();
 
-                  TH1F* histoClone = theSignals[i]->getClone();
+                  TH1D* histoClone = theSignals[i]->getClone();
                   if (regionRebin) histoClone->Rebin(regionRebin);
 
                   ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
@@ -458,14 +458,14 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver generalOptions, string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver generalOptions, string processClassOptions = "")
       {
           theHisto->SetFillColor(color);
           theHisto->SetLineColor(kBlack);
           theHisto->SetLineWidth(2);
       }
 
-      static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver generalOptions, string processClassOptions = "")
+      static void ApplyHistoSignalStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver generalOptions, string processClassOptions = "")
       {
           theHisto->SetFillColor(0);
           theHisto->SetLineWidth(3);
@@ -473,7 +473,7 @@ namespace theDoctor
           theHisto->SetLineStyle(9);
       }
 
-      static void ApplyDataStyle(Plot* thePlot, TH1F* theData, OptionsScrewdriver generalOptions)
+      static void ApplyDataStyle(Plot* thePlot, TH1D* theData, OptionsScrewdriver generalOptions)
       {
           PlotDefaultStyles::ApplyDefaultMarkerStyle(theData, kBlack);
       }
@@ -503,12 +503,12 @@ namespace theDoctor
           }
       }
 
-      static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
+      static void ApplyRatioStyle(Plot* thePlot, TH1D* theRatio, OptionsScrewdriver generalOptions)
       {
           PlotDefaultStyles::ApplyDefaultMarkerStyle(theRatio, kBlack);
       }
 
-      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
+      static void ApplyRatioAxisStyle(Plot* thePlot, TH1D* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
       {
           string ratioPosition = generalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
 

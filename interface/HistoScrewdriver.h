@@ -38,9 +38,9 @@ namespace theDoctor
 
       Histo1DEntries* get1DHistoEntriesPointer(string var, string processClass, string region, string channel);
       Histo1D* get1DHistoForPlotPointer(string type, string var, string region, string channel, string options);
-      TH1F* get1DHistoClone(string var, string processClass, string region, string channel);
-      TH1F* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
-      TH1F* get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
+      TH1D* get1DHistoClone(string var, string processClass, string region, string channel);
+      TH1D* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
+      TH1D* get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
 
       // 2D histos
 
@@ -49,9 +49,9 @@ namespace theDoctor
 
       Histo2DEntries* get2DHistoEntriesPointer(string varX, string varY, string processClass, string region, string channel);
       Histo2D* get2DHistoForPlotPointer(string type, string varX, string varY, string region, string channel, string options);
-      TH2F* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
-      TH2F* get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel);
-      TH2F* get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
+      TH2D* get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
+      TH2D* get2DHistoEntriesClone(string varX, string varY, string processClass, string region, string channel);
+      TH2D* get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
 
       // 3D histos
       void Add3DHistoEntries(string varX, string varY, string varZ);
@@ -59,8 +59,8 @@ namespace theDoctor
 
       Histo3DEntries* get3DHistoEntriesPointer(string varX, string varY, string varZ, string processClass, string region, string channel);
       Histo3D* get3DHistoForPlotPointer(string type, string varX, string varY, string varZ, string region, string channel, string options);
-      TH3F* get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel);
-      TH3F* get3DHistoEntriesClone(string varX, string varY, string varZ, string processClass, string region, string channel);
+      TH3D* get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel);
+      TH3D* get3DHistoEntriesClone(string varX, string varY, string varZ, string processClass, string region, string channel);
 
       void Add1DHistoForPlots(Histo1D theHisto) { the1DHistosForPlots.push_back(theHisto); }
       void Add2DHistoForPlots(Histo2D theHisto) { the2DHistosForPlots.push_back(theHisto); }

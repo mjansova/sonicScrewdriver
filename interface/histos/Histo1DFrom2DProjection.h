@@ -140,12 +140,12 @@ namespace theDoctor
           float minY   = theYVar->getMin();
           float maxY   = theYVar->getMax();
 
-          TH2F* theInputHisto_ = theInputHisto->getClone();
+          TH2D* theInputHisto_ = theInputHisto->getClone();
 
           for (int i = 1 ; i < nBinsX+1 ; i++)
           {
               // Read bin i on x axis
-              TH1F iIshBinHisto("tempHisto","",nBinsY,minY,maxY);
+              TH1D iIshBinHisto("tempHisto","",nBinsY,minY,maxY);
               for (int j = 0 ; j <= nBinsY+1 ; j++)
               {
                   iIshBinHisto.SetBinContent(j,theInputHisto_->GetBinContent(i,j));

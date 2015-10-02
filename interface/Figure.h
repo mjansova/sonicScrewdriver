@@ -119,8 +119,8 @@ namespace theDoctor
 
       static Figure applyOperation(const Figure figureA, const Figure figureB, string type)
       {
-          TH1F a("a","a",1,-0.5,0.5);
-          TH1F b("b","b",1,-0.5,0.5);
+          TH1D a("a","a",1,-0.5,0.5);
+          TH1D b("b","b",1,-0.5,0.5);
 
 
           a.SetBinContent(1,figureA.value());

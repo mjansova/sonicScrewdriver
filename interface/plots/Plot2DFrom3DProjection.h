@@ -144,7 +144,7 @@ namespace theDoctor
          thePlot.AddToInPlotInfo(zlabel);
 
          // Get the histo
-         TH2F* histoClone = theHisto->getClone();
+         TH2D* histoClone = theHisto->getClone();
 
          ApplyHistoStyle(&thePlot,histoClone,theProcessClass->getColor(),theGlobalOptions,theProcessClass->getOptions());
          ApplyAxisStyle(&thePlot,histoClone,xlabel,ylabel,theGlobalOptions,theXVar->getOptions(),theYVar->getOptions());
@@ -169,11 +169,11 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH2F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH2D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
       }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH2F* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
+      static void ApplyAxisStyle(Plot* thePlot, TH2D* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
       {
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);

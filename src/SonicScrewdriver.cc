@@ -281,16 +281,16 @@ vector<Histo2DEntries>* SonicScrewdriver::Get2DHistosEntries()
 vector<Histo3DEntries>* SonicScrewdriver::Get3DHistosEntries()
 { return theHistoScrewdriver.Get3DHistosEntries(); }
 
-TH1F* SonicScrewdriver::Get1DHistoClone(string var, string processClass, string region, string channel)
+TH1D* SonicScrewdriver::Get1DHistoClone(string var, string processClass, string region, string channel)
 { return theHistoScrewdriver.get1DHistoClone(var,processClass,region,channel); }
 
-TH1F* SonicScrewdriver::Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
+TH1D* SonicScrewdriver::Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
 { return theHistoScrewdriver.get1DCompositeHistoClone(var,type,region,channel,otherParameters); }
 
-TH2F* SonicScrewdriver::Get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
+TH2D* SonicScrewdriver::Get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
 { return theHistoScrewdriver.get2DHistoClone(varX,varY,processClass,region,channel); }
 
-TH2F* SonicScrewdriver::Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
+TH2D* SonicScrewdriver::Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
 { return theHistoScrewdriver.get2DCompositeHistoClone(varX,varY,type,region,channel,otherParameters); }
 
 void SonicScrewdriver::ExportHistosEntries(string outputFile)
@@ -322,23 +322,23 @@ void SonicScrewdriver::ImportHistosEntries(string inputFile)
 
     for (unsigned int i = 0 ; i < Entries1D->size() ; i++)
     {
-        TH1F* localHisto = Entries1D->at(i).getHisto();
+        TH1D* localHisto = Entries1D->at(i).getHisto();
         string name = localHisto->GetName();
-        TH1F* fileHisto = (TH1F*) f->Get(name.c_str());
+        TH1D* fileHisto = (TH1D*) f->Get(name.c_str());
         localHisto->Add(fileHisto);
     }
     for (unsigned int i = 0 ; i < Entries2D->size() ; i++)
     {
-        TH2F* localHisto = Entries2D->at(i).getHisto();
+        TH2D* localHisto = Entries2D->at(i).getHisto();
         string name = localHisto->GetName();
-        TH2F* fileHisto = (TH2F*) f->Get(name.c_str());
+        TH2D* fileHisto = (TH2D*) f->Get(name.c_str());
         localHisto->Add(fileHisto);
     }
     for (unsigned int i = 0 ; i < Entries3D->size() ; i++)
     {
-        TH3F* localHisto = Entries3D->at(i).getHisto();
+        TH3D* localHisto = Entries3D->at(i).getHisto();
         string name = localHisto->GetName();
-        TH3F* fileHisto = (TH3F*) f->Get(name.c_str());
+        TH3D* fileHisto = (TH3D*) f->Get(name.c_str());
         localHisto->Add(fileHisto);
     }
 

@@ -192,21 +192,21 @@ Histo1D* HistoScrewdriver::get1DHistoForPlotPointer(string type, string var, str
     else return &(the1DHistosForPlots[indexHisto]);
 }
 
-TH1F* HistoScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
+TH1D* HistoScrewdriver::get1DHistoClone(string var, string processClass, string region, string channel)
 {
     int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
     if (indexHisto < 0) return 0;
     else return the1DHistosEntries[indexHisto].getClone();
 }
 
-TH1F* HistoScrewdriver::get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
+TH1D* HistoScrewdriver::get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
 {
     int indexHisto = getIndexOfHisto1DForPlot(type,var,region,channel,otherParameters);
     if (indexHisto < 0) return 0;
     else return the1DHistosForPlots[indexHisto].getClone();
 }
 
-TH1F* HistoScrewdriver::get1DHistoEntriesClone(string var, string processClass, string region, string channel)
+TH1D* HistoScrewdriver::get1DHistoEntriesClone(string var, string processClass, string region, string channel)
 {
   int indexHisto = getIndexOfHisto1DEntries(var,processClass,region,channel);
     if (indexHisto < 0) return 0;
@@ -337,14 +337,14 @@ Histo2D* HistoScrewdriver::get2DHistoForPlotPointer(string type, string varX, st
 }
 
 
-TH2F* HistoScrewdriver::get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
+TH2D* HistoScrewdriver::get2DHistoClone(string varX, string varY, string processClass, string region, string channel)
 {
     int indexHisto = getIndexOfHisto2DEntries(varX,varY,processClass,region,channel);
     if (indexHisto < 0) return 0;
     else return the2DHistosEntries[indexHisto].getClone();
 }
 
-TH2F* HistoScrewdriver::get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
+TH2D* HistoScrewdriver::get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters)
 {
     int indexHisto = getIndexOfHisto2DForPlot(type,varX,varY,region,channel,otherParameters);
     if (indexHisto < 0) return 0;
@@ -479,7 +479,7 @@ Histo3D* HistoScrewdriver::get3DHistoForPlotPointer(string type, string varX, st
     else return &(the3DHistosForPlots[indexHisto]);
 }
 
-TH3F* HistoScrewdriver::get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel)
+TH3D* HistoScrewdriver::get3DHistoClone(string varX, string varY, string varZ, string processClass, string region, string channel)
 {
     int indexHisto = getIndexOfHisto3DEntries(varX,varY,varZ,processClass,region,channel);
     if (indexHisto < 0) return 0;

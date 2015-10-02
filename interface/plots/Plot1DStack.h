@@ -129,7 +129,7 @@ namespace theDoctor
             ylabel += string(" ") + theVar->getUnit();
          }
 
-        vector<TH1F*>  pointersForLegend;
+        vector<TH1D*>  pointersForLegend;
         vector<string> labelsForLegend;
         vector<string> optionsForLegend;
 
@@ -143,7 +143,7 @@ namespace theDoctor
             ProcessClass* processClass = theBackgrounds[i]->getProcessClass();
 
             // Get the histo
-            TH1F* histoClone = theBackgrounds[i]->getClone();
+            TH1D* histoClone = theBackgrounds[i]->getClone();
 
             // Change style of histo and add it to legend
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
@@ -163,13 +163,13 @@ namespace theDoctor
 		// Add signal if specified in the options of the plot type
         if ((includeSignal != "") && (includeSignal != "no") && (includeSignal != "false"))
         {
-            TH1F* histoSumBackground = theSumBackground->getClone();
+            TH1D* histoSumBackground = theSumBackground->getClone();
             for (unsigned int i = 0 ; i < theSignals.size() ; i++)
             {
                 // Get associated processClass
                 ProcessClass* processClass = theSignals[i]->getProcessClass();
 
-                TH1F* histoClone = theSignals[i]->getClone();
+                TH1D* histoClone = theSignals[i]->getClone();
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->Scale(factorSignal);
 
@@ -246,14 +246,14 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(color);
          theHisto->SetLineColor(kBlack);
          theHisto->SetLineWidth(2);
       }
 
-	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(3);

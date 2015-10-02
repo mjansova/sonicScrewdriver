@@ -16,7 +16,7 @@ namespace theDoctor
             FigureOfMerit() { }
             ~FigureOfMerit() { }
 
-            static TH1F Compute(TH1F* signalHisto, TH1F* backgrHisto, short int cutType, OptionsScrewdriver theGlobalOptions)
+            static TH1D Compute(TH1D* signalHisto, TH1D* backgrHisto, short int cutType, OptionsScrewdriver theGlobalOptions)
             {
 
                 string type = theGlobalOptions.GetGlobalStringOption("FigureOfMerit","type");
@@ -25,7 +25,7 @@ namespace theDoctor
                 float Bmin = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","minBackground");
                 float f = theGlobalOptions.GetGlobalFloatOption("FigureOfMerit","backgroundSystematicUncertainty");
 
-                TH1F theFOM = *((TH1F*) signalHisto->Clone());
+                TH1D theFOM = *((TH1D*) signalHisto->Clone());
                 int nBins = theFOM.GetNbinsX();
 
                 if (backgrHisto == 0)

@@ -148,13 +148,13 @@ namespace theDoctor
           float minZ   = theZVar_->getMin();
           float maxZ   = theZVar_->getMax();
 
-          TH3F* theInputHisto_ = theInputHisto->getHisto();
+          TH3D* theInputHisto_ = theInputHisto->getHisto();
 
           for (int i = 0 ; i <= nBinsX+1 ; i++)
           for (int j = 0 ; j <= nBinsY+1 ; j++)
           {
               // Read bin (i,j)
-              TH1F ijIshBinHisto("tempHisto","",nBinsZ,minZ,maxZ);
+              TH1D ijIshBinHisto("tempHisto","",nBinsZ,minZ,maxZ);
               for (int k = 0 ; k <= nBinsZ+1 ; k++)
               {
                   ijIshBinHisto.SetBinContent(k,theInputHisto_->GetBinContent(i,j,k));

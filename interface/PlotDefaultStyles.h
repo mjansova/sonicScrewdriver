@@ -73,7 +73,7 @@ class PlotDefaultStyles
   }
 
   // Data style
-  static void ApplyDefaultMarkerStyle(TH1F* histo, Color_t color)
+  static void ApplyDefaultMarkerStyle(TH1D* histo, Color_t color)
   {
       histo->SetMarkerStyle(8);
       histo->SetMarkerSize(1.25);
@@ -83,7 +83,7 @@ class PlotDefaultStyles
       histo->SetFillStyle(0);
   }
 
-  static void ApplyDefaultStylePalette(TH2F* histo, TCanvas* theCanvas)
+  static void ApplyDefaultStylePalette(TH2D* histo, TCanvas* theCanvas)
   {
       theCanvas->Modified();
       theCanvas->Update();

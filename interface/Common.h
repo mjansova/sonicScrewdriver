@@ -54,9 +54,6 @@ using namespace std;
 #define COLORPLOT_BLACK        kBlack
 #define COLORPLOT_GRAY         kGray
 
-// Uncomment this to use TH1D instead of TH1F
-#define TH1F TH1D
-
 string floatToString(float input);
 
 void replaceSubstring(string& str, const string oldStr, const string newStr);

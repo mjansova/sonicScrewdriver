@@ -37,8 +37,8 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
 
-          TH2F* sigHisto    = theSignal->getClone();
-          TH1F* backgrHisto = theSumBackground->getClone();
+          TH2D* sigHisto    = theSignal->getClone();
+          TH1D* backgrHisto = theSumBackground->getClone();
 
           int   nBinsX = theXVar_->getNbins();
           int   nBinsY = theYVar_->getNbins();
@@ -48,12 +48,12 @@ namespace theDoctor
           for (int i = 1 ; i < nBinsX+1 ; i++)
           {
               // Read y histogram for x=i
-              TH1F tempSignalHisto("","",nBinsY,minY,maxY);
+              TH1D tempSignalHisto("","",nBinsY,minY,maxY);
               for (int j = 0 ; j <= nBinsY+1 ; j++)
                   tempSignalHisto.SetBinContent(j,sigHisto->GetBinContent(i,j));
 
               // Compute the FOM histogram
-              TH1F theFigureOfMeritHisto = FigureOfMerit::Compute(&tempSignalHisto,backgrHisto,cutType,theGlobalOptions);
+              TH1D theFigureOfMeritHisto = FigureOfMerit::Compute(&tempSignalHisto,backgrHisto,cutType,theGlobalOptions);
 
               // Copy it to this histogram
               for (int j = 0 ; j <= nBinsY+1 ; j++)

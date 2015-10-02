@@ -30,20 +30,20 @@ namespace theDoctor
           theHistoParameters = theHistoParameters_;
 
           if (theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning())
-              theHisto = new TH2F("","",
+              theHisto = new TH2D("","",
                                   theXVar->getNbins(),theXVar->getCustomBinning(),
                                   theYVar->getNbins(),theYVar->getCustomBinning());
 
           else if (theXVar_->usingCustomBinning())
-              theHisto = new TH2F("","",
+              theHisto = new TH2D("","",
                                   theXVar->getNbins(),theXVar->getCustomBinning(),
                                   theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
           else if (theXVar_->usingCustomBinning())
-              theHisto = new TH2F("","",
+              theHisto = new TH2D("","",
                                   theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                   theYVar->getNbins(),theYVar->getCustomBinning());
           else
-              theHisto = new TH2F("","",
+              theHisto = new TH2D("","",
                                   theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                   theYVar->getNbins(),theYVar->getMin(),theYVar->getMax());
 
@@ -54,7 +54,7 @@ namespace theDoctor
       ~Histo2D() { };
 
       // Accessors
-      TH2F*     getHisto()           { return theHisto;           };      TH2F*   getClone()        { return (TH2F*) theHisto->Clone(); };
+      TH2D*     getHisto()           { return theHisto;           };      TH2D*   getClone()        { return (TH2D*) theHisto->Clone(); };
       Variable* getVariableX()       { return theXVar;            };      string  getVariableXTag() { return theXVar->getTag();         };
       Variable* getVariableY()       { return theYVar;            };      string  getVariableYTag() { return theYVar->getTag();         };
       Region*   getRegion()          { return theRegion;          };      string  getRegionTag()    { return theRegion->getTag();       };
@@ -65,7 +65,7 @@ namespace theDoctor
 
      protected:
 
-        TH2F*     theHisto;
+        TH2D*     theHisto;
 
         Variable* theXVar;
         Variable* theYVar;

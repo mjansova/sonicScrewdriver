@@ -28,9 +28,9 @@ namespace theDoctor
           theHistoParameters = theHistoParameters_;
 
           if (theVar_->usingCustomBinning())
-              theHisto        = new TH1F("","",theVar->getNbins(),theVar->getCustomBinning());
+              theHisto        = new TH1D("","",theVar->getNbins(),theVar->getCustomBinning());
           else
-              theHisto        = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+              theHisto        = new TH1D("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
 
           theHisto->Sumw2();
       };
@@ -38,8 +38,8 @@ namespace theDoctor
       virtual ~Histo1D() { };
 
       // Accessors
-      TH1F*     getHisto()           const { return theHisto;                  };
-      TH1F*     getClone()           const { return (TH1F*) theHisto->Clone(); };
+      TH1D*     getHisto()           const { return theHisto;                  };
+      TH1D*     getClone()           const { return (TH1D*) theHisto->Clone(); };
 
       Variable* getVariable()        const { return theVar;             };  string  getVariableTag()  const { return theVar->getTag();      };
       Region*   getRegion()          const { return theRegion;          };  string  getRegionTag()    const { return theRegion->getTag();   };
@@ -60,7 +60,7 @@ namespace theDoctor
 
      protected:
 
-      TH1F*         theHisto;
+      TH1D*         theHisto;
 
       Variable*     theVar;
       Region*       theRegion;

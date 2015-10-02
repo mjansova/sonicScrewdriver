@@ -81,7 +81,7 @@ int main (int argc, char *argv[])
       s.AddVariable("MET",              "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
       s.AddVariable("leptonPt",         "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
       s.AddVariable("mMuf",             "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
-      s.AddVariable("leptonPtOverMET",  "Lepton pT / E^#text{miss}_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
+      s.AddVariable("leptonPtOverMET",  "Lepton pT / E^{miss}_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
       
       float customBinning[17] = {0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,50.0,60.0,70.0,80.0,90.0,100.0,125.0,150.0};
       s.AddVariable("leptonPt_customBinning",      "p_{T}(lepton)",    "GeV",    16,customBinning,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");

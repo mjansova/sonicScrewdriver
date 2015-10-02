@@ -82,7 +82,7 @@ namespace theDoctor
          string xlabel("");
          string ylabel(theFigureName.getLabel());
 
-        vector<TH1F*>  pointersForLegend;
+        vector<TH1D*>  pointersForLegend;
         vector<string> labelsForLegend;
         vector<string> optionsForLegend;
 
@@ -90,11 +90,11 @@ namespace theDoctor
         // ## Create invididual per-process histos ##
         // ##########################################
 
-        vector<TH1F*> perProcessHistos;
+        vector<TH1D*> perProcessHistos;
         for (unsigned int p = 0 ; p < theProcessClasses->size() ; p++)
         {
             ProcessClass* processClass = &((*theProcessClasses)[p]);
-            TH1F* newHisto   = new TH1F("","",theRegions->size(), 0, theRegions->size());
+            TH1D* newHisto   = new TH1D("","",theRegions->size(), 0, theRegions->size());
             string nameHisto =  string("f:")+theFigureName.getTag()
                                      +"|p:"+processClass->getTag()
                                      +"|c:"+theChannel.getTag()
@@ -125,7 +125,7 @@ namespace theDoctor
 
         THStack* theStack   = new THStack("","");
 
-        TH1F* histoSumBackground = new TH1F("","",theRegions->size(), 0, theRegions->size());
+        TH1D* histoSumBackground = new TH1D("","",theRegions->size(), 0, theRegions->size());
         histoSumBackground->Sumw2();
         string nameHisto    = string("f:")+theFigureName.getTag()
                                  +"|p:SumBackground"
@@ -142,7 +142,7 @@ namespace theDoctor
             if (processClass->getType() != "background") continue;
 
             // Get the histo
-            TH1F* histoClone = perProcessHistos[p];
+            TH1D* histoClone = perProcessHistos[p];
 
             // Change style of histo and add it to legend
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
@@ -202,7 +202,7 @@ namespace theDoctor
                 ProcessClass* processClass = &((*theProcessClasses)[p]);
                 if (processClass->getType() != "signal") continue;
 
-                TH1F* histoClone = perProcessHistos[p];
+                TH1D* histoClone = perProcessHistos[p];
                 ApplyHistoSignalStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
                 histoClone->Scale(factorSignal);
 
@@ -225,7 +225,7 @@ namespace theDoctor
         // ##  Data  ##
         // ############
 
-        TH1F* histoSumData = new TH1F("","",theRegions->size(), 0, theRegions->size());
+        TH1D* histoSumData = new TH1D("","",theRegions->size(), 0, theRegions->size());
         nameHisto  = string("f:")+theFigureName.getTag()
                           +"|p:SumData"
                           +"|c:"+theChannel.getTag()
@@ -241,7 +241,7 @@ namespace theDoctor
             if (processClass->getType() != "data") continue;
 
             // Get the histo
-            TH1F* histoClone = perProcessHistos[p];
+            TH1D* histoClone = perProcessHistos[p];
 
             // Add histo to sum
             histoSumData->Add(histoClone);
@@ -282,7 +282,7 @@ namespace theDoctor
         theRatioPad->cd();
 
         // Make the histogram
-        TH1F* histoRatio = new TH1F("","",theRegions->size(), 0, theRegions->size());
+        TH1D* histoRatio = new TH1D("","",theRegions->size(), 0, theRegions->size());
         nameHisto  = string("f:")+theFigureName.getTag()
                           +"|p:DataMCRatio"
                           +"|c:"+theChannel.getTag()
@@ -320,14 +320,14 @@ namespace theDoctor
 
      private:
 
-      static void ApplyHistoStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+      static void ApplyHistoStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(color);
          theHisto->SetLineColor(kBlack);
          theHisto->SetLineWidth(2);
       }
 
-	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
+	  static void ApplyHistoSignalStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string processClassOptions = "")
       {
          theHisto->SetFillColor(0);
          theHisto->SetLineWidth(3);
@@ -335,7 +335,7 @@ namespace theDoctor
 		 theHisto->SetLineStyle(9);
 	  }
 
-      static void ApplyDataStyle(Plot* thePlot, TH1F* theData, OptionsScrewdriver generalOptions)
+      static void ApplyDataStyle(Plot* thePlot, TH1D* theData, OptionsScrewdriver generalOptions)
       {
           theData->SetMarkerStyle(8);
           theData->SetMarkerSize(1);
@@ -368,12 +368,12 @@ namespace theDoctor
           }
       }
 
-      static void ApplyRatioStyle(Plot* thePlot, TH1F* theRatio, OptionsScrewdriver generalOptions)
+      static void ApplyRatioStyle(Plot* thePlot, TH1D* theRatio, OptionsScrewdriver generalOptions)
       {
           PlotDefaultStyles::ApplyDefaultMarkerStyle(theRatio, kBlack);
       }
 
-      static void ApplyRatioAxisStyle(Plot* thePlot, TH1F* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
+      static void ApplyRatioAxisStyle(Plot* thePlot, TH1D* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
       {
           string ratioPosition = generalOptions.GetGlobalStringOption("DataMCComparison","ratioPosition");
 

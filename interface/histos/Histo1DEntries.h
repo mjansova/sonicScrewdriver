@@ -32,9 +32,9 @@ namespace theDoctor
 
           theHisto->SetName(nameHisto.c_str());
           if (theVar_->usingCustomBinning())
-              theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+              theHistoRawEntries = new TH1D("","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
           else
-              theHistoRawEntries = new TH1F("","",theVar->getNbins(),theVar->getCustomBinning());
+              theHistoRawEntries = new TH1D("","",theVar->getNbins(),theVar->getCustomBinning());
 
           theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
           theHistoRawEntries->Sumw2();
@@ -45,8 +45,8 @@ namespace theDoctor
       // Accessors
       ProcessClass*  getProcessClass()     const { return theProcessClass;       };
       string         getProcessClassTag()  const { return theProcessClass->getTag(); };
-      TH1F*          getEntriesHisto()     const { return theHistoRawEntries;                   };
-      TH1F*          getEntriesClone()     const { return (TH1F*) theHistoRawEntries->Clone();  };
+      TH1D*          getEntriesHisto()     const { return theHistoRawEntries;                   };
+      TH1D*          getEntriesClone()     const { return (TH1D*) theHistoRawEntries->Clone();  };
 
       Figure GetYieldAndError() const
       {
@@ -82,7 +82,7 @@ namespace theDoctor
 
       void ApplyScaleFactor(Figure scaleFactor) const
       {
-            TH1F histoScaleFactor("histoScaleFactor","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
+            TH1D histoScaleFactor("histoScaleFactor","",theVar->getNbins(),theVar->getMin(),theVar->getMax());
 
             for (int i = 0 ; i <= histoScaleFactor.GetNbinsX()+1 ; i++)
             {
@@ -96,7 +96,7 @@ namespace theDoctor
      private:
 
       ProcessClass* theProcessClass;
-      TH1F* theHistoRawEntries;
+      TH1D* theHistoRawEntries;
 
     };
 

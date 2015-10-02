@@ -32,12 +32,12 @@ namespace theDoctor
           theHistoParameters = theHistoParameters_;
 
           if(!theXVar_->usingCustomBinning() && !theYVar_->usingCustomBinning() && !theZVar_->usingCustomBinning())
-              theHisto = new TH3F("","",
+              theHisto = new TH3D("","",
                                   theXVar->getNbins(),theXVar->getMin(),theXVar->getMax(),
                                   theYVar->getNbins(),theYVar->getMin(),theYVar->getMax(),
                                   theZVar->getNbins(),theZVar->getMin(),theZVar->getMax());
           else if (theXVar_->usingCustomBinning() && theYVar_->usingCustomBinning() && theZVar_->usingCustomBinning())
-              theHisto = new TH3F("","",
+              theHisto = new TH3D("","",
                                   theXVar->getNbins(),theXVar->getCustomBinning(),
                                   theYVar->getNbins(),theYVar->getCustomBinning(),
                                   theZVar->getNbins(),theZVar->getCustomBinning());
@@ -53,7 +53,7 @@ namespace theDoctor
       ~Histo3D() { };
 
       // Accessors
-      TH3F*     getHisto()           { return theHisto;           };      TH3F*   getClone()        { return (TH3F*) theHisto->Clone(); };
+      TH3D*     getHisto()           { return theHisto;           };      TH3D*   getClone()        { return (TH3D*) theHisto->Clone(); };
       Variable* getVariableX()       { return theXVar;            };      string  getVariableXTag() { return theXVar->getTag();         };
       Variable* getVariableY()       { return theYVar;            };      string  getVariableYTag() { return theYVar->getTag();         };
       Variable* getVariableZ()       { return theZVar;            };      string  getVariableZTag() { return theZVar->getTag();         };
@@ -65,7 +65,7 @@ namespace theDoctor
 
      protected:
 
-        TH3F*     theHisto;
+        TH3D*     theHisto;
 
         Variable* theXVar;
         Variable* theYVar;

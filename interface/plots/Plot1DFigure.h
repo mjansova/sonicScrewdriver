@@ -124,7 +124,7 @@ namespace theDoctor
          string xlabel("");
          string ylabel("");
 
-        vector<TH1F*>  pointersForLegend;
+        vector<TH1D*>  pointersForLegend;
         vector<string> labelsForLegend;
         vector<string> optionsForLegend;
 
@@ -132,13 +132,13 @@ namespace theDoctor
         // ##  Prepare histograms  ##
         // ##########################
 
-        vector<TH1F*> perFigureHistos;
+        vector<TH1D*> perFigureHistos;
         for (unsigned int f = 0 ; f < theFigureNames.size() ; f++)
         {
             Name theFigureName       = theFigureNames[f];
             Map2DFigure theFigureMap = theFigureMaps[f];
 
-            TH1F* newHisto     = new TH1F("","",theRegions->size(), 0, theRegions->size());
+            TH1D* newHisto     = new TH1D("","",theRegions->size(), 0, theRegions->size());
             string nameHisto =  string("f:")+theFigureName.getTag()
                                      +"|c:"+theChannel.getTag()
                                      +"|t:1DFigure";
@@ -170,7 +170,7 @@ namespace theDoctor
         for (unsigned int f = 0 ; f < theFigureNames.size() ; f++)
         {
             Name theFigureName  = theFigureNames[f];
-            TH1F* theHisto      = perFigureHistos[f];
+            TH1D* theHisto      = perFigureHistos[f];
 
             ApplyHistoFigureStyle(&thePlot, theHisto, colors[f], theGlobalOptions, thePlotOptions);
 
@@ -207,9 +207,9 @@ namespace theDoctor
         if (lineValue != -1.0)
         {
 
-            TH1F* histLineValue       = new TH1F("","",theRegions->size(), 0, theRegions->size());
-            TH1F* histLinePlus1Sigma  = new TH1F("","",theRegions->size(), 0, theRegions->size());
-            TH1F* histLineMinus1Sigma = new TH1F("","",theRegions->size(), 0, theRegions->size());
+            TH1D* histLineValue       = new TH1D("","",theRegions->size(), 0, theRegions->size());
+            TH1D* histLinePlus1Sigma  = new TH1D("","",theRegions->size(), 0, theRegions->size());
+            TH1D* histLineMinus1Sigma = new TH1D("","",theRegions->size(), 0, theRegions->size());
 
             for (unsigned int i = 0 ; i < theRegions->size() ; i++)
             {
@@ -252,12 +252,12 @@ namespace theDoctor
 
      private:
 
-	  static void ApplyHistoFigureStyle(Plot* thePlot, TH1F* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string options = "")
+	  static void ApplyHistoFigureStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string options = "")
       {
           PlotDefaultStyles::ApplyDefaultMarkerStyle(theHisto, color);
 	  }
 
-      static void ApplyAxisStyle(Plot* thePlot, TH1F* theHisto, OptionsScrewdriver theGlobalOptions, string options = "")
+      static void ApplyAxisStyle(Plot* thePlot, TH1D* theHisto, OptionsScrewdriver theGlobalOptions, string options = "")
       {
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),"");
           PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),"");
