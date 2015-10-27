@@ -43,6 +43,7 @@ class BabyScrewdriver : public SonicScrewdriver
 
 };
 
+///*
 // This should be moved elsewhere
 string intToString(int input)
 {
@@ -50,6 +51,7 @@ string intToString(int input)
     ss << input;
     return ss.str();
 }
+//*/
 
 int main()
 {
@@ -135,7 +137,13 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
         // Open the tree
         TFile f((babyTuplePath+"/"+currentDataset+".root").c_str());
         TTree* theTree = (TTree*) f.Get("babyTuple");
-        InitializeBranchesForReading(theTree,&myEvent);
+        cout<<"here: call Initializetion"<<endl;
+	InitializeBranchesForReading(theTree,&myEvent);
+	
+	// retrievve total nof weighted events
+	TH1F* hWeight = (TH1F*) f.Get("hWeights");
+	float TotalWeight = hWeight->GetBinContent(1);
+
 
         // Get number of entries, determine what range to run on
         unsigned int nEntries           = theTree->GetEntries();
@@ -158,7 +166,9 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
             // Get the i-th entry
             ReadEvent(theTree,i,&myEvent);
 
-            ActionForEachEvent(currentDataset);
+            //Writing the total number of events (weighted)
+	    myEvent.totalNumberOfInitialEvent = TotalWeight;
+	    ActionForEachEvent(currentDataset);
         }
 
         // Close the tree
