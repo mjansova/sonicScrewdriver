@@ -72,7 +72,7 @@ int main (int argc, char *argv[])
   
      // Create a sonic Screwdriver
       SonicScrewdriver s;
-      s.LoadJsconConfig("./testStyleConfig.json");
+      s.LoadJsonConfig("./testStyleConfig.json");
 
   // ##########################
   // ##   Create Variables   ##
@@ -153,11 +153,6 @@ int main (int argc, char *argv[])
      s.SchedulePlots("1DFigureOfMerit","var=leptonPt,cutType=keepHighValues");
      s.SchedulePlots("2D");
 
-     // Config plots
-
-     s.SetGlobalStringOption("Plot", "infoTopRight", "Work in progress");
-     s.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
-     
   // ########################################
   // ##        Run over the events         ##
   // ########################################

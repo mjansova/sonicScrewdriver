@@ -59,6 +59,7 @@ class OptionsScrewdriver
                     if (level2_.is<string>()) SetGlobalStringOption(level1Name,level2Name,level2_.get<string>());
                 }
             }
+
         }
 
         ~OptionsScrewdriver() { }

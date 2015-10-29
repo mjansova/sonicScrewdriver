@@ -289,6 +289,7 @@ namespace theDoctor
         void SetGlobalBoolOption(string category, string field, bool value)     { theGlobalOptions.SetGlobalBoolOption(category,field,value);   }
 
         OptionsScrewdriver GetGlobalOptions() { return theGlobalOptions; }
+        void LoadJsonConfig(string fileName)  { theGlobalOptions.LoadJsonConfig(fileName); }
 
         private:
 
