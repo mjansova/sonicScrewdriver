@@ -212,7 +212,8 @@ namespace theDoctor
       void SetGlobalFloatOption(string category, string field, float value)   { thePlotScrewdriver.SetGlobalFloatOption (category,field,value); }
       void SetGlobalStringOption(string category, string field, string value) { thePlotScrewdriver.SetGlobalStringOption(category,field,value); }
       void SetGlobalBoolOption(string category, string field, bool value)     { thePlotScrewdriver.SetGlobalBoolOption  (category,field,value); }
-      void SetGlobalIntOption(string category, string field, int value)       { thePlotScrewdriver.SetGlobalIntOption   (category,field,value); }
+
+      void LoadJsconConfig(string fileName)                                   { return GetGlobalOptions().LoadJsonConfig(fileName);             }
 
       OptionsScrewdriver GetGlobalOptions() { return thePlotScrewdriver.GetGlobalOptions(); }
 

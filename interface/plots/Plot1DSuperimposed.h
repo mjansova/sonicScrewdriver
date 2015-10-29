@@ -290,8 +290,8 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, TH1D* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
       {
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
+         PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel, theGlobalOptions);
+         PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel, theGlobalOptions);
          theHisto->SetTitle("");
          theHisto->SetStats(0);
 

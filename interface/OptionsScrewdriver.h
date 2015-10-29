@@ -23,12 +23,26 @@ class OptionsScrewdriver
 #include "DefaultConfig.json"
             );
 
-            picojson::value defaultConfigJson;
+            ReadJsonConfig(defaultConfig);
 
-            string err = picojson::parse(defaultConfigJson, defaultConfig);
-            if (!err.empty()) { cerr << "Error while loading default plot style json file : " << err << endl; exit(-1); }
+        }
 
-            const picojson::value::object& level0 = defaultConfigJson.get<picojson::object>();
+        void LoadJsonConfig(string fileName)
+        {
+            ifstream f(fileName);
+            stringstream buffer;
+            buffer << f.rdbuf();
+            ReadJsonConfig(buffer.str());
+        }
+
+        void ReadJsonConfig(string configString)
+        {
+            picojson::value configJson;
+
+            string err = picojson::parse(configJson, configString);
+            if (!err.empty()) { cerr << "Error while loading json file : " << err << endl; exit(-1); }
+
+            const picojson::value::object& level0 = configJson.get<picojson::object>();
 
             for (picojson::value::object::const_iterator level1 = level0.begin() ; level1 != level0.end() ; ++level1)
             {
@@ -135,9 +149,6 @@ class OptionsScrewdriver
         void SetGlobalBoolOption(string category, string field, bool value)
         {  pair<string,string> name(category,field); theGlobalOptions_bool[name] = value; }
 
-        void SetGlobalIntOption(string category, string field, int value)
-        { pair<string,string> name(category,field); theGlobalOptions_int[name] = value; }
-
         string GetGlobalStringOption(string category, string field)
         { pair<string,string> name(category,field); return theGlobalOptions_string[name]; }
 
@@ -147,15 +158,11 @@ class OptionsScrewdriver
         bool   GetGlobalBoolOption(string category, string field)
         { pair<string,string> name(category,field); return theGlobalOptions_bool[name]; }
 
-        int    GetGlobalIntOption(string category, string field)
-        { pair<string,string> name(category,field); return theGlobalOptions_int[name]; }
-
     private:
 
         std::map<pair<string,string>,float>  theGlobalOptions_float;
         std::map<pair<string,string>,string> theGlobalOptions_string;
         std::map<pair<string,string>,bool>   theGlobalOptions_bool;
-        std::map<pair<string,string>,int>    theGlobalOptions_int;
 
 };
 

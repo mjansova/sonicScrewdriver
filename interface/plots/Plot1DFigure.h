@@ -254,13 +254,13 @@ namespace theDoctor
 
 	  static void ApplyHistoFigureStyle(Plot* thePlot, TH1D* theHisto, Color_t color, OptionsScrewdriver theGlobalOptions, string options = "")
       {
-          PlotDefaultStyles::ApplyDefaultMarkerStyle(theHisto, color);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theHisto, color, theGlobalOptions);
 	  }
 
       static void ApplyAxisStyle(Plot* thePlot, TH1D* theHisto, OptionsScrewdriver theGlobalOptions, string options = "")
       {
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),"");
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),"");
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),"", theGlobalOptions);
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),"", theGlobalOptions);
           theHisto->SetStats(0);
           theHisto->SetTitle("");
       }

@@ -1,3 +1,6 @@
+#ifndef BABYSCREWDRIVER_H
+#define BABYSCREWDRIVER_H
+
 #include "string.h"
 #include <sys/wait.h>
 
@@ -233,4 +236,4 @@ void BabyScrewdriver::PrintBoxedMessage(string message)
 
 }
 
-
+#endif
