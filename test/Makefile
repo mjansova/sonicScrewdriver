@@ -17,7 +17,7 @@ CXXFLAGS      += -I../
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/../libSonicScrewdriver.so
+LDFLAGS       += -l:`pwd`/../liblSonicScrewdriver.so
 
 SOFLAGS       = -shared
 LIBS          = 

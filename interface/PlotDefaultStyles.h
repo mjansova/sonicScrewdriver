@@ -6,11 +6,10 @@
 #define PLOTDEFAULTSTYLES_FONT 40		// Helvetica
 //#define PLOTDEFAULTSTYLES_FONT 130	// Times
 
-
 class PlotDefaultStyles
 {
 
- public:
+  public:
 
   PlotDefaultStyles();
   ~PlotDefaultStyles();

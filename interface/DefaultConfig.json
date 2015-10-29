@@ -1,0 +1,44 @@
+R"(
+{
+   "general" :
+   {
+       "textFont"                  : 42
+   },
+   "axisStyle" :
+   {
+       "titleSize"                 : 0.05,
+       "titleOffset"               : 0.9,
+       "labelSize"                 : 22
+   },
+   "legendStyle" :
+   {
+       "borderSize"                : 0,
+       "fillColor"                 : 0,
+       "textSize"                  : 0.035
+   },
+   "stackStyle" :
+   {
+       "backgroundLineWidth"       : 2,
+       "signalLineWidth"           : 3,
+       "signalLineStyle"           : 9
+   },
+   "superimposedStyle" :
+   {
+       "lineWidth"                 : 6
+   },
+   "dataMCComparisonStyle" :
+   {
+       "ratioPosition"             : "bottom",
+       "showBackgroundUncertainty" : true,
+       "includeSignal"             : true,
+       "factorSignal"              : 2.0
+   },
+   "dataMCratioStyle" :
+   {
+       "min"                       : 0.5,
+       "max"                       : 1.5,
+       "includeSignal"             : true
+   }
+
+}
+)"
