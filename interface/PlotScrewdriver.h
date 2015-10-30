@@ -287,9 +287,9 @@ namespace theDoctor
         void SetGlobalFloatOption(string category, string field, float value)   { theGlobalOptions.SetGlobalFloatOption(category,field,value);  }
         void SetGlobalStringOption(string category, string field, string value) { theGlobalOptions.SetGlobalStringOption(category,field,value); }
         void SetGlobalBoolOption(string category, string field, bool value)     { theGlobalOptions.SetGlobalBoolOption(category,field,value);   }
-        void SetGlobalIntOption(string category, string field, int value)       { theGlobalOptions.SetGlobalIntOption(category,field,value);    }
 
         OptionsScrewdriver GetGlobalOptions() { return theGlobalOptions; }
+        void LoadJsonConfig(string fileName)  { theGlobalOptions.LoadJsonConfig(fileName); }
 
         private:
 

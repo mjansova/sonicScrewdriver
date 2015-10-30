@@ -5,126 +5,167 @@
 
 using namespace std;
 
+#include "picojson/picojson.h"
+
+
 namespace theDoctor
 {
 
-    class OptionsScrewdriver
-    {
+class OptionsScrewdriver
+{
 
-        public:
+    public:
 
-            OptionsScrewdriver() { }
-            ~OptionsScrewdriver() { }
+        OptionsScrewdriver()
+        {
+            string defaultConfig
+            (
+#include "DefaultConfig.json"
+            );
 
-            static bool IsInOptions(string options, string field)
+            ReadJsonConfig(defaultConfig);
+
+        }
+
+        void LoadJsonConfig(string fileName)
+        {
+            ifstream f(fileName);
+            stringstream buffer;
+            buffer << f.rdbuf();
+            ReadJsonConfig(buffer.str());
+        }
+
+        void ReadJsonConfig(string configString)
+        {
+            picojson::value configJson;
+
+            string err = picojson::parse(configJson, configString);
+            if (!err.empty()) { cerr << "Error while loading json file : " << err << endl; exit(-1); }
+
+            const picojson::value::object& level0 = configJson.get<picojson::object>();
+
+            for (picojson::value::object::const_iterator level1 = level0.begin() ; level1 != level0.end() ; ++level1)
             {
-                if (options.find(field+"=") != string::npos) return true;
-                else return false;
-            }
+                string level1Name                      = level1->first;
+                const picojson::value::object& level1_ = level1->second.get<picojson::object>();
 
-            static string GetStringOption(string options, string field)
-            {
-                if (!OptionsScrewdriver::IsInOptions(options,field)) return "";
-
-                string optionWithValue;
-                stringstream stream(options);
-                while( getline(stream,optionWithValue,',') )
+                for (picojson::value::object::const_iterator level2 = level1_.begin() ; level2 != level1_.end() ; ++level2)
                 {
-                    stringstream stream2(optionWithValue);
-                    string option; getline(stream2,option,'=');
+                    string level2Name             = level2->first;
+                    const picojson::value level2_ = level2->second;
 
-                    if (option != field) continue;
-
-                    string value;
-                    getline(stream2,value,'=');
-                    return value;
+                    if (level2_.is<double>()) SetGlobalFloatOption (level1Name,level2Name,level2_.get<double>());
+                    if (level2_.is<bool>  ()) SetGlobalBoolOption  (level1Name,level2Name,level2_.get<bool>  ());
+                    if (level2_.is<string>()) SetGlobalStringOption(level1Name,level2Name,level2_.get<string>());
                 }
-
-                return "";
-
             }
 
-            static vector<string> GetStringListOption(string options, string field)
+        }
+
+        ~OptionsScrewdriver() { }
+
+        static bool IsInOptions(string options, string field)
+        {
+            if (options.find(field+"=") != string::npos) return true;
+            else return false;
+        }
+
+        static string GetStringOption(string options, string field)
+        {
+            if (!OptionsScrewdriver::IsInOptions(options,field)) return "";
+
+            string optionWithValue;
+            stringstream stream(options);
+            while( getline(stream,optionWithValue,',') )
             {
-                vector<string> parsedList;
-                if (!OptionsScrewdriver::IsInOptions(options,field)) return parsedList;
+                stringstream stream2(optionWithValue);
+                string option; getline(stream2,option,'=');
 
-                string rawList = GetStringOption(options, field);
-                string parsedListElement;
-                stringstream stream(rawList);
-                while( getline(stream,parsedListElement,':') )
-                {
-                    parsedList.push_back(parsedListElement);
-                }
+                if (option != field) continue;
 
-                return parsedList;
+                string value;
+                getline(stream2,value,'=');
+                return value;
             }
 
-            static float GetFloatOption(string options, string field)
+            return "";
+
+        }
+
+        static vector<string> GetStringListOption(string options, string field)
+        {
+            vector<string> parsedList;
+            if (!OptionsScrewdriver::IsInOptions(options,field)) return parsedList;
+
+            string rawList = GetStringOption(options, field);
+            string parsedListElement;
+            stringstream stream(rawList);
+            while( getline(stream,parsedListElement,':') )
             {
-                if (!OptionsScrewdriver::IsInOptions(options,field)) return -1.0;
-
-                string optionWithValue;
-                stringstream stream(options);
-                while( getline(stream,optionWithValue,',') )
-                {
-                    stringstream stream2(optionWithValue);
-                    string option; getline(stream2,option,'=');
-
-                    if (option != field) continue;
-
-                    string value;
-                    getline(stream2,value,'=');
-                    return atof(value.c_str());
-                }
-
-                return -1.0;
+                parsedList.push_back(parsedListElement);
             }
 
-            static bool GetBoolOption(string options, string field)
+            return parsedList;
+        }
+
+        static float GetFloatOption(string options, string field)
+        {
+            if (!OptionsScrewdriver::IsInOptions(options,field)) return -1.0;
+
+            string optionWithValue;
+            stringstream stream(options);
+            while( getline(stream,optionWithValue,',') )
             {
-                string option;
-                stringstream stream(options);
-                while( getline(stream,option,',') )
-                {
-                    if (option == field) return true;
-                }
+                stringstream stream2(optionWithValue);
+                string option; getline(stream2,option,'=');
 
-                return false;
+                if (option != field) continue;
+
+                string value;
+                getline(stream2,value,'=');
+                return atof(value.c_str());
             }
 
-            void SetGlobalStringOption(string category, string field, string value)
-            {  pair<string,string> name(category,field); theGlobalOptions_string[name] = value; }
+            return -1.0;
+        }
 
-            void SetGlobalFloatOption(string category, string field, float value)
-            {  pair<string,string> name(category,field); theGlobalOptions_float[name] = value; }
+        static bool GetBoolOption(string options, string field)
+        {
+            string option;
+            stringstream stream(options);
+            while( getline(stream,option,',') )
+            {
+                if (option == field) return true;
+            }
 
-            void SetGlobalBoolOption(string category, string field, bool value)
-            {  pair<string,string> name(category,field); theGlobalOptions_bool[name] = value; }
+            return false;
+        }
 
-            void SetGlobalIntOption(string category, string field, int value)
-            { pair<string,string> name(category,field); theGlobalOptions_int[name] = value; }
+        void SetGlobalStringOption(string category, string field, string value)
+        {  pair<string,string> name(category,field); theGlobalOptions_string[name] = value; }
 
-            string GetGlobalStringOption(string category, string field)
-            { pair<string,string> name(category,field); return theGlobalOptions_string[name]; }
+        void SetGlobalFloatOption(string category, string field, float value)
+        {  pair<string,string> name(category,field); theGlobalOptions_float[name] = value; }
 
-            float  GetGlobalFloatOption(string category, string field)
-            { pair<string,string> name(category,field); return theGlobalOptions_float[name]; }
+        void SetGlobalBoolOption(string category, string field, bool value)
+        {  pair<string,string> name(category,field); theGlobalOptions_bool[name] = value; }
 
-            bool   GetGlobalBoolOption(string category, string field)
-            { pair<string,string> name(category,field); return theGlobalOptions_bool[name]; }
+        string GetGlobalStringOption(string category, string field)
+        { pair<string,string> name(category,field); return theGlobalOptions_string[name]; }
 
-            int    GetGlobalIntOption(string category, string field)
-            { pair<string,string> name(category,field); return theGlobalOptions_int[name]; }
+        float  GetGlobalFloatOption(string category, string field)
+        { pair<string,string> name(category,field); return theGlobalOptions_float[name]; }
 
-        private:
+        bool   GetGlobalBoolOption(string category, string field)
+        { pair<string,string> name(category,field); return theGlobalOptions_bool[name]; }
 
-            std::map<pair<string,string>,float>  theGlobalOptions_float;
-            std::map<pair<string,string>,string> theGlobalOptions_string;
-            std::map<pair<string,string>,bool>   theGlobalOptions_bool;
-            std::map<pair<string,string>,int>    theGlobalOptions_int;
+    private:
 
-    };
+        std::map<pair<string,string>,float>  theGlobalOptions_float;
+        std::map<pair<string,string>,string> theGlobalOptions_string;
+        std::map<pair<string,string>,bool>   theGlobalOptions_bool;
+
+};
 
 }
 

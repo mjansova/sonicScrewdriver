@@ -166,8 +166,8 @@ namespace theDoctor
 
           if (ratioPosition == "top")
           {
-             theStackPad = thePlot.AddPad(0,0,1,0.8,"legend");
-             theRatioPad = thePlot.AddPad(0,0.8,1,1,"topInfo");
+             theStackPad = thePlot.AddPad(0,0,1,0.8,theGlobalOptions,"legend" );
+             theRatioPad = thePlot.AddPad(0,0.8,1,1,theGlobalOptions,"topInfo");
 
              theRatioPad->SetBottomMargin(0.07);
              theRatioPad->SetTopMargin(0.3);
@@ -175,8 +175,8 @@ namespace theDoctor
           }
           else
           {
-             theStackPad = thePlot.AddPad(0,0.25,1,1,"legend,topInfo");
-             theRatioPad = thePlot.AddPad(0,0,1,0.25,"");
+             theStackPad = thePlot.AddPad(0,0.25,1,1,theGlobalOptions,"legend,topInfo");
+             theRatioPad = thePlot.AddPad(0,0,1,0.25,theGlobalOptions,""              );
 
              theRatioPad->SetTopMargin(0.05);
              theRatioPad->SetBottomMargin(0.35);
@@ -475,7 +475,7 @@ namespace theDoctor
 
       static void ApplyDataStyle(Plot* thePlot, TH1D* theData, OptionsScrewdriver generalOptions)
       {
-          PlotDefaultStyles::ApplyDefaultMarkerStyle(theData, kBlack);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theData, kBlack, generalOptions);
       }
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver generalOptions, string varOptions = "")
@@ -485,11 +485,11 @@ namespace theDoctor
           bool   logY = OptionsScrewdriver::GetBoolOption(varOptions,"logY");
 
           if (ratioPosition == "top")
-             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
+             PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel, generalOptions);
           else
              theStack->GetXaxis()->SetLabelSize(0.0);
 
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel, generalOptions);
 
           theStack->SetTitle("");
           if (logY)
@@ -505,7 +505,7 @@ namespace theDoctor
 
       static void ApplyRatioStyle(Plot* thePlot, TH1D* theRatio, OptionsScrewdriver generalOptions)
       {
-          PlotDefaultStyles::ApplyDefaultMarkerStyle(theRatio, kBlack);
+          PlotDefaultStyles::ApplyDefaultMarkerStyle(theRatio, kBlack, generalOptions);
       }
 
       static void ApplyRatioAxisStyle(Plot* thePlot, TH1D* theRatio, string xlabel, OptionsScrewdriver generalOptions, string varOptions = "")
@@ -519,7 +519,7 @@ namespace theDoctor
           if (ratioMax == -1) ratioMax = 1.5;
 
           // Y axis
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"));
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"), generalOptions);
           theRatio->GetYaxis()->CenterTitle();
           theRatio->GetYaxis()->SetTickLength(0.015);
           theRatio->GetYaxis()->SetTitleSize(0.17);
@@ -531,12 +531,12 @@ namespace theDoctor
           // X axis
           if (ratioPosition == "top")
           {
-              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), "");
+              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), "", generalOptions);
               theRatio->GetXaxis()->SetLabelSize(0.0);
           }
           else
           {
-              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), xlabel) ;
+              PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), xlabel, generalOptions) ;
               theRatio->GetXaxis()->SetTitleSize(0.22);
               theRatio->GetXaxis()->SetTitleOffset(0.65);
           }

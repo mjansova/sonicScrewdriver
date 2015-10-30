@@ -1,0 +1,74 @@
+R"(
+{
+   "General" :
+   {
+       "textFont"                  : 4
+   },
+   "Plot" :
+   {
+       "width"                     : 850,
+       "height"                    : 750,
+       "exportPng"                 : false,
+       "exportEps"                 : false,
+       "exportPdf"                 : true,
+       "infoTopRight"              : "Work in progress",
+       "infoTopLeft"               : ""
+   },
+   "Axis" :
+   {
+       "titleSize"                 : 0.05,
+       "titleOffset"               : 0.9,
+       "labelSize"                 : 22
+   },
+   "Legend" :
+   {
+       "borderSize"                : 0,
+       "fillColor"                 : 0,
+       "textSize"                  : 0.035
+   },
+   "1DStack" :
+   {
+       "backgroundLineWidth"       : 2,
+       "signalLineWidth"           : 3,
+       "signalLineStyle"           : 9,
+       "includeSignal"             : "stack",
+       "factorSignal"              : 1.0
+   },
+   "1DSuperimposed" :
+   {
+       "includeSignal"             : true,
+       "lineWidth"                 : 6
+   },
+   "DataMCComparison" :
+   {
+       "ratioPosition"             : "bottom",
+       "showBackgroundUncertainty" : true,
+       "includeSignal"             : "stack",
+       "factorSignal"              : 1.0
+   },
+   "DataMCRatio" :
+   {
+       "min"                       : 0.5,
+       "yGridStep"                 : 0.25,
+       "max"                       : 1.5,
+       "includeSignal"             : true,
+       "splitUncertainties"        : false
+   },
+   "1DFigure" :
+   {
+       "includeSignal"             : false,
+       "factorSignal"              : 1.0
+   },
+   "1DDataMCComparisonFigure" :
+   {
+       "includeSignal"             : false,
+       "factorSignal"              : 1.0
+   },
+   "FigureOfMerit" :
+   {
+       "type"                            : "Zbi",
+       "minBackground"                   : 1.0,
+       "backgroundSystematicUncertainty" : 0.15
+   }
+}
+)"

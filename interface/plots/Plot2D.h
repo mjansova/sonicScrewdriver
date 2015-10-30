@@ -101,7 +101,7 @@ namespace theDoctor
 
                 thePlot.getCanvas()->SetRightMargin(0.1);
                 histoClone->Draw("COLZ");
-                PlotDefaultStyles::ApplyDefaultStylePalette(histoClone,thePlot.getCanvas());
+                PlotDefaultStyles::ApplyDefaultStylePalette(histoClone,thePlot.getCanvas(), theGlobalOptions);
 
                 return thePlot;
             }
@@ -114,8 +114,8 @@ namespace theDoctor
 
             static void ApplyAxisStyle(Plot* thePlot, TH2D* theHisto, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varXOptions = "", string varYOptions = "")
             {
-                PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel);
-                PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel);
+                PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetXaxis(),xlabel, theGlobalOptions);
+                PlotDefaultStyles::ApplyDefaultAxisStyle(theHisto->GetYaxis(),ylabel, theGlobalOptions);
                 //theHisto->SetTitle(title.c_str());
                 theHisto->SetTitle("");
                 theHisto->SetStats(0);

@@ -9,6 +9,7 @@
 #include "../interface/tables/TableDataMC.h" 
 using namespace theDoctor;
 
+
 // ####################
 // #   Event format   #
 // ####################
@@ -23,12 +24,11 @@ typedef struct
 }
 microEvent;
 
-// The current event
 microEvent myEvent;
 
-// ##################################################
-// #   Additional variables to compute on the fly   #
-// ##################################################
+// ######################################################
+// #   Additional variables to be computed on the fly   #
+// ######################################################
 
 float leptonPtOverMET()
 {
@@ -72,6 +72,7 @@ int main (int argc, char *argv[])
   
      // Create a sonic Screwdriver
       SonicScrewdriver s;
+      s.LoadJsonConfig("./testStyleConfig.json");
 
   // ##########################
   // ##   Create Variables   ##
@@ -81,8 +82,11 @@ int main (int argc, char *argv[])
       s.AddVariable("MET",              "Missing E_{T}",    "GeV",    40,0,400,    &(myEvent.MET),            "logY"     );
       s.AddVariable("leptonPt",         "p_{T}(lepton)",    "GeV",    30,0,150,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
       s.AddVariable("mMuf",             "True muf mass",    "GeV",    11,114,136,  &(myEvent.mMuf),           "noUnderflowInFirstBin");
-      s.AddVariable("leptonPtOverMET",  "Lepton pT / E^{miss}_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
       
+      // Variable with value defined by a function
+      s.AddVariable("leptonPtOverMET",  "Lepton pT / E^#text{miss}_{T}",    "",    40,0,10,  &(leptonPtOverMET),  "noUnderflowInFirstBin");
+     
+      // Variable with a custom binning
       float customBinning[17] = {0.0,5.0,10.0,15.0,20.0,25.0,30.0,35.0,40.0,50.0,60.0,70.0,80.0,90.0,100.0,125.0,150.0};
       s.AddVariable("leptonPt_customBinning",      "p_{T}(lepton)",    "GeV",    16,customBinning,    &(myEvent.leptonPt),       "noUnderflowInFirstBin");
 
@@ -141,22 +145,6 @@ int main (int argc, char *argv[])
      s.Add2DHisto("invariantMass","leptonPt");
      s.Add2DHisto("mMuf","invariantMass");
 
-     // Set options
-
-     s.SetGlobalBoolOption  ("1DSuperimposed",    "includeSignal",                    true   );
-     
-     s.SetGlobalStringOption("1DStack",           "includeSignal",                    "stack");
-     s.SetGlobalFloatOption ("1DStack",           "factorSignal",                     2.0    );
-
-     s.SetGlobalStringOption("DataMCComparison",  "includeSignal",                    "stack");
-     s.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
-     s.SetGlobalBoolOption  ("DataMCComparison",  "showBackgroundUncertainty",        true   );
-     s.SetGlobalBoolOption  ("DataMCRatio",       "includeSignal",                    true   );
-     s.SetGlobalBoolOption  ("DataMCRatio",       "splitUncertainties",               false  );
-     s.SetGlobalFloatOption ("DataMCRatio",       "yGridStep",                        0.25   );
-     
-     s.SetGlobalFloatOption ("FigureOfMerit",     "backgroundSystematicUncertainty",  0.15   );
-
      // Schedule plots
      
      s.SchedulePlots("1DSuperimposed");
@@ -164,15 +152,6 @@ int main (int argc, char *argv[])
      s.SchedulePlots("1DDataMCComparison");
      s.SchedulePlots("1DFigureOfMerit","var=leptonPt,cutType=keepHighValues");
      s.SchedulePlots("2D");
-
-     // Config plots
-
-     s.SetGlobalStringOption("Plot", "infoTopRight", "Work in progress");
-     s.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
-     
-     s.SetGlobalBoolOption("Plot", "exportPdf", true);
-     s.SetGlobalBoolOption("Plot", "exportEps", false);
-     s.SetGlobalBoolOption("Plot", "exportPng", false);
 
   // ########################################
   // ##        Run over the events         ##

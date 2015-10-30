@@ -2,55 +2,53 @@
 #define PlotDefaultStyles_h
 
 #include "interface/Common.h"
+#include "interface/OptionsScrewdriver.h"
 
-#define PLOTDEFAULTSTYLES_FONT 40		// Helvetica
-//#define PLOTDEFAULTSTYLES_FONT 130	// Times
-
+namespace theDoctor
+{
 
 class PlotDefaultStyles
 {
 
- public:
+  public:
 
   PlotDefaultStyles();
   ~PlotDefaultStyles();
 
   // Axis style
-  static void ApplyDefaultAxisStyle(TAxis* theAxis, string label)
+  static void ApplyDefaultAxisStyle(TAxis* theAxis, string label, OptionsScrewdriver globalOptions)
   {
-	 theAxis->SetTitle(label.c_str());
-	 theAxis->SetTitleFont(PLOTDEFAULTSTYLES_FONT+2);
-	 theAxis->SetTitleSize(0.05);
-	 theAxis->SetTitleOffset(0.9);
-	 theAxis->SetLabelFont(PLOTDEFAULTSTYLES_FONT+3);
-	 theAxis->SetLabelSize(22);
+	 theAxis->SetTitle      (label.c_str());
+	 theAxis->SetTitleFont  (globalOptions.GetGlobalFloatOption("General","textFont")*10+2 );
+	 theAxis->SetTitleSize  (globalOptions.GetGlobalFloatOption("Axis","titleSize")        );
+	 theAxis->SetTitleOffset(globalOptions.GetGlobalFloatOption("Axis","titleOffset")      );
+	 theAxis->SetLabelFont  (globalOptions.GetGlobalFloatOption("General","textFont")*10+3 );
+	 theAxis->SetLabelSize  (globalOptions.GetGlobalFloatOption("Axis","labelSize")        );
   }
 
   // PaveText style
-  static void ApplyDefaultPaveTextStyle(TPaveText* thePaveText)
+  static void ApplyDefaultPaveTextStyle(TPaveText* thePaveText, OptionsScrewdriver globalOptions)
   {
 	 thePaveText->SetFillColor(kWhite);
 	 thePaveText->SetFillStyle(0);
 	 thePaveText->SetBorderSize(0);
-	 thePaveText->SetTextFont(PLOTDEFAULTSTYLES_FONT+3);
+	 thePaveText->SetTextFont(globalOptions.GetGlobalFloatOption("General","textFont")*10+3);
 	 thePaveText->SetTextSize(26);
   }
 
   // Legend style
-  static void ApplyDefaultLegendStyle(TLegend* theLegend)
+  static void ApplyDefaultLegendStyle(TLegend* theLegend, OptionsScrewdriver globalOptions)
   {
-	 theLegend->SetBorderSize(0);
-	 theLegend->SetFillColor(kWhite);
-	 theLegend->SetFillStyle(0);
-	 theLegend->SetTextFont(PLOTDEFAULTSTYLES_FONT+2);
-	 theLegend->SetTextSize(0.035);
+	 theLegend->SetBorderSize(globalOptions.GetGlobalFloatOption("Legend","borderSize")     );
+	 theLegend->SetFillColor (globalOptions.GetGlobalFloatOption("Legend","fillColor")      );
+	 theLegend->SetTextFont  (globalOptions.GetGlobalFloatOption("General","textFont")*10+2 );
+	 theLegend->SetTextSize  (globalOptions.GetGlobalFloatOption("Legend","textSize")       );
+	 theLegend->SetFillStyle (0);
   }
 
   // Canvas style
-  static void ApplyDefaultCanvasStyle(TCanvas* theCanvas)
+  static void ApplyDefaultCanvasStyle(TCanvas* theCanvas, OptionsScrewdriver globalOptions)
   {
-    //theCanvas->SetFrameLineWidth(3);
-	//theCanvas->SetFixedAspectRatio();
 	theCanvas->SetTickx();
 	theCanvas->SetTicky();
 	theCanvas->SetFillColor(kWhite);
@@ -60,10 +58,8 @@ class PlotDefaultStyles
   }
 
   // Pad
-  static void ApplyDefaultPadStyle(TPad* thePad)
+  static void ApplyDefaultPadStyle(TPad* thePad, OptionsScrewdriver globalOptions)
   {
-    //theCanvas->SetFrameLineWidth(3);
-	//theCanvas->SetFixedAspectRatio();
 	thePad->SetTickx();
 	thePad->SetTicky();
 	thePad->SetFillColor(kWhite);
@@ -73,7 +69,7 @@ class PlotDefaultStyles
   }
 
   // Data style
-  static void ApplyDefaultMarkerStyle(TH1D* histo, Color_t color)
+  static void ApplyDefaultMarkerStyle(TH1D* histo, Color_t color, OptionsScrewdriver globalOptions)
   {
       histo->SetMarkerStyle(8);
       histo->SetMarkerSize(1.25);
@@ -83,7 +79,7 @@ class PlotDefaultStyles
       histo->SetFillStyle(0);
   }
 
-  static void ApplyDefaultStylePalette(TH2D* histo, TCanvas* theCanvas)
+  static void ApplyDefaultStylePalette(TH2D* histo, TCanvas* theCanvas, OptionsScrewdriver globalOptions)
   {
       theCanvas->Modified();
       theCanvas->Update();
@@ -104,7 +100,7 @@ class PlotDefaultStyles
       }
   }
 
-  static void SetSmoothPalette(string option = "standard")
+  static void Set2DPalette(OptionsScrewdriver globalOptions, string option = "standard")
   {
       const int NRGBs = 5;
       const int NCont = 999;
@@ -130,5 +126,7 @@ class PlotDefaultStyles
   }
 
 };
+
+}
 
 #endif

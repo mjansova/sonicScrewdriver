@@ -28,17 +28,18 @@ namespace theDoctor
             // Plot constructor
             Plot(string name_, string type_, OptionsScrewdriver theGlobalOptions, string options = "")
             {
-                theCanvas = new TCanvas(name_.c_str(),"",850,750);
+                theCanvas = new TCanvas(name_.c_str(),"",theGlobalOptions.GetGlobalFloatOption("Plot","width"),theGlobalOptions.GetGlobalFloatOption("Plot","height"));
+
                 theLegend = new TLegend(0.65,0.70,0.89,0.89); theLegendMaxLabelSize = 0; theLegendNumberOfLines = 0;
                 theTopLeftInfo  = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theTopRightInfo = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
                 theInPlotInfo = new TPaveText(0.13,0.77,0.43,0.87,"NDC");
 
-                PlotDefaultStyles::ApplyDefaultCanvasStyle(theCanvas);
-                PlotDefaultStyles::ApplyDefaultLegendStyle(theLegend);
-                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopLeftInfo);
-                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopRightInfo);
-                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theInPlotInfo);
+                PlotDefaultStyles::ApplyDefaultCanvasStyle(theCanvas,         theGlobalOptions);
+                PlotDefaultStyles::ApplyDefaultLegendStyle(theLegend,         theGlobalOptions);
+                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopLeftInfo,  theGlobalOptions);
+                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theTopRightInfo, theGlobalOptions);
+                PlotDefaultStyles::ApplyDefaultPaveTextStyle(theInPlotInfo,   theGlobalOptions);
 
                 theTopLeftInfo ->SetTextAlign(12);
                 theTopRightInfo->SetTextAlign(32);
@@ -104,12 +105,12 @@ namespace theDoctor
             void SetActive()   { theCanvas->cd();                            };
             void Update()      { theCanvas->Modified(); theCanvas->Update(); };
 
-            TPad* AddPad(float x_start, float y_start, float x_end, float y_end, string options = "")
+            TPad* AddPad(float x_start, float y_start, float x_end, float y_end, OptionsScrewdriver theGlobalOptions, string options = "")
             {
                 SetActive();
 
                 TPad* newPad = new TPad("","",x_start,y_start,x_end,y_end);
-                PlotDefaultStyles::ApplyDefaultPadStyle(newPad);
+                PlotDefaultStyles::ApplyDefaultPadStyle(newPad, theGlobalOptions);
 
                 newPad->Draw();
                 newPad->cd();

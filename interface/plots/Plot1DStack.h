@@ -263,8 +263,8 @@ namespace theDoctor
 
       static void ApplyAxisStyle(Plot* thePlot, THStack* theStack, string xlabel, string ylabel, OptionsScrewdriver theGlobalOptions, string varOptions = "")
       {
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel);
-         PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel);
+         PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetXaxis(),xlabel, theGlobalOptions);
+         PlotDefaultStyles::ApplyDefaultAxisStyle(theStack->GetYaxis(),ylabel, theGlobalOptions);
          theStack->SetTitle("");
          if (OptionsScrewdriver::GetBoolOption(varOptions,"logY"))
          {

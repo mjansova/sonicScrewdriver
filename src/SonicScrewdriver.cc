@@ -19,7 +19,7 @@ SonicScrewdriver::SonicScrewdriver():
     // FIXME this should be handled an other way
     AddVariable("yield","Yield","",1,0,0,&sonicScrewdriver_DummyUnity,"");
     // FIXME this too
-    PlotDefaultStyles::SetSmoothPalette("smooth");
+    PlotDefaultStyles::Set2DPalette(GetGlobalOptions(),"smooth");
     thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "min", 0.5);
     thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "max", 1.5);
 }
