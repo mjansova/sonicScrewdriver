@@ -69,10 +69,25 @@ namespace theDoctor
           if ((theProcessClass->getType() == "data")
            && (OptionsScrewdriver::GetBoolOption(theRegion->getOptions(),"blinded"))) return;
 
-            Fill(theXVar->getAutoFillValue(),theYVar->getAutoFillValue(),weight);
+          uint32_t arraySizeX = theXVar->getArrSize();
+          uint32_t arraySizeY = theYVar->getArrSize();
+          double arrayX[arraySizeX];
+          double arrayY[arraySizeY];
+          memcpy(arrayX, theXVar->getAutoFillValue(), arraySizeX*sizeof(double));
+          memcpy(arrayY, theYVar->getAutoFillValue(), arraySizeY*sizeof(double));
+          for(uint32_t f = 0; f < arraySizeX; f++)
+          {
+              for(uint32_t g = 0; g < arraySizeY; g++)
+              {
+                  Fill(arrayX[f], arrayY[g], weight);  //@MJ@ TODO this needs to be tested!!!! 3D still needs to be implemented!
+                  std::cout << " value X: " << arrayX[f] << ", weight: " << weight << " value Y: " << arrayY[g]<< std::endl;
+              }
+          }
+
+            Fill(*theXVar->getAutoFillValue(),*theYVar->getAutoFillValue(),weight);
         }
 
-        void Fill(float valueX = 1.0, float valueY = 1.0, float weight = 1.0)
+        void Fill(double valueX = 1.0, double valueY = 1.0, float weight = 1.0)
         {
 
             if ((!OptionsScrewdriver::GetBoolOption(theXVar->getOptions(),"noUnderflowInFirstBin"))

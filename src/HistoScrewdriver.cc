@@ -1,5 +1,5 @@
 
-#include "interface/HistoScrewdriver.h"
+#include "../interface/HistoScrewdriver.h"
 
 using namespace theDoctor;
 
@@ -148,28 +148,45 @@ void HistoScrewdriver::Create1DHistosEntries()
 
 void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
 {
+
     for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
     {
         // Get histo
         Histo1DEntries* currentHisto = &(the1DHistosEntries[i]);
 
         // Check this is an histogram for the relevant process class
-        if (currentHisto->getProcessClassTag() != processClass) continue;
+        if (currentHisto->getProcessClassTag() != processClass)
+        {
+        //cout << "Check this is an histogram for the relevant process class" << endl;
+        continue;
+        }
         
         // Check channel selection
-        if (!(currentHisto->getChannel()->getSelectionFlag())) continue;
+        if (!(currentHisto->getChannel()->getSelectionFlag()))
+        {
+        //cout << "Check channel selection" << endl;
+        continue;
+        }
 
         // Check region selection
             // If show cuts mode is not activated, check the standard selection flag
             if (!currentHisto->getRegion()->getShowCutsMode())
             {
-                if (!(currentHisto->getRegion()->getSelectionFlag())) continue;
+                if (!(currentHisto->getRegion()->getSelectionFlag()))
+                {
+                 //cout << "If show cuts mode is not activated, check the standard selection flag" << endl;
+                 continue;
+                 }
             }
             // If show cut mode is activated, the region need to perform a special check
             else 
             {
                 string variableToIgnore = currentHisto->getVariable()->getTag();
-                if (!(currentHisto->getRegion()->getSelectionFlag(variableToIgnore))) continue;
+                if (!(currentHisto->getRegion()->getSelectionFlag(variableToIgnore)))
+                {
+                 //cout << "If show cut mode is activated, the region need to perform a special check" << endl;
+                 continue;
+                 }
             }
        
         // Fill the histo

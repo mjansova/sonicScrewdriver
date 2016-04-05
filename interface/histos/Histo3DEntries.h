@@ -69,7 +69,7 @@ namespace theDoctor
           if ((theProcessClass->getType() == "data")
            && (OptionsScrewdriver::GetBoolOption(theRegion->getOptions(),"blinded"))) return;
 
-            Fill(theXVar->getAutoFillValue(),theYVar->getAutoFillValue(),theZVar->getAutoFillValue(),weight);
+            Fill(*theXVar->getAutoFillValue(),*theYVar->getAutoFillValue(),*theZVar->getAutoFillValue(),weight);
         }
 
         void Fill(float valueX = 1.0, float valueY = 1.0, float valueZ = 1.0, float weight = 1.0)

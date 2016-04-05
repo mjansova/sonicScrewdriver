@@ -5,7 +5,7 @@
 #include <vector>
 #include <iomanip>
 
-#include "interface/Figure.h"
+#include "Figure.h"
 
 using namespace std;
 

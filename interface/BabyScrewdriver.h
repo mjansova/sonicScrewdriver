@@ -6,6 +6,10 @@
 
 #include "interface/SonicScrewdriver.h"
 #include "interface/tables/TableDataMC.h"
+#include "interface/tables/TableBackgroundSignal.h"
+#include "interface/tables/TableToBackgroundRatio.h"
+#include "interface/tables/TableZbi.h"
+
 using namespace theDoctor;
 
 class BabyScrewdriver : public SonicScrewdriver
@@ -220,6 +224,9 @@ void BabyScrewdriver::WaitForWorkers()
         {
             if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
             {
+                cout << "status " << status << endl;
+                cout << "WIFEXITED " <<   WIFEXITED(status) << endl;
+                cout << "WEXITSTATUS " << WEXITSTATUS(status) << endl;
                 cerr << "Worker with PID " << done << " failed. Exiting." << endl;
                 exit(-1);
             }

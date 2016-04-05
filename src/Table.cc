@@ -144,8 +144,16 @@ Figure Table::Get(string colTag, string rowTag)
 	int indexRow = -1;
 	int indexCol = -1;
 
-	for (unsigned int i = 0 ; i < nRow ; i++) if (rowTag == rowTags[i]) indexRow = i;
-	for (unsigned int i = 0 ; i < nCol ; i++) if (colTag == colTags[i]) indexCol = i;
+	for (unsigned int i = 0 ; i < nRow ; i++) 
+        {
+           cout << "row " << i << " name " << rowTags[i] << endl; 
+           if (rowTag == rowTags[i]) indexRow = i;
+        }
+	for (unsigned int i = 0 ; i < nCol ; i++)
+        { 
+            cout << "col " << i << " name " << colTags[i] << endl; 
+            if (colTag == colTags[i]) indexCol = i;
+        }
 
     if (indexRow == -1) { WARNING_MSG << "Could not find row named "    << rowTag << " to get " << endl; return Figure(0,0); }
     if (indexCol == -1) { WARNING_MSG << "Could not find column named " << colTag << " to get " << endl; return Figure(0,0); }

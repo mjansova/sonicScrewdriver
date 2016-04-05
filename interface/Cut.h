@@ -53,7 +53,7 @@ namespace theDoctor
       {
           if (target == 0) { return false; }
 
-          float targetValue = target->getAutoFillValue();
+          float targetValue = *target->getAutoFillValue(); //@MJ@ TODO implement array variable, or what should I do here for array variable?????
 
                if (type == '>') { if (targetValue >  value) return true; else return false; }
           else if (type == '<') { if (targetValue <  value) return true; else return false; }

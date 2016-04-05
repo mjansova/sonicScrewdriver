@@ -45,13 +45,13 @@ void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, in
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, int*    autoFillPointer, string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
 
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max,     int (*autoFillFunction)(),   string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max,     int* (*autoFillFunction)(),   string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    }
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       int (*autoFillFunction)(),   string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       int* (*autoFillFunction)(),   string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    }
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float (*autoFillFunction)(), string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* (*autoFillFunction)(), string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    }
-void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       float (*autoFillFunction)(), string options)
+void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       float* (*autoFillFunction)(), string options)
 {    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    }
 
 int SonicScrewdriver::GetIndexOfVariable(string tag)
@@ -62,6 +62,11 @@ int SonicScrewdriver::GetIndexOfVariable(string tag)
     return -1;
 }
 
+
+void SonicScrewdriver::SetSizeOfVarArray(string tag, uint32_t arrSize)
+{
+    theVariables.at(GetIndexOfVariable(tag)).setArrSize(arrSize); 
+}
 
 void SonicScrewdriver::AddProcessClass(string tag, string plotLabel, string type, Color_t color, string options)
 {    theProcessClasses.push_back(ProcessClass(tag,plotLabel,type,color,options));    }
@@ -324,6 +329,7 @@ void SonicScrewdriver::ImportHistosEntries(string inputFile)
     {
         TH1D* localHisto = Entries1D->at(i).getHisto();
         string name = localHisto->GetName();
+        cout << "the name of the histogram: " << name << endl;
         TH1D* fileHisto = (TH1D*) f->Get(name.c_str());
         localHisto->Add(fileHisto);
     }

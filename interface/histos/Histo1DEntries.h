@@ -1,6 +1,7 @@
 #ifndef Histo1DEntries_h
 #define Histo1DEntries_h
 
+#include <cstring>
 
 #include "interface/histos/Histo1D.h"
 #include "interface/ProcessClass.h"
@@ -63,12 +64,20 @@ namespace theDoctor
           if ((theProcessClass->getType() == "data")
            && (OptionsScrewdriver::GetBoolOption(theRegion->getOptions(),"blinded"))) return;
 
-          Fill(theVar->getAutoFillValue(),weight);
+          uint32_t arraySize = theVar->getArrSize();
+          double array[arraySize];
+          memcpy(array, theVar->getAutoFillValue(), arraySize*sizeof(double));
+          for(uint32_t f = 0; f < arraySize; f++)
+          {
+              Fill(array[f],weight);  //@MJ@ TODO do this for 2D and 3D, or add some check, or....
+              //std::cout << " value: " << array[f] << ", weight: " << weight << std::endl;
+          }
       }
 
-      void Fill(float value = 1.0, float weight = 1.0) const
+      void Fill(double value = 1.0, float weight = 1.0) const
       {
-          //DEBUG_MSG << "integral : " << GetYieldAndError().Print() << endl;
+          //cout << "filling the histos1: value: " << value << "weight: " << weight << endl;
+          //DEBUG_MSG << "@MJ@ integral : " << GetYieldAndError().Print() << endl;
 
           if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noUnderflowInFirstBin"))
            && (value < theVar->getMin())) value = theVar->getMin();

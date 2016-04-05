@@ -114,7 +114,7 @@ namespace theDoctor
 
      private:
 
-      bool (*selector)();
+      bool (*selector)(); //@MJ@ TODO I need bool (*selector)(ofstream &outputFile)
       vector<Cut> setOfCuts;
       bool flag;
       bool showCutsMode;

@@ -1,7 +1,7 @@
 #ifndef Figure_h
 #define Figure_h
 
-#include "interface/Common.h"
+#include "Common.h"
 
 using namespace std;
 

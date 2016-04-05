@@ -132,7 +132,7 @@ namespace theDoctor
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
 
             // Normalize histogram to unity
-            if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+            //if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral()); //@MJ@ TODO
 
             // Draw the histo
             if (!firstHisto)
