@@ -71,20 +71,26 @@ namespace theDoctor
 
           uint32_t arraySizeX = theXVar->getArrSize();
           uint32_t arraySizeY = theYVar->getArrSize();
-          double arrayX[arraySizeX];
-          double arrayY[arraySizeY];
-          memcpy(arrayX, theXVar->getAutoFillValue(), arraySizeX*sizeof(double));
-          memcpy(arrayY, theYVar->getAutoFillValue(), arraySizeY*sizeof(double));
-          for(uint32_t f = 0; f < arraySizeX; f++)
-          {
-              for(uint32_t g = 0; g < arraySizeY; g++)
-              {
-                  Fill(arrayX[f], arrayY[g], weight);  //@MJ@ TODO this needs to be tested!!!! 3D still needs to be implemented!
-                  std::cout << " value X: " << arrayX[f] << ", weight: " << weight << " value Y: " << arrayY[g]<< std::endl;
-              }
-          }
 
-            Fill(*theXVar->getAutoFillValue(),*theYVar->getAutoFillValue(),weight);
+          if(arraySizeX != 0 && arraySizeY != 0)
+          {
+              double arrayX[arraySizeX];
+              double arrayY[arraySizeY];
+              if( theXVar->getAutoFillValue() == NULL || theYVar->getAutoFillValue() == NULL)
+                  throw std::runtime_error("2D: The Pointer with values which should be filled is NULL, even though the array size is not zero!");
+              memcpy(arrayX, theXVar->getAutoFillValue(), arraySizeX*sizeof(double));
+              memcpy(arrayY, theYVar->getAutoFillValue(), arraySizeY*sizeof(double));
+              for(uint32_t f = 0; f < arraySizeX; f++)
+              {
+                  for(uint32_t g = 0; g < arraySizeY; g++)
+                  {
+                      Fill(arrayX[f], arrayY[g], weight);  //@MJ@ TODO this needs to be tested!!!! 3D still needs to be implemented!
+                      std::cout << " value X: " << arrayX[f] << ", weight: " << weight << " value Y: " << arrayY[g]<< std::endl;
+                  }
+              }
+
+              Fill(*theXVar->getAutoFillValue(),*theYVar->getAutoFillValue(),weight);
+          }
         }
 
         void Fill(double valueX = 1.0, double valueY = 1.0, float weight = 1.0)

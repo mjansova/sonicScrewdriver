@@ -146,12 +146,12 @@ Figure Table::Get(string colTag, string rowTag)
 
 	for (unsigned int i = 0 ; i < nRow ; i++) 
         {
-           cout << "row " << i << " name " << rowTags[i] << endl; 
+           //cout << "row " << i << " name " << rowTags[i] << endl; 
            if (rowTag == rowTags[i]) indexRow = i;
         }
 	for (unsigned int i = 0 ; i < nCol ; i++)
         { 
-            cout << "col " << i << " name " << colTags[i] << endl; 
+            //cout << "col " << i << " name " << colTags[i] << endl; 
             if (colTag == colTags[i]) indexCol = i;
         }
 

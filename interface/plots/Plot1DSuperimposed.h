@@ -166,7 +166,7 @@ namespace theDoctor
                 histoClone->SetLineStyle(9);
 
                 // Normalize histogram to unity
-                if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+                //if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
                 // Draw the histo
                 if (!firstHisto)
@@ -204,7 +204,7 @@ namespace theDoctor
                 histoClone->SetFillStyle(0);
 
                 // Normalize histogram to unity
-                if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+                //if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
                 // Draw the histo
                 if (!firstHisto)

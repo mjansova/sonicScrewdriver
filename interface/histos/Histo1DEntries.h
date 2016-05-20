@@ -2,6 +2,7 @@
 #define Histo1DEntries_h
 
 #include <cstring>
+#include <exception>
 
 #include "interface/histos/Histo1D.h"
 #include "interface/ProcessClass.h"
@@ -65,12 +66,18 @@ namespace theDoctor
            && (OptionsScrewdriver::GetBoolOption(theRegion->getOptions(),"blinded"))) return;
 
           uint32_t arraySize = theVar->getArrSize();
-          double array[arraySize];
-          memcpy(array, theVar->getAutoFillValue(), arraySize*sizeof(double));
-          for(uint32_t f = 0; f < arraySize; f++)
+          if(arraySize != 0)
           {
-              Fill(array[f],weight);  //@MJ@ TODO do this for 2D and 3D, or add some check, or....
-              //std::cout << " value: " << array[f] << ", weight: " << weight << std::endl;
+              double array[arraySize];
+              
+              if(theVar->getAutoFillValue() == NULL)
+                  throw std::runtime_error("1D: The Pointer with values which should be filled is NULL, even though the array size is not zero!");
+              memcpy(array, theVar->getAutoFillValue(), arraySize*sizeof(double));
+              for(uint32_t f = 0; f < arraySize; f++)
+              {
+                  Fill(array[f],weight);  //@MJ@ TODO do this for 2D and 3D, or add some check, or....
+                  //std::cout << " value: " << array[f] << ", weight: " << weight << std::endl;
+              }
           }
       }
 
