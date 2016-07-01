@@ -11,6 +11,8 @@
 #include "interface/PlotDefaultStyles.h"
 #include "interface/OptionsScrewdriver.h"
 
+#define NORMALIZE 1
+
 namespace theDoctor
 {
 
@@ -132,8 +134,10 @@ namespace theDoctor
             ApplyHistoStyle(&thePlot,histoClone,processClass->getColor(),theGlobalOptions,processClass->getOptions());
 
             // Normalize histogram to unity
-            //if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral()); //@MJ@ TODO
-
+            #if NORMALIZE == 1
+	    if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral()); //@MJ@ TODO
+            #endif		
+		 
             // Draw the histo
             if (!firstHisto)
             {
@@ -166,7 +170,9 @@ namespace theDoctor
                 histoClone->SetLineStyle(9);
 
                 // Normalize histogram to unity
+                #if NORMALIZE == 1
                 if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+	        #endif
 
                 // Draw the histo
                 if (!firstHisto)
@@ -204,7 +210,9 @@ namespace theDoctor
                 histoClone->SetFillStyle(0);
 
                 // Normalize histogram to unity
+                #if NORMALIZE ==  1
                 if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
+		#endif
 
                 // Draw the histo
                 if (!firstHisto)
