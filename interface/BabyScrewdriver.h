@@ -79,6 +79,9 @@ int main()
 
     if (workerId != 0)
     {
+    	// for gprofile
+    	//gmon_thread_timer(1);
+
         // Process the datasets
         b.ProcessDatasets(workerId);
 
@@ -88,6 +91,9 @@ int main()
 
         // Export histogram collection
         b.ExportWorkerOutput(workerId,masterPID);
+    	
+	//for gprofile
+	//gmon_thread_timer(0);
 
         cout << "[Worker " << workerId << "] "
              << "Exiting." << endl;
@@ -148,9 +154,10 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
 	InitializeBranchesForReading(theTree,&myEvent);
 	
 	// retrievve total nof weighted events
-	TH1F* hWeight = (TH1F*) f.Get("hWeights");
-	float TotalWeight = hWeight->GetBinContent(1);
-
+	//@EC@ temporarilly changed for trigger study
+	//TH1F* hWeight = (TH1F*) f.Get("hWeights");
+	//float TotalWeight = hWeight->GetBinContent(1);
+	float TotalWeight = 1;
 
         // Get number of entries, determine what range to run on
         unsigned int nEntries           = theTree->GetEntries();
@@ -171,7 +178,7 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
         for (unsigned int i = entryIdMin ; i < entryIdMax ; i++)
         {
             // Get the i-th entry
-            ReadEvent(theTree,i,&myEvent);
+	    ReadEvent(theTree,i,&myEvent);
 
             //Writing the total number of events (weighted)
 	    myEvent.totalNumberOfInitialEvent = TotalWeight;
@@ -185,6 +192,7 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
 
 int BabyScrewdriver::CreateWorkers()
 {
+    //gmon_start_all_thread_timers()
 
     int i = 0;
     int pid = -1;
