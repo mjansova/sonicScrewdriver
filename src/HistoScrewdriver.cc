@@ -61,9 +61,11 @@ void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight)
 
 void HistoScrewdriver::UpdateRegionsAndChannels()
 {
+    //#pragma omp parallel for private(myEvent)
     for (unsigned int i = 0 ; i < theRegions->size() ; i++)
         (*theRegions)[i].updateSelectionFlag();
 
+    //#pragma omp parallel for private(myEvent)
     for (unsigned int i = 0 ; i < theChannels->size() ; i++)
         (*theChannels)[i].updateSelectionFlag();
 }
@@ -149,6 +151,7 @@ void HistoScrewdriver::Create1DHistosEntries()
 void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
 {
 
+    //#pragma omp parallel for
     for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
     {
         // Get histo
