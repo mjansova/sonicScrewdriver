@@ -325,6 +325,7 @@ void SonicScrewdriver::ImportHistosEntries(string inputFile)
     vector<Histo2DEntries>* Entries2D = Get2DHistosEntries();
     vector<Histo3DEntries>* Entries3D = Get3DHistosEntries();
 
+    cout<<Entries1D->size()<<" is the size"<<endl;
     for (unsigned int i = 0 ; i < Entries1D->size() ; i++)
     {
         TH1D* localHisto = Entries1D->at(i).getHisto();
@@ -345,6 +346,56 @@ void SonicScrewdriver::ImportHistosEntries(string inputFile)
         TH3D* localHisto = Entries3D->at(i).getHisto();
         string name = localHisto->GetName();
         TH3D* fileHisto = (TH3D*) f->Get(name.c_str());
+        localHisto->Add(fileHisto);
+    }
+
+    f->Close();
+    
+}
+
+void SonicScrewdriver::ImportHistosFromFile(string inputFile)
+{ 
+    TFile* f = new TFile(inputFile.c_str(),"READ");
+    
+    vector<Histo1DEntries>* Entries1D = Get1DHistosEntries();
+    vector<Histo2DEntries>* Entries2D = Get2DHistosEntries();
+    vector<Histo3DEntries>* Entries3D = Get3DHistosEntries();
+
+    //cout<<Entries1D->size()<<" is the size"<<endl;
+    for (unsigned int i = 0 ; i < Entries1D->size() ; i++)
+    {
+        string dir = Entries1D->at(i).getChannel()->getTag()+string("/")+Entries1D->at(i).getRegion()->getTag();
+	string var = Entries1D->at(i).getVariable()->getTag();
+	TH1D* localHisto = Entries1D->at(i).getHisto();
+        string name = localHisto->GetName();
+        //cout << "the name of the histogram: " << name << endl;
+        //cout <<" search: "<<dir+name<<endl;
+	//cout<<"dir = "<<dir<<endl;
+	TDirectory* d = (TDirectory*) f->Get(dir.c_str());
+	TCanvas* c = (TCanvas*) d->Get(var.c_str());
+	TH1D* fileHisto = (TH1D*) c->GetPrimitive(name.c_str());
+	localHisto->Add(fileHisto);
+    }
+    for (unsigned int i = 0 ; i < Entries2D->size() ; i++)
+    {
+        string dir = Entries2D->at(i).getChannel()->getTag()+string("/")+Entries2D->at(i).getRegion()->getTag()+string("/");
+	string var ; // to be updated = Entries2D->at(i).getVariable()->getTag();
+        TH2D* localHisto = Entries2D->at(i).getHisto();
+        string name = localHisto->GetName();
+	TDirectory* d = (TDirectory*) f->Get(dir.c_str());
+	TCanvas* c = (TCanvas*) d->Get(var.c_str());
+	TH2D* fileHisto = (TH2D*) c->GetPrimitive(name.c_str());
+        localHisto->Add(fileHisto);
+    }
+    for (unsigned int i = 0 ; i < Entries3D->size() ; i++)
+    {
+        string dir = Entries3D->at(i).getChannel()->getTag()+string("/")+Entries3D->at(i).getRegion()->getTag()+string("/");
+	string var ; // to be udpated = Entries3D->at(i).getVariable()->getTag();
+        TH3D* localHisto = Entries3D->at(i).getHisto();
+        string name = localHisto->GetName();
+	TDirectory* d = (TDirectory*) f->Get(dir.c_str());
+	TCanvas* c = (TCanvas*) d->Get(var.c_str());
+	TH3D* fileHisto = (TH3D*) c->GetPrimitive(name.c_str());
         localHisto->Add(fileHisto);
     }
 
