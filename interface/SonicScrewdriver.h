@@ -242,7 +242,8 @@ namespace theDoctor
       vector<Histo2DEntries>* Get2DHistosEntries();
       vector<Histo3DEntries>* Get3DHistosEntries();
       void ExportHistosEntries(string outputFile);
-      void ImportHistosEntries(string inputFile);
+      void ImportHistosEntries(string inputFile); //Function used by babyScrewDriver
+      void ImportHistosFromFile(string inputFile); // Function used to read output file using the same directory structure
 
       TH1D* Get1DHistoClone(string var, string processClass, string region, string channel);
       TH1D* Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
