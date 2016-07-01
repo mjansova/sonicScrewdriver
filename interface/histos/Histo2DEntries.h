@@ -80,7 +80,7 @@ namespace theDoctor
               for(uint32_t g = 0; g < arraySizeY; g++)
               {
                   Fill(arrayX[f], arrayY[g], weight);  //@MJ@ TODO this needs to be tested!!!! 3D still needs to be implemented!
-                  std::cout << " value X: " << arrayX[f] << ", weight: " << weight << " value Y: " << arrayY[g]<< std::endl;
+                  //std::cout << " value X: " << arrayX[f] << ", weight: " << weight << " value Y: " << arrayY[g]<< std::endl;
               }
           }
 
