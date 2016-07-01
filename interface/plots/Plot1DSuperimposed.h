@@ -173,6 +173,7 @@ namespace theDoctor
                 #if NORMALIZE == 1
                 if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 	        #endif
+                //if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
                 // Draw the histo
                 if (!firstHisto)
@@ -213,6 +214,7 @@ namespace theDoctor
                 #if NORMALIZE ==  1
                 if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 		#endif
+                //if (histoClone->Integral() != 0) histoClone->Scale(1.0/histoClone->Integral());
 
                 // Draw the histo
                 if (!firstHisto)
