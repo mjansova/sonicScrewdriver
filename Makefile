@@ -5,11 +5,11 @@ DEFINES       =
 
 CXX           = g++
 CXXFLAGS      = -std=c++0x
-CXXFLAGS      += -O3 -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
+CXXFLAGS      += -O3 -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow  -pg -fopenmp -g 
 CXXFLAGS      += $(ROOTCFLAGS) -I./
 
 LD            = g++ 
-LDFLAGS       = -g -O -Wall -fPIC -Wl,-undefined,error
+LDFLAGS       = -pg -O3 -Wall -fPIC -Wl,-undefined,error -fopenmp -g
 LDFLAGS       += $(ROOTLIBS)
 
 SOFLAGS       = -shared
