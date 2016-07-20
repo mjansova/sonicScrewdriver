@@ -447,3 +447,236 @@ void SonicScrewdriver::SetFigure(string tag, string region, string channel, Figu
    }
 }
 
+void SonicScrewdriver::WriteXMLConfig(string outputfilename){
+	ofstream ofile(outputfilename.c_str());
+	
+	//  header
+	ofile<<"<?xml version=\"1.0\"?>"<<endl;
+
+	//---------------------
+	// -- Write Variables
+	//---------------------
+	ofile<<"<Variables>"<<endl;
+	for(unsigned int i=0;i<theVariables.size();i++){
+		ofile<<"<Variable tag=\""<<theVariables[i].getTag()<<"\"";
+		ofile<<" label=\""<<theVariables[i].getLabel()<<"\"";
+		ofile<<" unit=\""<<theVariables[i].getUnit()<<"\"";
+		ofile<<" nbins=\""<<theVariables[i].getNbins()<<"\"";
+		if(theVariables[i].getCustomBinning()==0){
+			ofile<<"min=\""<<theVariables[i].getMin()<<"\"";
+			ofile<<"max=\""<<theVariables[i].getMax()<<"\"";
+		}
+		else{
+			ofile<<" binning=\"";
+			for(int b=0;b<theVariables[i].getNbins();b++){
+				ofile<<theVariables[i].getCustomBinning()[b];
+				if(b!= theVariables[i].getNbins()-1) ofile<<"-";
+			}
+			ofile<<"\"";
+		}
+		ofile<<"/>"<<endl;
+	}
+	ofile<<"</Variables>"<<endl;
+	
+	//---------------------
+	// -- Write Regions
+	//---------------------
+	ofile<<"<Regions>"<<endl;
+	for(unsigned int i=0;i<theRegions.size();i++){
+		ofile<<"<Region tag=\""<<theRegions[i].getTag()<<"\"";
+		ofile<<" label=\""<<theRegions[i].getLabel()<<"\"";
+		ofile<<" />"<<endl;
+	}
+	ofile<<"</Regions>"<<endl;
+
+
+	//---------------------
+	// -- Write Channels
+	//---------------------
+	ofile<<"<Channels>"<<endl;
+	for(unsigned int i=0;i<theChannels.size();i++){
+		ofile<<"<Channel tag=\""<<theChannels[i].getTag()<<"\"";
+		ofile<<" label=\""<<theChannels[i].getLabel()<<"\"";
+		ofile<<" />"<<endl;
+	}
+	ofile<<"</Channels>"<<endl;
+
+	//---------------------
+	// -- Write ProcessClass
+	//---------------------
+	ofile<<"<ProcessClasses>"<<endl;
+	for(unsigned int i=0;i<theProcessClasses.size();i++){
+		ofile<<"<ProcessClass tag=\""<<theProcessClasses[i].getTag()<<"\"";
+		ofile<<" label=\""<<theProcessClasses[i].getLabel()<<"\"";
+		ofile<<" type=\""<<theProcessClasses[i].getType()<<"\"";
+		ofile<<" color=\""<<theProcessClasses[i].getColor()<<"\"";
+		ofile<<" />"<<endl;
+	}
+	ofile<<"</ProcessClasses>"<<endl;
+	
+	//---------------------
+	// -- Write Datasets
+	//---------------------
+	ofile<<"<Datasets>"<<endl;
+	for(unsigned int i=0;i<theDatasets.size();i++){
+		ofile<<"<Dataset tag=\""<<theDatasets[i].getTag()<<"\"";
+		ofile<<" label=\""<<theDatasets[i].getLabel()<<"\"";
+      		ofile<<" processClass=\""<<theDatasets[i].getProcessClass()<<"\"";
+		ofile<<" XsecOrLumi=\""<<theDatasets[i].getXsecOrLumi()<<"\"";
+		ofile<<" getTrueNumberOfEvents=\""<<theDatasets[i].getTrueNumberOfEvents()<<"\"";
+		ofile<<" />"<<endl;
+	}
+	ofile<<"</Datasets>"<<endl;
+
+
+	ofile.close();
+}
+
+
+
+void SonicScrewdriver::LoadXMLConfig(string inputfilename){
+   // First create engine
+   TXMLEngine* xml = new TXMLEngine;
+   
+   // Now try to parse xml file
+   // Only file with restricted xml syntax are supported
+   XMLDocPointer_t xmldoc = xml->ParseFile(inputfilename.c_str());
+   if (xmldoc==0) {
+      delete xml;
+      return;  
+   }   
+
+   // take access to main node   
+   XMLNodePointer_t node = xml->DocGetRootElement(xmldoc);
+   
+   // display recursively all nodes and subnodes
+   //DisplayNode(xml, mainnode, 1); 
+   //mainode = xml->GetNodeName(mainnode)
+
+   // loop over the nodes
+   for(; node; node = xml->GetNext(node)){
+	cout<<xml->GetNodeName(node)<<endl;	
+   	string nodename = xml->GetNodeName(node);
+	if(nodename == string("Variables")){
+		XMLNodePointer_t child = xml->GetChild(node);
+		while (child!=0) {
+		       if( string(xml->GetNodeName(child)) == string("Variable")){
+				float* dummy = 0;
+				string tag;
+		       		string label;
+		       		string unit;
+				float min = 0;
+				float max = 0;
+				int nBins = 0;
+				float* binning = 0;
+				if(xml->HasAttr(child,"tag")) tag = xml->GetAttr(child,"tag");	
+		       		if(xml->HasAttr(child,"label")) label = xml->GetAttr(child,"label");
+		       		if(xml->HasAttr(child,"unit")) unit = xml->GetAttr(child,"unit");
+				if(xml->HasAttr(child,"min")) min = atof(xml->GetAttr(child,"min"));
+				if(xml->HasAttr(child,"max")) max = atof(xml->GetAttr(child,"max"));
+				if(xml->HasAttr(child,"nbins")){
+					nBins = atoi(xml->GetAttr(child,"nbins"));
+					binning = new float[nBins];
+					if(xml->HasAttr(child,"binning")){
+						string s = xml->GetAttr(child,"binning");
+						string delimiter = "-";
+
+						size_t pos = 0;
+						std::string token;
+						int iter = 0;
+						while ((pos = s.find(delimiter)) != std::string::npos) {
+    							token = s.substr(0, pos);
+    							//std::cout << token << std::endl;
+   							if(iter<nBins){
+							   binning[iter] = atof(token.c_str());
+							   iter++;
+							}
+							s.erase(0, pos + delimiter.length());
+						}
+   						if(iter<nBins){
+							   binning[iter] = atof(s.c_str());
+							   iter++;
+							
+						}
+					}
+      					AddVariable(tag, label, unit, nBins, binning, dummy);
+				}
+				else{
+      					 AddVariable(tag, label, unit, nBins, min, max, dummy);
+				}
+      		
+		       }
+		       child = xml->GetNext(child);
+		}   
+	}
+	if(nodename == string("ProcessClasses")){
+		XMLNodePointer_t child = xml->GetChild(node);
+		while (child!=0) {
+		       if( string(xml->GetNodeName(child)) == string("ProcessClass")){
+				string tag;
+		       		string label;
+				string type;
+				int color = 0;
+		       		if(xml->HasAttr(child,"tag")) tag = xml->GetAttr(child,"tag");	
+		       		if(xml->HasAttr(child,"label")) label = xml->GetAttr(child,"label");
+		       		if(xml->HasAttr(child,"type")) type = xml->GetAttr(child,"type");
+		       		if(xml->HasAttr(child,"color")) color = atoi(xml->GetAttr(child,"color"));
+				//cout<<"tag = "<<tag<<" label = "<<label<<endl;
+      			 	AddProcessClass(tag, label, type, color);
+		       }
+		       child = xml->GetNext(child);
+		}   
+	}
+	if(nodename == string("Regions")){
+		XMLNodePointer_t child = xml->GetChild(node);
+		while (child!=0) {
+		       if( string(xml->GetNodeName(child)) == string("Region")){
+				string tag;
+		       		string label;
+		       		if(xml->HasAttr(child,"tag")) tag = xml->GetAttr(child,"tag");	
+		       		if(xml->HasAttr(child,"label")) label = xml->GetAttr(child,"label");
+				//cout<<"tag = "<<tag<<" label = "<<label<<endl;
+		       		AddRegion(tag,label,0);
+		       }
+		       child = xml->GetNext(child);
+		}   
+	}
+	if(nodename == string("Channels")){
+		XMLNodePointer_t child = xml->GetChild(node);
+		while (child!=0) {
+		       if( string(xml->GetNodeName(child)) == string("Channel")){
+				string tag;
+		       		string label;
+		       		if(xml->HasAttr(child,"tag")) tag = xml->GetAttr(child,"tag");	
+		       		if(xml->HasAttr(child,"label")) label = xml->GetAttr(child,"label");
+				//cout<<"tag = "<<tag<<" label = "<<label<<endl;
+		       		AddChannel(tag,label,0);
+		       }
+		       child = xml->GetNext(child);
+		}   
+	}
+	if(nodename == string("Datasets")){
+		XMLNodePointer_t child = xml->GetChild(node);
+		while (child!=0) {
+		       if( string(xml->GetNodeName(child)) == string("Dataset")){
+				string tag;
+		       		string label;
+		       		string processClass;
+				int trueNofEvents = -1;
+				int XsecOrLumi = -1;
+				if(xml->HasAttr(child,"tag")) tag = xml->GetAttr(child,"tag");	
+		       		if(xml->HasAttr(child,"label")) label = xml->GetAttr(child,"label");
+		       		if(xml->HasAttr(child,"processClass")) label = xml->GetAttr(child,"processClass");
+		       		if(xml->HasAttr(child,"getTrueNumberOfEvents")) trueNofEvents = atoi(xml->GetAttr(child,"getTrueNumberOfEvents"));
+		       		if(xml->HasAttr(child,"XsecOrLumi")) XsecOrLumi = atoi(xml->GetAttr(child,"XsecOrLumi"));
+		       		AddDataset(tag, processClass, trueNofEvents, XsecOrLumi);
+		       }
+		       child = xml->GetNext(child);
+		}   
+	}
+   }
+
+   // Release memory before exit
+   xml->FreeDoc(xmldoc);
+   delete xml;
+}

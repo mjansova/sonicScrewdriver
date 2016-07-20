@@ -10,6 +10,8 @@
 #include "interface/Region.h"
 #include "interface/Channel.h"
 
+#include "TXMLEngine.h"
+
 namespace theDoctor
 {
 
@@ -249,6 +251,13 @@ namespace theDoctor
       TH1D* Get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
       TH2D* Get2DHistoClone(string varX, string varY, string processClass, string region, string channel);
       TH2D* Get2DCompositeHistoClone(string varX, string varY, string type, string region, string channel, string otherParameters);
+
+
+       //
+       // *** Write XML file to dump the configuration
+       //
+       void WriteXMLConfig(string outputfilename = "config.xml");
+       void LoadXMLConfig(string inputfilename = "config.xml");
 
      private:
 
