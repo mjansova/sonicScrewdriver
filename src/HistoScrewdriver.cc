@@ -219,6 +219,57 @@ TH1D* HistoScrewdriver::get1DHistoClone(string var, string processClass, string 
     else return the1DHistosEntries[indexHisto].getClone();
 }
 
+
+vector<TH1D*> HistoScrewdriver::get1DHistoCloneFromFile(string dir, string type, string var, vector<string> processClass, string region, string channel)
+{
+    TFile* f = NULL;
+    TString filename = dir + "/" + type + ".root";
+    cout << "filename " << filename << endl;
+    f = TFile::Open(filename);
+    if(f==NULL)
+        throw std::runtime_error("file not opened");
+
+    TString canvasname = channel+"/"+region+"/"+var;
+    TCanvas* can = NULL;
+    can = dynamic_cast<TCanvas*>(f->Get(canvasname));
+    if(can==NULL)
+        throw std::runtime_error("canvas not opened");
+
+    vector<TH1D*> hist;
+    for(uint32_t p=0; p<processClass.size();p++)
+    {
+        TString histname = "v:"+ var+ "|p:"+processClass.at(p) +"|r:"+ region+"|c:"+channel+"|t:1DEntries";
+        cout << "canvasname " << canvasname << " histname: " << histname << endl;
+        hist.push_back(dynamic_cast<TH1D*>(can->GetPrimitive(histname)->Clone()));
+    }
+    return hist;
+}
+
+vector<TH1D*> HistoScrewdriver::get1DHistoCanFileFromFile(TFile** f, TCanvas** can, string dir, string type, string var, vector<string> processClass, string region, string channel)
+{
+    *f = NULL;
+    TString filename = dir + "/" + type + ".root";
+    cout << "filename " << filename << endl;
+    *f = TFile::Open(filename);
+    if(*f==NULL)
+        throw std::runtime_error("file not opened");
+
+    TString canvasname = channel+"/"+region+"/"+var;
+    *can = NULL;
+    *can = dynamic_cast<TCanvas*>((*f)->Get(canvasname));
+    if(*can==NULL)
+        throw std::runtime_error("canvas not opened");
+
+    vector<TH1D*> hist;
+    for(uint32_t p=0; p<processClass.size();p++)
+    {
+        TString histname = "v:"+ var+ "|p:"+processClass.at(p) +"|r:"+ region+"|c:"+channel+"|t:1DEntries";
+        cout << "canvasname " << canvasname << " histname: " << histname << endl;
+        hist.push_back(dynamic_cast<TH1D*>((*can)->GetPrimitive(histname)));
+    }
+    return hist;
+}
+
 TH1D* HistoScrewdriver::get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters)
 {
     int indexHisto = getIndexOfHisto1DForPlot(type,var,region,channel,otherParameters);

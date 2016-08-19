@@ -274,6 +274,12 @@ void SonicScrewdriver::MakePlots(string options)
 void SonicScrewdriver::WritePlots(string outputFolder)
 { thePlotScrewdriver.WritePlots(&theChannels, &theRegions, outputFolder); }
 
+vector<TH1D*> SonicScrewdriver::Get1DHistoCloneFromFile(string dir, string type, string var, vector<string> processClass, string region, string channel)
+{ return theHistoScrewdriver.get1DHistoCloneFromFile(dir,type,var,processClass,region,channel); }
+
+vector<TH1D*> SonicScrewdriver::Get1DHistoCanFileFromFile(TFile** file, TCanvas** can, string dir, string type, string var, vector<string> processClass, string region, string channel)
+{ return theHistoScrewdriver.get1DHistoCanFileFromFile(file,can,dir,type,var,processClass,region,channel); }
+
 Figure SonicScrewdriver::GetYieldAndError(string processClass,string region,string channel)
 { return theHistoScrewdriver.GetYieldAndError(processClass,region,channel); }
 
@@ -325,12 +331,10 @@ void SonicScrewdriver::ImportHistosEntries(string inputFile)
     vector<Histo2DEntries>* Entries2D = Get2DHistosEntries();
     vector<Histo3DEntries>* Entries3D = Get3DHistosEntries();
 
-    cout<<Entries1D->size()<<" is the size"<<endl;
     for (unsigned int i = 0 ; i < Entries1D->size() ; i++)
     {
         TH1D* localHisto = Entries1D->at(i).getHisto();
         string name = localHisto->GetName();
-        cout << "the name of the histogram: " << name << endl;
         TH1D* fileHisto = (TH1D*) f->Get(name.c_str());
         localHisto->Add(fileHisto);
     }

@@ -41,6 +41,8 @@ namespace theDoctor
       TH1D* get1DHistoClone(string var, string processClass, string region, string channel);
       TH1D* get1DHistoEntriesClone(string var, string processClass, string region, string channel);
       TH1D* get1DCompositeHistoClone(string var, string type, string region, string channel, string otherParameters);
+      vector<TH1D*> get1DHistoCloneFromFile(string dir, string type, string var, vector<string> processClass, string region, string channel);
+      vector<TH1D*> get1DHistoCanFileFromFile(TFile** file, TCanvas** can, string dir, string type, string var, vector<string> processClass, string region, string channel);
 
       // 2D histos
 
