@@ -13,11 +13,11 @@ string floatToString(float input)
 
 int sonicScrewdriver_DummyUnity = 1;
 
-SonicScrewdriver::SonicScrewdriver():
+SonicScrewdriver::SonicScrewdriver(bool add_default_yield):
     theHistoScrewdriver(&theVariables,&theProcessClasses,&theRegions,&theChannels)
 {
     // FIXME this should be handled an other way
-    AddVariable("yield","Yield","",1,0,0,&sonicScrewdriver_DummyUnity,"");
+    if(add_default_yield) AddVariable("yield","Yield","",1,0,0,&sonicScrewdriver_DummyUnity,"");
     // FIXME this too
     PlotDefaultStyles::Set2DPalette(GetGlobalOptions(),"smooth");
     thePlotScrewdriver.SetGlobalFloatOption("DataMCRatio", "min", 0.5);
@@ -467,12 +467,12 @@ void SonicScrewdriver::WriteXMLConfig(string outputfilename){
 		ofile<<" unit=\""<<theVariables[i].getUnit()<<"\"";
 		ofile<<" nbins=\""<<theVariables[i].getNbins()<<"\"";
 		if(theVariables[i].getCustomBinning()==0){
-			ofile<<"min=\""<<theVariables[i].getMin()<<"\"";
-			ofile<<"max=\""<<theVariables[i].getMax()<<"\"";
+			ofile<<" min=\""<<theVariables[i].getMin()<<"\"";
+			ofile<<" max=\""<<theVariables[i].getMax()<<"\"";
 		}
 		else{
 			ofile<<" binning=\"";
-			for(int b=0;b<theVariables[i].getNbins();b++){
+			for(int b=0;b<theVariables[i].getNbins()+1;b++){
 				ofile<<theVariables[i].getCustomBinning()[b];
 				if(b!= theVariables[i].getNbins()-1) ofile<<"-";
 			}
@@ -559,7 +559,7 @@ void SonicScrewdriver::LoadXMLConfig(string inputfilename){
 
    // loop over the nodes
    for(; node; node = xml->GetNext(node)){
-	cout<<xml->GetNodeName(node)<<endl;	
+	//cout<<xml->GetNodeName(node)<<endl;	
    	string nodename = xml->GetNodeName(node);
 	if(nodename == string("Variables")){
 		XMLNodePointer_t child = xml->GetChild(node);
@@ -580,7 +580,7 @@ void SonicScrewdriver::LoadXMLConfig(string inputfilename){
 				if(xml->HasAttr(child,"max")) max = atof(xml->GetAttr(child,"max"));
 				if(xml->HasAttr(child,"nbins")){
 					nBins = atoi(xml->GetAttr(child,"nbins"));
-					binning = new float[nBins];
+					binning = new float[nBins+1];
 					if(xml->HasAttr(child,"binning")){
 						string s = xml->GetAttr(child,"binning");
 						string delimiter = "-";
@@ -597,17 +597,23 @@ void SonicScrewdriver::LoadXMLConfig(string inputfilename){
 							}
 							s.erase(0, pos + delimiter.length());
 						}
-   						if(iter<nBins){
+   						if(iter<=nBins){
 							   binning[iter] = atof(s.c_str());
 							   iter++;
 							
 						}
+      						//print binning
+						cout<<"binning = ";
+						for(int i=0;i<nBins+1;i++) cout<<binning[i]<<" ";
+						cout<<endl;
+						AddVariable(tag, label, unit, nBins, binning, dummy);
 					}
-      					AddVariable(tag, label, unit, nBins, binning, dummy);
+					else
+      					 	AddVariable(tag, label, unit, nBins, min, max, dummy);
 				}
-				else{
-      					 AddVariable(tag, label, unit, nBins, min, max, dummy);
-				}
+				//else{
+      				//	 AddVariable(tag, label, unit, nBins, min, max, dummy);
+				//}
       		
 		       }
 		       child = xml->GetNext(child);

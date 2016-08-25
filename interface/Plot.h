@@ -175,11 +175,9 @@ namespace theDoctor
             {
 
                 if (hasBeenWritten) return;
-
                 DrawTopInfoText();
                 DrawLegend();
                 SetActive();
-
                 // FIXME : this has nothing to do here, move this to each classes
                 if (type == "1DFrom2DProjection")
                 {
@@ -210,7 +208,7 @@ namespace theDoctor
                 else
                 {
                     string varName = GetParameter("variable");
-                    theCanvas->SetName(varName.c_str());
+		    theCanvas->SetName(varName.c_str());
                 }
 
                 // Write root output

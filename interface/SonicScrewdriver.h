@@ -21,7 +21,7 @@ namespace theDoctor
 
      public:
 
-      SonicScrewdriver();
+      SonicScrewdriver(bool add_default_yield = true);
       ~SonicScrewdriver();
 
       // ########################
