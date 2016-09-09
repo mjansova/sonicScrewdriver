@@ -122,14 +122,14 @@ int main()
 
 void BabyScrewdriver::ExportWorkerOutput(int workerId, int masterPID)
 {
-    system("mkdir -p ~/.tmp/");
-    ExportHistosEntries("~/.tmp/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(workerId)+".output.root");
+    system("mkdir -p /opt/sbg/cms/ui6_data1/mjansova/ssMess/");
+    ExportHistosEntries("/opt/sbg/cms/ui6_data1/mjansova/ssMess/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(workerId)+".output.root");
 }
 
 void BabyScrewdriver::MergeWorkerOutputs(int masterPID)
 {
     for (int w = 1 ; w <= totalNumberOfWorkers ; w++)
-        ImportHistosEntries("~/.tmp/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(w)+".output.root");
+        ImportHistosEntries("/opt/sbg/cms/ui6_data1/mjansova/ssMess/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(w)+".output.root");
 }
 
 void BabyScrewdriver::ProcessDatasets(int workerId)
@@ -155,9 +155,9 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
 	
 	// retrievve total nof weighted events
 	//@EC@ temporarilly changed for trigger study
-	//TH1F* hWeight = (TH1F*) f.Get("hWeights");
-	//float TotalWeight = hWeight->GetBinContent(1);
-	float TotalWeight = 1;
+	TH1F* hWeight = (TH1F*) f.Get("htotweight");
+	float TotalWeight = hWeight->GetBinContent(1);
+	//float TotalWeight = 1;
 
         // Get number of entries, determine what range to run on
         unsigned int nEntries           = theTree->GetEntries();
