@@ -1,3 +1,5 @@
+#ifndef __PRINT_MESSAGE__
+#define __PRINT_MESSAGE__
 
 // System includes
 
@@ -53,3 +55,5 @@ void printBoxedMessage(string message)
     cout << endl;
 
 }
+
+#endif
