@@ -22,6 +22,7 @@
 
 // Plot producers
 #include "interface/plots/Plot1DSuperimposed.h"
+#include "interface/plots/Plot1DSuperimposedNoNorm.h"
 #include "interface/plots/Plot1DStack.h"
 #include "interface/plots/Plot1DFigureOfMerit.h"
 #include "interface/plots/Plot1DDataMCComparison.h"
@@ -62,14 +63,15 @@ namespace theDoctor
         {
             vector<pair<string,string> > dependencies;
 
-                 if (plotType == "1DSuperimposed")     Plot1DSuperimposed    ::GetHistoDependencies(dependencies);
-            else if (plotType == "1DStack")            Plot1DStack           ::GetHistoDependencies(dependencies);
-            else if (plotType == "1DFigureOfMerit")    Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies,options);
-            else if (plotType == "1DDataMCComparison") Plot1DDataMCComparison::GetHistoDependencies(dependencies);
-            else if (plotType == "2D")                 Plot2D                ::GetHistoDependencies(dependencies);
-            else if (plotType == "2DSuperimposed")     Plot2DSuperimposed    ::GetHistoDependencies(dependencies);
-            else if (plotType == "1DFrom2DProjection") Plot1DFrom2DProjection::GetHistoDependencies(dependencies,options);
-            else if (plotType == "2DFrom3DProjection") Plot2DFrom3DProjection::GetHistoDependencies(dependencies,options);
+                 if (plotType == "1DSuperimposed")       Plot1DSuperimposed    ::GetHistoDependencies(dependencies);
+            else if (plotType == "1DSuperimposedNoNorm") Plot1DSuperimposedNoNorm    ::GetHistoDependencies(dependencies);
+            else if (plotType == "1DStack")              Plot1DStack           ::GetHistoDependencies(dependencies);
+            else if (plotType == "1DFigureOfMerit")      Plot1DFigureOfMerit   ::GetHistoDependencies(dependencies,options);
+            else if (plotType == "1DDataMCComparison")   Plot1DDataMCComparison::GetHistoDependencies(dependencies);
+            else if (plotType == "2D")                   Plot2D                ::GetHistoDependencies(dependencies);
+            else if (plotType == "2DSuperimposed")       Plot2DSuperimposed    ::GetHistoDependencies(dependencies);
+            else if (plotType == "1DFrom2DProjection")   Plot1DFrom2DProjection::GetHistoDependencies(dependencies,options);
+            else if (plotType == "2DFrom3DProjection")   Plot2DFrom3DProjection::GetHistoDependencies(dependencies,options);
             else if (plotType == "1DDataMCComparisonFigure")   Plot1DDataMCComparisonFigure::GetHistoDependencies(dependencies,options);
             else if (plotType == "1DFigure")                   Plot1DFigure                ::GetHistoDependencies(dependencies,options);
 
@@ -149,6 +151,9 @@ namespace theDoctor
                 else if (plotType == "1DSuperimposed")
                     inputFromProducer =
                         Plot1DSuperimposed    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
+                else if (plotType == "1DSuperimposedNoNorm")
+                    inputFromProducer =
+                        Plot1DSuperimposedNoNorm    ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
                 else if (plotType == "1DFigureOfMerit")
                     inputFromProducer =
                         Plot1DFigureOfMerit   ::Produce(theVariables, theProcessClasses, theRegions, theChannels, theHistoScrewdriver, theGlobalOptions, plotOptions);
@@ -193,6 +198,7 @@ namespace theDoctor
             int ret;
             ret = system(("rm -f "+outputFolder+"/1DStack.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DSuperimposed.root").c_str());
+            ret = system(("rm -f "+outputFolder+"/1DSuperimposedNoNorm.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DFigureOfMerit.root").c_str());
             ret = system(("rm -f "+outputFolder+"/1DDataMCComparison.root").c_str());
             ret = system(("rm -f "+outputFolder+"/2D.root").c_str());
