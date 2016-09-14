@@ -122,14 +122,14 @@ int main()
 
 void BabyScrewdriver::ExportWorkerOutput(int workerId, int masterPID)
 {
-    system("mkdir -p /opt/sbg/cms/ui6_data1/mjansova/ssMess/");
-    ExportHistosEntries("/opt/sbg/cms/ui6_data1/mjansova/ssMess/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(workerId)+".output.root");
+    system("mkdir -p ~/.tmp/");
+    ExportHistosEntries("~/.tmp/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(workerId)+".output.root");
 }
 
 void BabyScrewdriver::MergeWorkerOutputs(int masterPID)
 {
     for (int w = 1 ; w <= totalNumberOfWorkers ; w++)
-        ImportHistosEntries("/opt/sbg/cms/ui6_data1/mjansova/ssMess/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(w)+".output.root");
+        ImportHistosEntries("~/.tmp/.babyScrewdriver."+intToString(masterPID)+"-"+intToString(w)+".output.root");
 }
 
 void BabyScrewdriver::ProcessDatasets(int workerId)
