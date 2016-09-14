@@ -50,6 +50,8 @@ namespace theDoctor
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    float*   (*autoFillFunction)() = 0, string options = "");
       void AddVariable(string tag, string plotLabel, string unit, int nBins,    float* binning,    int*     (*autoFillFunction)() = 0, string options = "");
 
+      void GetVariablesTagList(vector<string> *output);
+      void GetVariablesLabelList(vector<string> *output);
       int GetIndexOfVariable(string tag);
       void SetSizeOfVarArray(string tag, uint32_t arrSize);
       // #############################

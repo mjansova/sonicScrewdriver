@@ -224,6 +224,15 @@ void Table::PrintLatex(int prec, string options, std::ostream& output)
 	output << left;
 
     // Begin tabular
+    output << "\\documentclass{article}" << endl;
+    output << "\\usepackage{graphicx}" << endl;
+    output << "\\usepackage{pdflscape}" << endl;
+    output << "\\begin{document}" << endl;
+    output << "\\begin{landscape}" << endl;
+
+    output << "\\noindent\\hrulefill" << endl;
+    output << "\\smallskip\\noindent" << endl;
+    output << "\\resizebox{\\linewidth}{!}{%" << endl;
     output << "\\begin{tabular}{|l|";
 	for (unsigned int i = 0 ; i < nCol ; i++) output << "c";
     output << "|}" << endl;
@@ -263,7 +272,10 @@ void Table::PrintLatex(int prec, string options, std::ostream& output)
     output << "\\hline" << endl;
     
     // End tabular
-    output << "\\end{tabular}" << endl;
+    output << "\\end{tabular}}" << endl;
+    output << "\\end{landscape}" << endl;
+    output << "\\end{document}" << endl;
+
 
 }
 
