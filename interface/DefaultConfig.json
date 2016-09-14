@@ -39,6 +39,11 @@ R"(
        "includeSignal"             : true,
        "lineWidth"                 : 6
    },
+   "1DSuperimposedNoNorm" :
+   {
+       "includeSignal"             : true,
+       "lineWidth"                 : 6
+   },
    "DataMCComparison" :
    {
        "ratioPosition"             : "bottom",

@@ -62,6 +62,19 @@ int SonicScrewdriver::GetIndexOfVariable(string tag)
     return -1;
 }
 
+void SonicScrewdriver::GetVariablesTagList(vector<string> *output)
+{
+    output->clear();
+    for (unsigned int i = 0 ; i < theVariables.size() ; i++)
+        output->push_back(theVariables[i].getTag());
+}
+
+void SonicScrewdriver::GetVariablesLabelList(vector<string> *output)
+{
+    output->clear();
+    for (unsigned int i = 0 ; i < theVariables.size() ; i++)
+        output->push_back(theVariables[i].getLabel());
+}
 
 void SonicScrewdriver::SetSizeOfVarArray(string tag, uint32_t arrSize)
 {
