@@ -9,6 +9,7 @@
 #include "interface/tables/TableBackgroundSignal.h"
 #include "interface/tables/TableToBackgroundRatio.h"
 #include "interface/tables/TableZbi.h"
+#include "interface/tables/CombineCardMaker.h"
 
 using namespace theDoctor;
 
