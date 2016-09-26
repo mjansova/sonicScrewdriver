@@ -39,7 +39,7 @@ namespace theDoctor
       void Print(string fileName, int prec = 2, string options = "");
       void PrintLatex(string fileName, int prec = 2, string options = "");
 
-      public: //@MJ@ TODO we should more use getters and setters, but it is not crucial problem in here
+      protected:
 
       // Data management
       vector<string> colTags;
