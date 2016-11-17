@@ -204,7 +204,7 @@ namespace theDoctor
             };
 
 
-	    void ProduceCard(string outputdir, float bkgRelUncert = 1.2){
+	    void ProduceCard(string outputdir,float sigRelUncert = 1.1, float bkgRelUncert = 1.2){
 		int iBkgLine = -1;
 		for (unsigned int i = 0 ; i < nRow ; i++){
 			cout<<rowLabels[i]<<endl;
@@ -258,7 +258,7 @@ namespace theDoctor
 				ofile<<endl;
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"uncert_bkg\t lnN \t";
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<bkgRelUncert<<"\t 1.0 \t";}
+				for(unsigned int j = 0; j < nCol ; j++){ ofile<<sigRelUncert<<"\t "<<bkgRelUncert<<" \t";}
 				ofile<<endl;
 				ofile.close();
 

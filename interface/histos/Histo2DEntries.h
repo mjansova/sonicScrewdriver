@@ -88,8 +88,6 @@ namespace theDoctor
                       //std::cout << " value X: " << arrayX[f] << ", weight: " << weight << " value Y: " << arrayY[g]<< std::endl;
                   }
               }
-
-              Fill(*theXVar->getAutoFillValue(),*theYVar->getAutoFillValue(),weight);
           }
         }
 
