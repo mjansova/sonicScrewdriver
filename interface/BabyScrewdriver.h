@@ -150,14 +150,16 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
 
         // Open the tree
         TFile f((babyTuplePath+"/"+currentDataset+".root").c_str());
-        TTree* theTree = (TTree*) f.Get("babyTuple");
-        cout<<"here: call Initializetion"<<endl;
+        cout << "file " << babyTuplePath+"/"+currentDataset+".root" << endl;
+        TTree* theTree = NULL;
+        theTree =  (TTree*) f.Get("t");
+        cout<<"here: call Initializetion of tree" << theTree <<endl;
 	InitializeBranchesForReading(theTree,&myEvent);
 	
 	// retrievve total nof weighted events
 	//@EC@ temporarilly changed for trigger study
-	TH1F* hWeight = (TH1F*) f.Get("htotweight");
-	float TotalWeight = hWeight->GetBinContent(1);
+	//TH1F* hWeight = (TH1F*) f.Get("htotweight");
+	//float TotalWeight = hWeight->GetBinContent(1);
 	//float TotalWeight = 1;
 
         // Get number of entries, determine what range to run on
@@ -180,9 +182,12 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
         {
             // Get the i-th entry
 	    ReadEvent(theTree,i,&myEvent);
-
+            //for(uint32_t j=0; j<myEvent->ngoodjets; j++)
+            //{
+            //    ReadJetsForEvent(theTree,j,&myEvent)
+            //}
             //Writing the total number of events (weighted)
-	    myEvent.totalNumberOfInitialEvent = TotalWeight;
+	    //myEvent.totalNumberOfInitialEvent = TotalWeight;
 	    ActionForEachEvent(currentDataset);
         }
 
