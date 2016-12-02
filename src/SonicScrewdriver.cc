@@ -242,8 +242,8 @@ void SonicScrewdriver::AddChannel(string tag, string plotLabel, bool (*selector)
 // #    Histo management     #
 // ###########################
 
-void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight)
-{    theHistoScrewdriver.AutoFillProcessClass(processClass,weight);    }
+void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
+{    theHistoScrewdriver.AutoFillProcessClass(processClass,weight, weightV, syst);    }
 
 // ###########################
 // #   1D histo management   #

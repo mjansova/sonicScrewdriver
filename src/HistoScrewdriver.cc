@@ -51,10 +51,10 @@ int HistoScrewdriver::getIndexOfChannel(string tag)
 }
 
 
-void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight)
+void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
 {
     UpdateRegionsAndChannels();
-    AutoFill1DProcessClass(processClass,weight);
+    AutoFill1DProcessClass(processClass, weight,weightV,syst);
     AutoFill2DProcessClass(processClass,weight);
     AutoFill3DProcessClass(processClass,weight);
 }
@@ -148,14 +148,16 @@ void HistoScrewdriver::Create1DHistosEntries()
     }
 }
 
-void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
+void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
 {
+     cout << "number of histograms to fill " << the1DHistosEntries.size() << std::endl;
 
     //#pragma omp parallel for
     for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
     {
         // Get histo
         Histo1DEntries* currentHisto = &(the1DHistosEntries[i]);
+        //currentHisto->dump();
 
         // Check this is an histogram for the relevant process class
         if (currentHisto->getProcessClassTag() != processClass)
@@ -192,8 +194,17 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight)
                  }
             }
        
+        currentHisto->dump();
+        cout << "weight " << weight << " weightV " << weightV.at(i) << endl;
         // Fill the histo
-        currentHisto->AutoFill(weight);
+        if(syst == true)
+        {
+            if(weightV.size() <= i)
+                throw std::runtime_error("Wrong use of weight vector, should have as many entries as regions*variables*channels ");
+            currentHisto->AutoFill(weightV.at(i));
+        }
+        else
+            currentHisto->AutoFill(weight);
     }
 }
 

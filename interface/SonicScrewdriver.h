@@ -161,7 +161,7 @@ namespace theDoctor
       //     of variables.
       //
 
-      void AutoFillProcessClass(string processClass, float weight = 1.0);
+      void AutoFillProcessClass(string processClass, float weight,vector<float> weightV, bool syst);
 
             // ########################
             // #  Histo1D management  #

@@ -9,6 +9,8 @@
 #include "interface/histos/Histo2DEntries.h"
 #include "interface/histos/Histo3DEntries.h"
 
+static vector<float> DEFAULT_VECTOR;
+
 namespace theDoctor
 {
 
@@ -21,7 +23,7 @@ namespace theDoctor
       ~HistoScrewdriver();
 
       void Create1DHistosEntries();
-      void AutoFillProcessClass(string processClass, float weight);
+      void AutoFillProcessClass(string processClass, float weight, vector<float> weightV, bool syst);
       Figure GetYieldAndError(string processClass, string region, string channel);
 
       vector<Histo1DEntries>* Get1DHistosEntries();
@@ -32,7 +34,7 @@ namespace theDoctor
       vector<Histo2D>* Get2DHistosForPlots() { return &the2DHistosForPlots; }
       vector<Histo3D>* Get3DHistosForPlots() { return &the3DHistosForPlots; }
 
-      void AutoFill1DProcessClass(string processClass, float weight = 1.0);
+      void AutoFill1DProcessClass(string processClass, float weight = 1.0, vector<float> weightV = DEFAULT_VECTOR, bool syst = false);
 
       void ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor);
 

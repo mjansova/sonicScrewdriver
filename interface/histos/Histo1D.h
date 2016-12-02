@@ -51,9 +51,9 @@ namespace theDoctor
       {
           cout
           << "theHisto = "           <<   theHisto            << endl
-          << "theVar = "             <<   theVar              << endl
-          << "theRegion = "          <<   theRegion           << endl
-          << "theChannel = "         <<   theChannel          << endl
+          << "theVar = "             <<   theVar->getTag()              << endl
+          << "theRegion = "          <<   theRegion->getTag()           << endl
+          << "theChannel = "         <<   theChannel->getTag()          << endl
           << "theHistoParameters = " <<   theHistoParameters  << endl;
 
       }
