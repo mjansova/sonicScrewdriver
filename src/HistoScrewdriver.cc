@@ -150,7 +150,7 @@ void HistoScrewdriver::Create1DHistosEntries()
 
 void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
 {
-     cout << "number of histograms to fill " << the1DHistosEntries.size() << std::endl;
+     //cout << "number of histograms to fill " << the1DHistosEntries.size() << std::endl;
 
     //#pragma omp parallel for
     for (unsigned int i = 0 ; i < the1DHistosEntries.size() ; i++)
@@ -194,8 +194,8 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight,
                  }
             }
        
-        currentHisto->dump();
-        cout << "weight " << weight << " weightV " << weightV.at(i) << endl;
+        //currentHisto->dump();
+        //cout << "weight " << weight << " weightV " << weightV.at(i) << endl;
         // Fill the histo
         if(syst == true)
         {

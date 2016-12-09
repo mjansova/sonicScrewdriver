@@ -154,7 +154,7 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
         TTree* theTree = NULL;
         theTree =  (TTree*) f.Get("t");
         cout<<"here: call Initializetion of tree" << theTree <<endl;
-	InitializeBranchesForReading(theTree,&myEvent);
+	InitializeBranchesForReading(theTree,&myEvent,&f);
 	
 	// retrievve total nof weighted events
 	//@EC@ temporarilly changed for trigger study
