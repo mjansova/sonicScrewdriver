@@ -51,10 +51,10 @@ int HistoScrewdriver::getIndexOfChannel(string tag)
 }
 
 
-void HistoScrewdriver::AutoFillProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
+void HistoScrewdriver::AutoFillProcessClass(vector< vector<double> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields)
 {
     UpdateRegionsAndChannels();
-    AutoFill1DProcessClass(processClass, weight,weightV,syst);
+    AutoFill1DProcessClass(yieldsMtx, processClass, weight,weightV,syst, checkYields);
     AutoFill2DProcessClass(processClass,weight);
     AutoFill3DProcessClass(processClass,weight);
 }
@@ -148,7 +148,7 @@ void HistoScrewdriver::Create1DHistosEntries()
     }
 }
 
-void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
+void HistoScrewdriver::AutoFill1DProcessClass(vector< vector<double> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields )
 {
      //cout << "number of histograms to fill " << the1DHistosEntries.size() << std::endl;
 
@@ -157,20 +157,21 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight,
     {
         // Get histo
         Histo1DEntries* currentHisto = &(the1DHistosEntries[i]);
-        //currentHisto->dump();
+        bool notFill = false;
+
 
         // Check this is an histogram for the relevant process class
         if (currentHisto->getProcessClassTag() != processClass)
         {
         //cout << "Check this is an histogram for the relevant process class" << endl;
-        continue;
+            notFill = true;
         }
         
         // Check channel selection
         if (!(currentHisto->getChannel()->getSelectionFlag()))
         {
         //cout << "Check channel selection" << endl;
-        continue;
+            notFill = true;
         }
 
         // Check region selection
@@ -180,8 +181,8 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight,
                 if (!(currentHisto->getRegion()->getSelectionFlag()))
                 {
                  //cout << "If show cuts mode is not activated, check the standard selection flag" << endl;
-                 continue;
-                 }
+                    notFill = true;
+                }
             }
             // If show cut mode is activated, the region need to perform a special check
             else 
@@ -190,21 +191,33 @@ void HistoScrewdriver::AutoFill1DProcessClass(string processClass, float weight,
                 if (!(currentHisto->getRegion()->getSelectionFlag(variableToIgnore)))
                 {
                  //cout << "If show cut mode is activated, the region need to perform a special check" << endl;
-                 continue;
-                 }
+                    notFill = true;
+                }
             }
        
         //currentHisto->dump();
         //cout << "weight " << weight << " weightV " << weightV.at(i) << endl;
         // Fill the histo
-        if(syst == true)
+        if(!notFill)
         {
-            if(weightV.size() <= i)
-                throw std::runtime_error("Wrong use of weight vector, should have as many entries as regions*variables*channels ");
-            currentHisto->AutoFill(weightV.at(i));
+		if(syst == true)
+		{
+		    if(weightV.size() <= i)
+			throw std::runtime_error("Wrong use of weight vector, should have as many entries as regions*variables*channels ");
+		    currentHisto->AutoFill(weightV.at(i));
+		}
+		else
+		    currentHisto->AutoFill(weight);
         }
-        else
-            currentHisto->AutoFill(weight);
+
+        //currentHisto->dump();
+        if(checkYields)
+        {
+            //cout << "checking yields" << endl;
+            if(yieldsMtx->size() != the1DHistosEntries.size())
+                throw std::runtime_error("not same number of vector entries as histograms to check for negative yields!");
+            currentHisto->CheckAndFillYields(&yieldsMtx->at(i));
+        }
     }
 }
 

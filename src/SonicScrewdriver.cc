@@ -31,28 +31,109 @@ SonicScrewdriver::~SonicScrewdriver()
 // #   Variables & processClasses  #
 // #          management           #
 // #################################
+vector< vector<double> > yieldMtx;
+vector< vector<double> > yieldMtxXPC;
 
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float*  autoFillPointer, string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, double* autoFillPointer, string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max, int*  autoFillPointer, string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillPointer,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, float*  autoFillPointer, string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, double* autoFillPointer, string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning, int*    autoFillPointer, string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillPointer,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, int min, int max,     int* (*autoFillFunction)(),   string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       int* (*autoFillFunction)(),   string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float min, float max, float* (*autoFillFunction)(), string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,min,max,autoFillFunction,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 void SonicScrewdriver::AddVariable(string tag, string plotLabel, string unit, int nBins, float* binning,       float* (*autoFillFunction)(), string options)
-{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    }
+{    theVariables.push_back(Variable(tag,plotLabel,unit,nBins,binning,autoFillFunction,options));    
+
+     vector<double> helper;
+     for(uint32_t x=0; x<nBins; x++)
+     {
+         helper.push_back(0);
+     }
+     yieldMtx.push_back(helper);
+}
 
 int SonicScrewdriver::GetIndexOfVariable(string tag)
 {
@@ -242,8 +323,24 @@ void SonicScrewdriver::AddChannel(string tag, string plotLabel, bool (*selector)
 // #    Histo management     #
 // ###########################
 
-void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight, vector<float> weightV, bool syst)
-{    theHistoScrewdriver.AutoFillProcessClass(processClass,weight, weightV, syst);    }
+void SonicScrewdriver::fillYieldsVector()
+{
+   for(uint32_t v=0; v<yieldMtx.size();v++ )
+   {
+       for(uint32_t r=0; r<theRegions.size(); r++ )
+       {
+           for(uint32_t p=0; p<theProcessClasses.size(); p++) //move to its proper class!!!
+           {
+                yieldMtxXPC.push_back(yieldMtx.at(v));
+           }
+        }
+    }
+}
+
+void SonicScrewdriver::AutoFillProcessClass(string processClass, float weight, bool zeroNegative, vector<float> weightV, bool syst)
+{
+    theHistoScrewdriver.AutoFillProcessClass(&yieldMtxXPC, processClass,weight, weightV, syst, zeroNegative);    
+}
 
 // ###########################
 // #   1D histo management   #

@@ -54,6 +54,7 @@ namespace theDoctor
       void GetVariablesLabelList(vector<string> *output);
       int GetIndexOfVariable(string tag);
       void SetSizeOfVarArray(string tag, uint32_t arrSize);
+      void fillYieldsVector();
       // #############################
       // #  ProcessClass management  #
       // #############################
@@ -161,7 +162,7 @@ namespace theDoctor
       //     of variables.
       //
 
-      void AutoFillProcessClass(string processClass, float weight,vector<float> weightV, bool syst);
+      void AutoFillProcessClass(string processClass, float weight = 1, bool zeroNegative = false, vector<float> weightV = DEFAULT_VECTOR, bool syst = false);
 
             // ########################
             // #  Histo1D management  #

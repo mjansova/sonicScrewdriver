@@ -97,7 +97,7 @@ namespace theDoctor
                                                                             regionsTags[r],
                                                                             channel);
                        
-                        tmpTotal += currentYield;
+                        if(currentYield.value()>0) tmpTotal += currentYield;
 
                     }
                     for (unsigned int p = 0 ; p < processesTags.size() ; p++)

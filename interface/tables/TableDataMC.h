@@ -114,7 +114,7 @@ namespace theDoctor
                                                                             channel);
                         Set(regionsTags[r], processesTags[p], currentYield);
 
-                        if (type == "background") tmpTotal += currentYield;
+                        if (type == "background" && currentYield.value()>0) tmpTotal += currentYield;
                     }
                     Set(regionsTags[r],"totalSM",tmpTotal);
                 }

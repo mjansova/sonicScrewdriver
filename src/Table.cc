@@ -111,6 +111,10 @@ bool Table::Set(int colId, int rowId, Figure value)
 	if ((((unsigned int) colId) >= nCol) || (((unsigned int) rowId) >= nRow))	return false;
 	if ((colId < 0)     || (rowId < 0))	    return false;
 
+        if(value.value()<0)
+        {
+             value = Figure(0,0);
+        }
 	data[colId][rowId] = value;
 	return true;
 }

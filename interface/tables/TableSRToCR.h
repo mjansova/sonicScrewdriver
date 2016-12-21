@@ -1,5 +1,5 @@
-#ifndef TableBackgroundSignal_h
-#define TableBackgroundSignal_h
+#ifndef TableSRToCR_h
+#define TableSRToCR_h
 
 #include <iostream>
 #include <vector>
@@ -8,20 +8,23 @@
 #include "interface/Figure.h"
 #include "interface/Table.h"
 #include "interface/SonicScrewdriver.h"
+#include "interface/OptionsScrewdriver.h"
 
 using namespace std;
 
 namespace theDoctor
 {
 
-    class TableBackgroundSignal : public Table
+    class TableSRToCR : public Table
     {
 
      public:
 
-            TableBackgroundSignal();
+            TableSRToCR()
+            {
+            }
 
-            TableBackgroundSignal(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel)
+            TableSRToCR(SonicScrewdriver* screwdriver, vector<string> SRTags, string CRTag, string channel, string options = "")
             {
                 vector<string> rawProcessesTags;
                 vector<string> rawProcessesLabels;
@@ -30,13 +33,15 @@ namespace theDoctor
                 vector<string> regionsTags;
                 vector<string> regionsLabels;
 
+                bool includeSignal = OptionsScrewdriver::GetBoolOption(options,"includeSignal");
+
                 screwdriver->GetProcessClassTagList  (&rawProcessesTags  );
                 screwdriver->GetProcessClassLabelList(&rawProcessesLabels);
 
                 screwdriver->GetRegionTagList  (&regionsTags  );
                 screwdriver->GetRegionLabelList(&regionsLabels);
 
-                // Sort backgrounds, signal, and add "total background" line
+                // Sort backgrounds, data, and add "total background" line
                 for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
                 {
                     string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
@@ -49,35 +54,61 @@ namespace theDoctor
 
                 processesTags.push_back("totalSM");
                 processesLabels.push_back("total SM");
+ 
+                processesTags.push_back("SRtoCR");
+                processesLabels.push_back("SRtoCR");
 
                 for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
                 {
                     string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
-                    if (type == "signal")
+                    if (type == "data")
                     {
                         processesTags.push_back(rawProcessesTags[i]);
                         processesLabels.push_back(rawProcessesTags[i]);
                     }
                 }
 
+                if (includeSignal)
+                {
+                    for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
+                    {
+                        string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
+                        if (type == "signal")
+                        {
+                            processesTags.push_back(rawProcessesTags[i]);
+                            processesLabels.push_back(rawProcessesTags[i]);
+                        }
+                    }
+                }
 
                 // Get labels for input regions
-                if (inputRegionTags.size() != 0)
+                if (SRTags.size() != 0)
                 {
-                    vector<string> inputRegionLabels;
+                    vector<string> SRLabels;
 
-                    for (unsigned int i = 0 ; i < inputRegionTags.size() ; i++)
+                    for (unsigned int i = 0 ; i < SRTags.size() ; i++)
                     {
                         bool found = false;
                         for (unsigned int j = 0 ; j < regionsTags.size()  ; j++)
                         {
-                            if (inputRegionTags[i] == regionsTags[j]) { inputRegionLabels.push_back(regionsLabels[j]); found = true; break; }
+                            if (SRTags[i] == regionsTags[j]) { SRLabels.push_back(regionsLabels[j]); found = true; break; }
                         }
-                        if (!found) WARNING_MSG << "Region " << inputRegionTags[i] << " was not found." << endl;
+                        if (!found) WARNING_MSG << "Region " << SRTags[i] << " was not found." << endl;
                     }
-
-                    regionsTags   = inputRegionTags;
-                    regionsLabels = inputRegionLabels;
+                    if(SRTags.size() != SRLabels.size() )
+                        throw std::runtime_error("Not same amount of tags as labels");
+                   
+                    regionsTags.clear();
+                    regionsLabels.clear(); //@MJ@ TODO do this better!!!!
+ 
+                    regionsTags.push_back(CRTag);
+                    regionsLabels.push_back(CRTag); //@MJ@ TODO do this better!!!!
+ 
+                    for(uint32_t tl=0; tl<SRTags.size(); tl++)
+                    {
+                        regionsTags.push_back(SRTags.at(tl));
+                        regionsLabels.push_back(SRLabels.at(tl));
+                    }
 
                 }
 
@@ -91,21 +122,31 @@ namespace theDoctor
                     for (unsigned int p = 0 ; p < processesTags.size() ; p++)
                     {
                         if (processesTags[p] == "totalSM") continue;
+                        if (processesTags[p] == "SRtoCR") continue;
                         string type = screwdriver->GetProcessClassType(processesTags[p]);
                         Figure currentYield = screwdriver->GetYieldAndError(processesTags[p],
                                                                             regionsTags[r],
                                                                             channel);
                         Set(regionsTags[r], processesTags[p], currentYield);
 
-                        if (type == "background"&& currentYield.value()>0) tmpTotal += currentYield;
+                        if (type == "background" && currentYield.value()>0 && processesTags[p] != "SRtoCR") tmpTotal += currentYield;
                     }
                     Set(regionsTags[r],"totalSM",tmpTotal);
+
+                    Figure CRYield = Get(CRTag, "totalSM");
+                    Figure SRYield = Get(regionsTags[r],"totalSM");
+                    //double ratio = SRYield.value()/CRYield.value();
+                    //double dratio = SRYield.error()/CRYield.error();
+                    Figure ratio = SRYield/CRYield;
+
+                    //Set(regionsTags[r], "SRtoCR", Figure(ratio,dratio));
+                    Set(regionsTags[r], "SRtoCR", ratio);
                 }
 
             };
 
 
-            ~TableBackgroundSignal()
+            ~TableSRToCR()
             {
             };
 
