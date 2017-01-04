@@ -43,8 +43,6 @@ namespace theDoctor
 
           theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
           theHistoRawEntries->Sumw2();
-          //negative = 0;
-          //positive = 0;
       };
 
 
@@ -85,11 +83,6 @@ namespace theDoctor
                   //std::cout << " value: " << array[f] << ", weight: " << weight << std::endl;
               }
           }
-          /*if(weight<0) //@MJ@ TODO it is in constant function...
-              negative++;
-          else
-              positive++;
-          cout << "positive " << positive << " negative " << negative << endl;*/
       }
       void Fill(double value = 1.0, float weight = 1.0) const
       {
