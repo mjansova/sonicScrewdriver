@@ -51,7 +51,7 @@ int HistoScrewdriver::getIndexOfChannel(string tag)
 }
 
 
-void HistoScrewdriver::AutoFillProcessClass(vector< vector<double> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields)
+void HistoScrewdriver::AutoFillProcessClass(vector< vector<Figure> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields)
 {
     UpdateRegionsAndChannels();
     AutoFill1DProcessClass(yieldsMtx, processClass, weight,weightV,syst, checkYields);
@@ -148,7 +148,7 @@ void HistoScrewdriver::Create1DHistosEntries()
     }
 }
 
-void HistoScrewdriver::AutoFill1DProcessClass(vector< vector<double> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields )
+void HistoScrewdriver::AutoFill1DProcessClass(vector< vector<Figure> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields )
 {
      //cout << "number of histograms to fill " << the1DHistosEntries.size() << std::endl;
 

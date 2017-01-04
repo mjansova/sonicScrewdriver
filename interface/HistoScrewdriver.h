@@ -23,7 +23,7 @@ namespace theDoctor
       ~HistoScrewdriver();
 
       void Create1DHistosEntries();
-      void AutoFillProcessClass(vector< vector<double> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields);
+      void AutoFillProcessClass(vector< vector<Figure> >* yieldsMtx, string processClass, float weight, vector<float> weightV, bool syst, bool checkYields);
       Figure GetYieldAndError(string processClass, string region, string channel);
 
       vector<Histo1DEntries>* Get1DHistosEntries();
@@ -34,7 +34,7 @@ namespace theDoctor
       vector<Histo2D>* Get2DHistosForPlots() { return &the2DHistosForPlots; }
       vector<Histo3D>* Get3DHistosForPlots() { return &the3DHistosForPlots; }
 
-      void AutoFill1DProcessClass(vector< vector<double> >* yieldsMtx, string processClass, float weight = 1.0, vector<float> weightV = DEFAULT_VECTOR, bool syst = false, bool checkYields = false);
+      void AutoFill1DProcessClass(vector< vector<Figure> >* yieldsMtx, string processClass, float weight = 1.0, vector<float> weightV = DEFAULT_VECTOR, bool syst = false, bool checkYields = false);
 
       void ApplyScaleFactor(string var, string processClass, string region, string channel, Figure scaleFactor);
 

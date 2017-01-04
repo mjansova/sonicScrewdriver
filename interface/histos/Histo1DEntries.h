@@ -14,6 +14,9 @@ namespace theDoctor
 
     class Histo1DEntries : public Histo1D
     {
+    public:
+      uint32_t positive;
+      uint32_t negative;
 
      public:
 
@@ -40,7 +43,10 @@ namespace theDoctor
 
           theHistoRawEntries->SetName((nameHisto+"Raw").c_str());
           theHistoRawEntries->Sumw2();
+          //negative = 0;
+          //positive = 0;
       };
+
 
       ~Histo1DEntries() { };
 
@@ -79,6 +85,11 @@ namespace theDoctor
                   //std::cout << " value: " << array[f] << ", weight: " << weight << std::endl;
               }
           }
+          /*if(weight<0) //@MJ@ TODO it is in constant function...
+              negative++;
+          else
+              positive++;
+          cout << "positive " << positive << " negative " << negative << endl;*/
       }
       void Fill(double value = 1.0, float weight = 1.0) const
       {
@@ -92,12 +103,13 @@ namespace theDoctor
            && (value >= theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this
 
           theHisto->Fill(value,weight);
+          //cout << "log value "  << value << " weight " << weight << " error " << theHisto->GetBinError(1) << endl;
           theHistoRawEntries->Fill(value);
 
       }
 
 
-      void CheckAndFillYields(vector<double>* yieldsVect)
+      void CheckAndFillYields(vector<Figure>* yieldsVect)
       {
           uint32_t nBins = theHisto->GetNbinsX();
           if(yieldsVect->size() != nBins)
@@ -105,16 +117,19 @@ namespace theDoctor
 
           for(uint32_t b=0; b<nBins; b++)
           {
-              double bValue = theHisto->GetBinContent(b+1);
-              if(bValue< yieldsVect->at(b))
+              double bError;
+              double bValue = theHisto->IntegralAndError(0,theHisto->GetNbinsX()+1, bError);
+              
+              if(bValue< yieldsVect->at(b).value())
               {
-                  theHisto->SetBinContent(b+1, yieldsVect->at(b));
+                  theHisto->SetBinContent(b+1, yieldsVect->at(b).value());
+                  theHisto->SetBinError(b+1, yieldsVect->at(b).error());
                   //cout << "value " << bValue << " was set to value " << yieldsVect->at(b) << endl; 
               }
               else
               {
                   //cout << "vector updated from " << yieldsVect->at(b) << " to " << bValue << endl;
-                  yieldsVect->at(b) = bValue;
+                  yieldsVect->at(b) = Figure(bValue,bError);
               }
           }
 
@@ -137,6 +152,9 @@ namespace theDoctor
 
       ProcessClass* theProcessClass;
       TH1D* theHistoRawEntries;
+
+     public:
+     
 
     };
 
