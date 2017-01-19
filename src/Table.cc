@@ -91,6 +91,8 @@ void Table::Init(vector<string> colTags_, vector<string> rowTags_)
 	colTags  = colTags_;
 	rowTags  = rowTags_;
 
+        SetLabels(colTags,rowTags); //@MJ@ TODO for the case of resaving latex tab  
+
 	nCol = (unsigned int) colTags.size();
 	nRow = (unsigned int) rowTags.size();
 	for (unsigned int i = 0 ; i < nCol ; i++)
@@ -98,7 +100,7 @@ void Table::Init(vector<string> colTags_, vector<string> rowTags_)
         vector<Figure> newVec;
         data.push_back(newVec);
 	    for (unsigned int j = 0 ; j < nRow ; j++)
-		    data[i].push_back(Figure(0.0,0.0));
+		    data[i].push_back(Figure(0.0,0.0,0.0));
     }
 }
 
@@ -113,7 +115,7 @@ bool Table::Set(int colId, int rowId, Figure value)
 
         if(value.value()<0)
         {
-             value = Figure(0,0);
+             value = Figure(0,0,0);
         }
 	data[colId][rowId] = value;
 	return true;

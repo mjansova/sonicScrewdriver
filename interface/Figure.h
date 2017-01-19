@@ -13,16 +13,18 @@ namespace theDoctor
 
      public:
 
-      Figure(double value_ = 0, float error_ = 0)
+      Figure(double value_ = 0, float error_ = 0, float errorSyst_ = 0)
       {
           theValue = value_;
           theError = error_;
+          theErrorSyst = errorSyst_;
       };
 
       ~Figure() { };
 
       double value() const { return theValue; };
       double error() const { return theError; };
+      double errorSyst() const { return theErrorSyst; };
 
       double valueWithVariation(int n) const
       {
@@ -47,6 +49,8 @@ namespace theDoctor
 
           if (options == "noError")
               s << theValue;
+          else if (options == "systError")
+              s << theValue << " +/- " << theError << " +/- " << theErrorSyst;
           else
               s << theValue << " +/- " << theError;
 
@@ -62,6 +66,8 @@ namespace theDoctor
 
           if (options == "noError")
               s << theValue;
+          else if (options == "systError")
+              s << theValue << " $\\pm$ " << theError << " $\\pm$ " << theErrorSyst;
           else
               s << theValue << " $\\pm$ " << theError;
 
@@ -152,6 +158,7 @@ namespace theDoctor
 
         double theValue;
         double theError;
+        double theErrorSyst;
 
     };
 
