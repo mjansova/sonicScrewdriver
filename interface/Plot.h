@@ -31,8 +31,8 @@ namespace theDoctor
                 theCanvas = new TCanvas(name_.c_str(),"",theGlobalOptions.GetGlobalFloatOption("Plot","width"),theGlobalOptions.GetGlobalFloatOption("Plot","height"));
 
                 theLegend = new TLegend(0.65,0.70,0.89,0.89); theLegendMaxLabelSize = 0; theLegendNumberOfLines = 0;
-                theTopLeftInfo  = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
-                theTopRightInfo = new TPaveText(0.06,0.93,0.99,0.97,"NDC");
+                theTopLeftInfo  = new TPaveText(0.06,0.94,0.99,0.95,"NDC");
+                theTopRightInfo = new TPaveText(0.06,0.94,0.99,0.95,"NDC");
                 theInPlotInfo = new TPaveText(0.13,0.77,0.43,0.87,"NDC");
 
                 PlotDefaultStyles::ApplyDefaultCanvasStyle(theCanvas,         theGlobalOptions);
@@ -80,7 +80,7 @@ namespace theDoctor
                 stringstream stream(info);
                 while( getline(stream,line,';') )
                 {
-                    if (line == "") continue;
+                    //if (line == "") continue;
                     theInPlotInfo->AddText(line.c_str());
                 }
             }
@@ -167,7 +167,7 @@ namespace theDoctor
                 theInPlotInfo->SetX2(theInPlotInfo->GetX1() + 0.4);
                 theInPlotInfo->SetY2(theInPlotInfo->GetY1() + 0.1 + 0.025*theInPlotInfo->GetSize());
 
-                theInPlotInfo->Draw();
+                //theInPlotInfo->Draw(); @MJ@ TODO do not do that, set some global option!!!
 
             }
 

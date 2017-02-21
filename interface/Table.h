@@ -23,7 +23,7 @@ namespace theDoctor
       Table(string inputFile);
 
       void SetLabels(vector<string> colLabels_, vector<string> rowLabels_);
-      void Init(vector<string> colTags_, vector<string> rowTags_);
+      void Init(vector<string> colTags_, vector<string> rowTags_, bool keepNegative = false);
 
       ~Table();
 
@@ -50,7 +50,7 @@ namespace theDoctor
       unsigned int nCol;
       unsigned int nRow;
       vector< vector<Figure> > data;
-
+      bool negativeValues;
     };
 
 }

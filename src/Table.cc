@@ -86,8 +86,9 @@ void Table::SetLabels(vector<string> colLabels_, vector<string> rowLabels_)
 	rowLabels = rowLabels_;
 }
 
-void Table::Init(vector<string> colTags_, vector<string> rowTags_)
+void Table::Init(vector<string> colTags_, vector<string> rowTags_, bool keepNegative)
 {
+        negativeValues = keepNegative;
 	colTags  = colTags_;
 	rowTags  = rowTags_;
 
@@ -113,7 +114,7 @@ bool Table::Set(int colId, int rowId, Figure value)
 	if ((((unsigned int) colId) >= nCol) || (((unsigned int) rowId) >= nRow))	return false;
 	if ((colId < 0)     || (rowId < 0))	    return false;
 
-        if(value.value()<0)
+        if(value.value()<0 && !negativeValues)
         {
              value = Figure(0,0,0);
         }

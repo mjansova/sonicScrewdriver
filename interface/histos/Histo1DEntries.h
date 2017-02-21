@@ -108,6 +108,8 @@ namespace theDoctor
           if(yieldsVect->size() != nBins)
               throw std::runtime_error("The vector of bin yields has not same lenght as histogram bins");
 
+          cout << "checking the yields " << endl;
+
           for(uint32_t b=0; b<nBins; b++)
           {
               double bError;
@@ -117,7 +119,7 @@ namespace theDoctor
               {
                   theHisto->SetBinContent(b+1, yieldsVect->at(b).value());
                   theHisto->SetBinError(b+1, yieldsVect->at(b).error());
-                  //cout << "value " << bValue << " was set to value " << yieldsVect->at(b) << endl; 
+                  cout << "value " << bValue << " was set to value " << yieldsVect->at(b).value() << endl; 
               }
               else
               {

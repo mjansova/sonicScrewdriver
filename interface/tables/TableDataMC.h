@@ -98,7 +98,8 @@ namespace theDoctor
 
                 }
 
-                Init(regionsTags,processesTags);
+                bool keepNegative = OptionsScrewdriver::GetBoolOption(options,"keepNegative");
+                Init(regionsTags,processesTags,keepNegative);
                 SetLabels(regionsLabels,processesLabels);
 
                 // Actually fill the table

@@ -280,10 +280,10 @@ namespace theDoctor
           TH1D* dataHisto = theSumData->getClone();
           if (regionRebin) dataHisto->Rebin(regionRebin);
 
-          // Add it to the legend
-          pointersForLegend.push_back(dataHisto);
-          labelsForLegend.push_back("data");
-          optionsForLegend.push_back("pl");
+          // Add it to the legend @MJ@ TODO do not do this! put some global option!!!
+          //pointersForLegend.push_back(dataHisto);
+          //labelsForLegend.push_back("data");
+          //optionsForLegend.push_back("pl");
 
           if (dataHisto->GetMaximum() > stackBackground->GetMaximum())
           {
@@ -519,14 +519,16 @@ namespace theDoctor
           if (ratioMax == -1) ratioMax = 1.5;
 
           // Y axis
-          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"), generalOptions);
+          //PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("data/SM"), generalOptions); @MJ@ TODO do not do this again - global option!
+          PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetYaxis(),string("Band/Central"), generalOptions);
           theRatio->GetYaxis()->CenterTitle();
           theRatio->GetYaxis()->SetTickLength(0.015);
-          theRatio->GetYaxis()->SetTitleSize(0.17);
+          theRatio->GetYaxis()->SetTitleSize(0.10);
+          theRatio->GetYaxis()->SetLabelSize(10);
           theRatio->GetYaxis()->SetTitleOffset(0.25);
           theRatio->SetMinimum(ratioMin);
           theRatio->SetMaximum(ratioMax);
-          theRatio->GetYaxis()->SetNdivisions(4);
+          theRatio->GetYaxis()->SetNdivisions(10);
 
           // X axis
           if (ratioPosition == "top")
@@ -537,8 +539,8 @@ namespace theDoctor
           else
           {
               PlotDefaultStyles::ApplyDefaultAxisStyle(theRatio->GetXaxis(), xlabel, generalOptions) ;
-              theRatio->GetXaxis()->SetTitleSize(0.22);
-              theRatio->GetXaxis()->SetTitleOffset(0.65);
+              theRatio->GetXaxis()->SetTitleSize(0.20);
+              theRatio->GetXaxis()->SetTitleOffset(0.80);
           }
 
           theRatio->GetXaxis()->SetTickLength(0.1);
