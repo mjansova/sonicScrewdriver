@@ -182,7 +182,7 @@ void BabyScrewdriver::ProcessDatasets(int workerId)
         for (unsigned int i = entryIdMin ; i < entryIdMax ; i++)
         {
             // Get the i-th entry
-	    ReadEvent(theTree,i,&myEvent);
+	    ReadEvent(theTree,i,&myEvent,&f);
             //for(uint32_t j=0; j<myEvent->ngoodjets; j++)
             //{
             //    ReadJetsForEvent(theTree,j,&myEvent)

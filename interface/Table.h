@@ -39,7 +39,7 @@ namespace theDoctor
       void Print(string fileName, int prec = 2, string options = "");
       void PrintLatex(string fileName, int prec = 2, string options = "");
 
-      protected:
+      public:
 
       // Data management
       vector<string> colTags;
@@ -47,6 +47,7 @@ namespace theDoctor
       vector<string> colLabels;
       vector<string> rowLabels;
 
+      protected:
       unsigned int nCol;
       unsigned int nRow;
       vector< vector<Figure> > data;

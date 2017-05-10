@@ -21,7 +21,7 @@ namespace theDoctor
 
      public:
 
-            CombineCardMaker();
+            CombineCardMaker(){};
 
             CombineCardMaker(SonicScrewdriver* screwdriver, vector<string> inputRegionTags, string channel, string SigProcessClass, string sigVarX, string sigVarY)
 	    {
@@ -53,6 +53,20 @@ namespace theDoctor
                 processesTags.push_back("totalSM");
                 processesLabels.push_back("total SM");
 
+                bool dataFilled = false;
+                for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
+                {
+                    string type2 = screwdriver->GetProcessClassType(rawProcessesTags[i]);
+                    if (type2 == "data")
+                    {
+                        if(dataFilled == true)
+                            throw std::runtime_error("data are already present!");
+                        processesTags.push_back(rawProcessesTags[i]);
+                        processesLabels.push_back(rawProcessesTags[i]);
+                        dataFilled = true;
+                    }
+                }
+
                 /*
 		for (unsigned int i = 0 ; i < rawProcessesTags.size() ; i++)
                 {
@@ -69,6 +83,9 @@ namespace theDoctor
 		 	cerr<<"CombinedCardMaker::no regions have been defined !"<<endl;
 		 	return;
 		 }
+ 
+                 if(SigProcessClass != "none")
+                 {
 		 TH2D* histo2Dtmp = screwdriver-> Get2DHistoClone(sigVarX, sigVarY, SigProcessClass, regionsTags[0], channel);
 		 for(int binX = 1 ; binX<histo2Dtmp->GetNbinsX(); binX++){
 
@@ -77,7 +94,7 @@ namespace theDoctor
                         		stringstream ss;
 					//rouding the masses by step of 5 GeV
 
-					ss<<"("<<(int)histo2Dtmp->GetXaxis()->GetBinLowEdge(binX)<<","<<(int)histo2Dtmp->GetYaxis()->GetBinLowEdge(binY)<<")";
+					ss<<"("<<(int)histo2Dtmp->GetXaxis()->GetBinCenter(binX)<<","<<(int)histo2Dtmp->GetYaxis()->GetBinCenter(binY)<<")";
 					processesTags.push_back(ss.str());
                         		processesLabels.push_back(ss.str());
 				}
@@ -86,6 +103,7 @@ namespace theDoctor
 			}
 
 		}
+                }
 
 
                 // Get labels for input regions
@@ -133,6 +151,9 @@ namespace theDoctor
                         tmpTotal += currentYield;
 
                     }
+
+                    if(SigProcessClass != "none")
+                    {
 		    //Scan the Signal 2D plan
 		    for(int binX = 1 ; binX<histo2DSigYields->GetNbinsX(); binX++){
 			for(int binY = 1 ; binY<histo2DSigYields->GetNbinsX(); binY++){
@@ -140,7 +161,7 @@ namespace theDoctor
 				Figure zbi = Zbi(sigYield.value(), tmpTotal.value());
                         	
 				stringstream ss;
-				ss<<"("<<(int)histo2DSigYields->GetXaxis()->GetBinLowEdge(binX)<<","<<(int)histo2DSigYields->GetYaxis()->GetBinLowEdge(binY)<<")";
+				ss<<"("<<(int)histo2DSigYields->GetXaxis()->GetBinCenter(binX)<<","<<(int)histo2DSigYields->GetYaxis()->GetBinCenter(binY)<<")";
 				string label = ss.str();
                         	cout<<"yield: "<<ss.str()<<" "<<histo2DSigYields->GetBinContent(binX, binY);//<<endl;
 				cout<<" "<<sigYield.value()<<" "<<tmpTotal.value();
@@ -151,6 +172,7 @@ namespace theDoctor
 			}
 
 		    }
+                    }
 		    ///*
                     for (unsigned int p = 0 ; p < processesTags.size() ; p++)
                     {
@@ -203,62 +225,128 @@ namespace theDoctor
             {
             };
 
+	    void UpdateCardTable(string inputTab){
 
-	    void ProduceCard(string outputdir,float sigRelUncert = 1.1, float bkgRelUncert = 1.2){
-		int iBkgLine = -1;
+                Table inTable(inputTab);
+                vector<string> processList = inTable.rowTags; 
+                vector<string> regionsList = inTable.colTags;
+
 		for (unsigned int i = 0 ; i < nRow ; i++){
-			cout<<rowLabels[i]<<endl;
-			if(rowLabels[i].find("total SM")!=std::string::npos) iBkgLine = i;
+			//cout<<rowLabels[i]<<endl;
+			if( !(rowLabels[i].find("total SM")!=std::string::npos || rowLabels[i].find("totalSM")!=std::string::npos) ){
+				//cout<<"new process !"<<endl;
+                                if(std::find(processList.begin(), processList.end(), rowLabels[i]) == processList.end() )
+                                    throw std::runtime_error("The processes names do not agree between the two tables");
+
+				for(unsigned int j = 0; j < nCol ; j++){ 
+                                    if(std::find(regionsList.begin(), regionsList.end(), colLabels[j]) == regionsList.end() )
+                                        throw std::runtime_error("The regions names do not agree between the two tables");
+				    Figure y = Get(j,i);
+                                    inTable.Set(colLabels[j], rowLabels[i], y); //@MJ@ TODO there can be mismatch between labels and tags
+                                    //cout << "table set with" << colLabels[j]<< rowLabels[i] << y.value() << endl;
+                                }
+                        }
+                }
+                inTable.Print(inputTab,4);
+            }; //@MJ@ TODO is the updated table really saved?! 
+
+	    void ProduceCard(string inputTab, string outputdir,float sigRelUncert = 1.1, float bkgRelUncert = 1.2){
+
+                Table inTable(inputTab);
+                vector<string> processList = inTable.rowTags; 
+                vector<string> regionsList = inTable.colTags; 
+		vector<int> iBkgLine;
+		for (unsigned int i = 0 ; i < processList.size() ; i++){
+			cout<<processList.at(i)<<endl;
+			if(processList.at(i).find("bkg")!=std::string::npos) iBkgLine.push_back(i);
 		}
-		if(iBkgLine<0){
-			cerr<<"CombinedCardMaker::totalSM line not found !"<<endl;
+		if(iBkgLine.size()==0){
+			cerr<<"CombinedCardMaker::backgrounds not found !"<<endl;
 			return;
 		}
+		int iDataLine=-1;
+		for (unsigned int i = 0 ; i < processList.size() ; i++){
+			if(processList.at(i).find("data")!=std::string::npos) iDataLine =i;
+		}
+		if(iDataLine==-1){
+			cout<<"CombinedCardMaker::no data"<<endl;
+		}
 		//looking for signal
-		for (unsigned int i = 0 ; i < nRow ; i++){
-			cout<<rowLabels[i]<<endl;
-			if(rowLabels[i].find("(")!=std::string::npos && rowLabels[i].find(")")!=std::string::npos){
+		for (unsigned int i = 0 ; i < processList.size() ; i++){
+			cout<<processList.at(i)<<endl;
+			if(processList.at(i).find("(")!=std::string::npos && processList.at(i).find(")")!=std::string::npos){
 				cout<<"selected !"<<endl;
 				string filename;
-				size_t found = rowLabels[i].find(",");
-				string val1 = rowLabels[i].substr(rowLabels[i].find("(")+1,found-1);
-				string val2 = rowLabels[i].substr(found+1,rowLabels[i].find(")")-found-1);
+				size_t found = processList.at(i).find(",");
+				string val1 = processList.at(i).substr(processList.at(i).find("(")+1,found-1);
+				string val2 = processList.at(i).substr(found+1,processList.at(i).find(")")-found-1);
 				filename = outputdir+string("/")+val1+string("_")+val2+string(".tab");
 
 				ofstream ofile(filename.c_str());
-				ofile<<"imax "<<nCol<<" number of bins"<<endl;
+				ofile<<"imax "<<regionsList.size()<<" number of bins"<<endl;
 				ofile<<"jmax 1 number of processes"<<endl; // bkg + signal only
 				ofile<<"kmax 1 number of nuisance parameters"<<endl; // only a systematic on the bkg
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"bin\t";
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<"ch"<<j<<"\t"; }
+				for(unsigned int j = 0; j < regionsList.size() ; j++){ ofile<<"ch"<<j<<"\t"; }
 				ofile<<endl;
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"observation\t";
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<"0\t"; }
+				for(unsigned int j = 0; j < regionsList.size() ; j++){ ofile<<inTable.Get(j,iDataLine).value()<<"\t"; }
 				ofile<<endl;
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"bin\t";
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<"ch"<<j<<"\tch"<<j<<"\t"; }
+				for(unsigned int j = 0; j < regionsList.size() ; j++)
+                                {
+                                    ofile<<"ch"<<j<<"\t"; 
+                                    for(uint32_t l=0; l<iBkgLine.size(); l++ )
+                                    {
+                                        ofile<<"ch"<<j<<"\t"; 
+                                    }
+                                };
 				ofile<<endl;
 				ofile<<"process\t";
 				//for(unsigned int j = 0; j < nCol ; j++){ ofile<<"bkg\tsignal\t"; }
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<"sig\tbkg\t"; }
+				for(unsigned int j = 0; j  < regionsList.size() ; j++)
+                                { 
+                                    ofile<<"sig\t";
+                                    for(uint32_t l=0; l<iBkgLine.size(); l++ )
+                                    {
+                                        ofile<<processList.at(l) <<"\t"; 
+                                    }
+                                }
 				ofile<<endl;
 				ofile<<"process\t";
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<"0\t1\t"; }
+				for(unsigned int j = 0; j  < regionsList.size() ; j++)
+                                { 
+                                    ofile<<"0\t";
+                                    for(uint32_t l=0; l<iBkgLine.size(); l++ )
+                                    {
+                                        ofile<<l+1<<"\t"; 
+                                    }
+                                }
 				ofile<<endl;
 				ofile<<"rate\t";
-				for(unsigned int j = 0; j < nCol ; j++){ 
+				for(unsigned int j = 0; j < regionsList.size() ; j++){ 
 					//signal yield (current one)
-					ofile<<Get(j,i).value()<<"\t";
+			            ofile<<inTable.Get(j,i).value()<<"\t";
 					//background yield
-					ofile<<Get(j,iBkgLine).value()<<"\t";
+                                    for(uint32_t l=0; l<iBkgLine.size(); l++ )
+                                    {
+					ofile<<inTable.Get(j,iBkgLine.at(l)).value()<<"\t";
+                                    }
 				}
 				ofile<<endl;
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"uncert_bkg\t lnN \t";
-				for(unsigned int j = 0; j < nCol ; j++){ ofile<<sigRelUncert<<"\t "<<bkgRelUncert<<" \t";}
+				for(unsigned int j = 0; j < nCol ; j++)
+                                { 
+                                    ofile<<sigRelUncert<<"\t ";
+                                    for(uint32_t l=0; l<iBkgLine.size(); l++ )
+                                    {
+                                        ofile<<bkgRelUncert<<" \t";
+                                    }
+                                }
 				ofile<<endl;
 				ofile.close();
 
