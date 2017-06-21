@@ -271,6 +271,9 @@ namespace theDoctor
 		if(iDataLine==-1){
 			cout<<"CombinedCardMaker::no data"<<endl;
 		}
+
+                ofstream shfile;
+                shfile.open (outputdir+"/combineCommands.sh");
 		//looking for signal
 		for (unsigned int i = 0 ; i < processList.size() ; i++){
 			cout<<processList.at(i)<<endl;
@@ -281,10 +284,11 @@ namespace theDoctor
 				string val1 = processList.at(i).substr(processList.at(i).find("(")+1,found-1);
 				string val2 = processList.at(i).substr(found+1,processList.at(i).find(")")-found-1);
 				filename = outputdir+string("/")+val1+string("_")+val2+string(".tab");
+                                shfile << "combine -M Asymptotic " << val1+string("_")+val2+string(".tab") << " -n " << val1+string("_")+val2 << endl;
 
 				ofstream ofile(filename.c_str());
 				ofile<<"imax "<<regionsList.size()<<" number of bins"<<endl;
-				ofile<<"jmax 1 number of processes"<<endl; // bkg + signal only
+				ofile<<"jmax "<< iBkgLine.size() <<" number of processes"<<endl; // bkg + signal only
 				ofile<<"kmax 1 number of nuisance parameters"<<endl; // only a systematic on the bkg
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"bin\t";
@@ -352,6 +356,8 @@ namespace theDoctor
 
 			}
 		}
+                shfile << "hadd allLimits.root *.root" << endl;
+                shfile.close();
 	    	
 	    }
 
