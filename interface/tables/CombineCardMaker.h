@@ -59,6 +59,7 @@ namespace theDoctor
                     string type2 = screwdriver->GetProcessClassType(rawProcessesTags[i]);
                     if (type2 == "data")
                     {
+                        cout << "filling data in card maker " << endl;
                         if(dataFilled == true)
                             throw std::runtime_error("data are already present!");
                         processesTags.push_back(rawProcessesTags[i]);
@@ -142,12 +143,12 @@ namespace theDoctor
                     {
                         if (processesTags[p] == "totalSM") continue;
                         string type = screwdriver->GetProcessClassType(processesTags[p]);
-                        if (type != "background") continue;
                         Figure currentYield = screwdriver->GetYieldAndError(processesTags[p],
                                                                             regionsTags[r],
                                                                             channel);
                        
 			Set(regionsTags[r], processesTags[p], currentYield);
+                        if (type != "background") continue;
                         tmpTotal += currentYield;
 
                     }
@@ -220,32 +221,70 @@ namespace theDoctor
                 double P_Bi = TMath::BetaIncomplete(1./(1.+tau),n_on,n_off+1);
                 double Z_Bi = sqrt(2)*TMath::ErfInverse(1 - 2*P_Bi);
                 return Z_Bi;
-            }
+            };
             ~CombineCardMaker()
             {
             };
 
-	    void UpdateCardTable(string inputTab){
+	    void UpdateCardTable(string inputTab, string TFtab, string bkgType){
 
                 Table inTable(inputTab);
                 vector<string> processList = inTable.rowTags; 
                 vector<string> regionsList = inTable.colTags;
 
-		for (unsigned int i = 0 ; i < nRow ; i++){
-			//cout<<rowLabels[i]<<endl;
-			if( !(rowLabels[i].find("total SM")!=std::string::npos || rowLabels[i].find("totalSM")!=std::string::npos) ){
-				//cout<<"new process !"<<endl;
-                                if(std::find(processList.begin(), processList.end(), rowLabels[i]) == processList.end() )
-                                    throw std::runtime_error("The processes names do not agree between the two tables");
+                cout << "in here 1";
+                Table TFTable(TFtab);
+                vector<string> TFRegionsList = TFTable.rowTags; 
+                vector<string> TFList = TFTable.colTags;
+                cout << "in here 2";
 
-				for(unsigned int j = 0; j < nCol ; j++){ 
-                                    if(std::find(regionsList.begin(), regionsList.end(), colLabels[j]) == regionsList.end() )
-                                        throw std::runtime_error("The regions names do not agree between the two tables");
-				    Figure y = Get(j,i);
-                                    inTable.Set(colLabels[j], rowLabels[i], y); //@MJ@ TODO there can be mismatch between labels and tags
+                if(regionsList.size() != TFRegionsList.size())
+                    throw std::runtime_error("Tables do not have same number of signal regions");
+                cout << "in here 3";
+		
+                uint16_t upColumnNr = 11111;
+                for (unsigned int k = 0 ; k < TFList.size() ; k++)
+                {
+                   if(TFList.at(k).find(bkgType)!=std::string::npos)
+                   {
+                       upColumnNr = k;
+                       break;
+                   }
+                }
+                if( upColumnNr == 11111)
+                    throw std::runtime_error("Background estimation column not found");
+
+		for (unsigned int i = 0 ; i < processList.size() ; i++)
+                {
+			//cout<<rowLabels[i]<<endl;
+			if( processList.at(i).find(bkgType)!=std::string::npos ) 
+                        {
+				//cout<<"new process !"<<endl;
+				for(unsigned int j = 0; j < regionsList.size() ; j++){ 
+				    Figure y = TFTable.Get(upColumnNr, j);
+                                    //cout << "value of y " << y.value() << endl;
+                                    inTable.Set(regionsList.at(j), processList.at(i), y); //@MJ@ TODO there can be mismatch between labels and tags
                                     //cout << "table set with" << colLabels[j]<< rowLabels[i] << y.value() << endl;
                                 }
                         }
+                }
+
+		for (unsigned int i = 0 ; i < regionsList.size() ; i++)
+                {
+                    Figure totSMVal(0,0);
+		    for (unsigned int j = 0 ; j < processList.size() ; j++)
+                    {
+	                if( !(processList.at(j).find("total SM")!=std::string::npos || processList.at(j).find("totalSM")!=std::string::npos) )
+                        {
+		            Figure z = inTable.Get(i,j);
+                            totSMVal+=z;
+                        }
+                        else
+                        {
+                            inTable.Set(regionsList.at(i), processList.at(j), totSMVal); //@MJ@ TODO there can be mismatch between labels and tags
+                            break;
+                        }
+                    }
                 }
                 inTable.Print(inputTab,4);
             }; //@MJ@ TODO is the updated table really saved?! 
@@ -343,7 +382,8 @@ namespace theDoctor
 				ofile<<endl;
 				ofile<<"----------------------------------------------------"<<endl;
 				ofile<<"uncert_bkg\t lnN \t";
-				for(unsigned int j = 0; j < nCol ; j++)
+				//for(unsigned int j = 0; j < nCol ; j++)
+				for(unsigned int j = 0; j  < regionsList.size() ; j++)
                                 { 
                                     ofile<<sigRelUncert<<"\t ";
                                     for(uint32_t l=0; l<iBkgLine.size(); l++ )
