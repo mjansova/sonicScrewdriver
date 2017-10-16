@@ -232,15 +232,12 @@ namespace theDoctor
                 vector<string> processList = inTable.rowTags; 
                 vector<string> regionsList = inTable.colTags;
 
-                cout << "in here 1";
                 Table TFTable(TFtab);
                 vector<string> TFRegionsList = TFTable.rowTags; 
                 vector<string> TFList = TFTable.colTags;
-                cout << "in here 2";
 
                 if(regionsList.size() != TFRegionsList.size())
                     throw std::runtime_error("Tables do not have same number of signal regions");
-                cout << "in here 3";
 		
                 uint16_t upColumnNr = 11111;
                 for (unsigned int k = 0 ; k < TFList.size() ; k++)
@@ -256,15 +253,11 @@ namespace theDoctor
 
 		for (unsigned int i = 0 ; i < processList.size() ; i++)
                 {
-			//cout<<rowLabels[i]<<endl;
 			if( processList.at(i).find(bkgType)!=std::string::npos ) 
                         {
-				//cout<<"new process !"<<endl;
 				for(unsigned int j = 0; j < regionsList.size() ; j++){ 
 				    Figure y = TFTable.Get(upColumnNr, j);
-                                    //cout << "value of y " << y.value() << endl;
-                                    inTable.Set(regionsList.at(j), processList.at(i), y); //@MJ@ TODO there can be mismatch between labels and tags
-                                    //cout << "table set with" << colLabels[j]<< rowLabels[i] << y.value() << endl;
+                                    inTable.Set(regionsList.at(j), processList.at(i), y);
                                 }
                         }
                 }
@@ -281,13 +274,13 @@ namespace theDoctor
                         }
                         else
                         {
-                            inTable.Set(regionsList.at(i), processList.at(j), totSMVal); //@MJ@ TODO there can be mismatch between labels and tags
+                            inTable.Set(regionsList.at(i), processList.at(j), totSMVal); 
                             break;
                         }
                     }
                 }
                 inTable.Print(inputTab,4);
-            }; //@MJ@ TODO is the updated table really saved?! 
+            };  
 
 	    void ProduceCard(string inputTab, string outputdir,float sigRelUncert = 1.1, float bkgRelUncert = 1.2){
 
@@ -313,6 +306,8 @@ namespace theDoctor
 
                 ofstream shfile;
                 shfile.open (outputdir+"/combineCommands.sh");
+                shfile << "rm allLimits.root" << endl;
+                shfile << "rm higgsCombine*.root" << endl;
 		//looking for signal
 		for (unsigned int i = 0 ; i < processList.size() ; i++){
 			cout<<processList.at(i)<<endl;
@@ -396,7 +391,7 @@ namespace theDoctor
 
 			}
 		}
-                shfile << "hadd allLimits.root *.root" << endl;
+                shfile << "hadd allLimits.root higgsCombine*.root" << endl;
                 shfile.close();
 	    	
 	    }

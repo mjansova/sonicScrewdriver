@@ -79,15 +79,12 @@ namespace theDoctor
               memcpy(array, theVar->getAutoFillValue(), arraySize*sizeof(double));
               for(uint32_t f = 0; f < arraySize; f++)
               {
-                  Fill(array[f],weight);  //@MJ@ TODO do this for 2D and 3D, or add some check, or....
-                  //std::cout << " value: " << array[f] << ", weight: " << weight << std::endl;
+                  Fill(array[f],weight);  
               }
           }
       }
       void Fill(double value = 1.0, float weight = 1.0) const
       {
-          //cout << "filling the histos1: value: " << value << "weight: " << weight << endl;
-          //DEBUG_MSG << "@MJ@ integral : " << GetYieldAndError().Print() << endl;
 
           if ((!OptionsScrewdriver::GetBoolOption(theVar->getOptions(),"noUnderflowInFirstBin"))
            && (value < theVar->getMin())) value = theVar->getMin();
@@ -96,8 +93,9 @@ namespace theDoctor
            && (value >= theVar->getMax())) value = theVar->getMax() - 0.001; // FIXME Find a better way to do this
 
           theHisto->Fill(value,weight);
-          //cout << "log value "  << value << " weight " << weight << " error " << theHisto->GetBinError(1) << endl;
           theHistoRawEntries->Fill(value);
+          /*if (theProcessClass->getType() == "data")
+              cout << "1D filled for data with weight " << weight << " value " << value << endl;*/
 
       }
 
@@ -107,8 +105,6 @@ namespace theDoctor
           uint32_t nBins = theHisto->GetNbinsX();
           if(yieldsVect->size() != nBins)
               throw std::runtime_error("The vector of bin yields has not same lenght as histogram bins");
-
-          cout << "checking the yields " << endl;
 
           for(uint32_t b=0; b<nBins; b++)
           {
